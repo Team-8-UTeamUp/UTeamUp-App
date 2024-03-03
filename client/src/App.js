@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from './components/Header.js'
+import Quiz_Skills from './components/Quiz_Skills.js';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         <title>Quiz (skills) </title>
       </head>
 
-      <Header />
+      <Quiz_Skills />
     </div>
   );
 }
