@@ -1,0 +1,19 @@
+# create python venv
+python -m venv .venv
+
+# activate venv
+.venv\scripts\activate
+
+# install requirements
+pip install -r Database/requirements.txt
+
+# add venv to IDE project settings
+
+# change database password to what your system uses (line 91)
+# run dummyDataGenerator
+# if names is not found:
+pip install names
+
+# have lines 96-109 uncommented first time to create project
+
+# rest of the code creates random students
