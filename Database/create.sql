@@ -10,7 +10,7 @@ lastName varchar(30)
 );
 
 create table admin(
-adminId varchar(9) primary	key not null,
+adminId varchar(9) primary key not null,
 
 CONSTRAINT `adminID`
 foreign key(adminID) references `user`(`userId`)
@@ -28,20 +28,23 @@ groupSizePref int not null
 );
 
 create table groupSkills(
-groupID int primary key not null,
+groupID int not null,
 skill varchar(30) not null,
-
-constraint groupSkillPK
+CONSTRAINT groupSkillPK
+	PRIMARY KEY (`groupID`, `skill`),
+constraint groupSkillFK
 foreign key (groupID) references `formedGroups`(`groupId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
 
 create table groupLang(
-groupID int primary key not null,
+groupID int not null,
 languages varchar(15) not null,
 
-constraint groupLangPK
+CONSTRAINT groupLangPK
+	PRIMARY KEY (`groupID`, `skill`),
+constraint groupLangFK
 foreign key (groupID) references `formedGroups`(`groupId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
@@ -150,3 +153,13 @@ create view individualStudents AS
 select studentId, firstName, lastName
 from student, user
 where studentId=user.userId AND student.groupId=0;
+
+create view UTDProjects as
+select projectNum, title
+from project
+where projType ='UTDProject';
+
+create view CSProjects as
+select projectNum, title
+from project
+where projType = 'CSProject';
