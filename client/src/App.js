@@ -1,5 +1,5 @@
 import React from 'react'
-import Quiz_Skills from './components/Quiz_Skills.js';
+import Quiz_Page from './components/Quiz_Page.js';
 import Faculty_Page from './components/Faculty_Page.js';
 
 function App() {
@@ -12,8 +12,8 @@ function App() {
         <title>Quiz (Whole) </title>
       </head>
 
-       {/* <Quiz_Skills />  */}
-       <Faculty_Page />
+       <Quiz_Page /> 
+       {/* <Faculty_Page /> */}
     </div>
   );
 }
