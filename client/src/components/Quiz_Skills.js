@@ -8,7 +8,6 @@ function Quiz_Skills() {
         <Header />
         <div class="centered">
             <p>What are some of your strengths?</p><br></br>
-            <input id="text_box" type="text" placeholder="Create a new skill"></input>
         </div>
         <div class="button_layout">
             <button class="button">Database</button>

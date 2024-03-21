@@ -16,18 +16,27 @@ header{
     display: flex;
     justify-content: space-between;
     border-bottom: solid gray;
+    max-height: 10vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 
 footer{
   display: flex;
   justify-content: space-between;
   border-top: solid gray;
+  max-height: 10vh;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
 
 header .logo{
-  width: 50px;
-  height: 50px;
-  margin: 10px;
+  width: 5%;
+  height: 5%;
 }
 
 #page_title{
@@ -35,12 +44,13 @@ header .logo{
 }
 
 #top_right{
-  margin: 20px;
+  width: 10%;
+  height: -40%;
 }
 
 .centered{
-  padding-top: 100px;
-  padding-bottom: 100px;
+  padding-top: 15vh;
+  padding-bottom: 15vh;
   text-align: center;
 }
 
@@ -50,11 +60,12 @@ header .logo{
 
 .button_layout{
   text-align: center;
-  padding-bottom: 300px;
+  padding-bottom: 50vh;
 }
 
 .button {
   display: inline-block;
+  margin-left: 5px;
   padding: 5px 20px;
   font-size: 15px;
   cursor: pointer;
@@ -96,4 +107,37 @@ header .logo{
 .button_page:hover {
   transform: scale(1.1);
   background-color: #157636;
+}
+
+/*Faculty*/
+
+.faculty-top {
+  display: flex;
+  justify-content: center;
+  border-bottom: solid gray;
+  min-height: 10vh;
+  margin-top: 20px;
+}
+
+table{
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  margin-top: 5%;
+}
+
+h2 {
+  margin-left: 10%;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+control{ /*doesnt work*/
+  display: flex;
+  justify-content: center;
 }
