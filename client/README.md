@@ -68,3 +68,11 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### DRAG AND DROP UI
+# For Chackra UI
+##  `npm i @chakra-ui/react @chakra-ui/next-js @emotion/react @emotion/styled framer-motion`
+install chakra UI with command
+## For react beautiful dnd
+## `npm i react-beautiful-dnd`
+install react beautiful dnd with command
