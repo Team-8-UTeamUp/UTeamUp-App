@@ -1,11 +1,12 @@
 import React from 'react'
-import Validate from './Validate';
+import Validate from '../pages/Validate';
 
 function Faculty_Page() {
     return (
         <>
         <div class="faculty-top">
-            <h2>Faculty</h2><br></br>
+            <h2>Faculty</h2><br></br>s
+            {/* import header and get the button click to faculty page as a js function to change the title  */}
         </div>
         <div>
             <form>
@@ -17,7 +18,7 @@ function Faculty_Page() {
             <tr>
                 <th width="10%">Project Number</th>
                 <th width="55%" text-align="left" >Group Members</th> 
-                {/* text align not working  */}
+                {/* text align above not working  */}
                 <th width="10%">Group Size</th>
                 <th width="10%">Deadline</th>
                 <th width="15%">Status</th>
