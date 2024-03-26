@@ -10,7 +10,7 @@ lastName varchar(30)
 );
 
 create table admin(
-adminId varchar(9) primary key not null,
+adminId varchar(9) primary	key not null,
 
 CONSTRAINT `adminID`
 foreign key(adminID) references `user`(`userId`)
@@ -43,7 +43,7 @@ groupID int not null,
 languages varchar(15) not null,
 
 CONSTRAINT groupLangPK
-	PRIMARY KEY (`groupID`, `skill`),
+	PRIMARY KEY (`groupID`, `languages`),
 constraint groupLangFK
 foreign key (groupID) references `formedGroups`(`groupId`)
 ON DELETE CASCADE
@@ -54,7 +54,7 @@ create table student(
 studentId varchar(9) primary key not null,
 email varchar(22), 
 groupId int Default 0, 
-prefGroupSize int not null,
+prefGroupSize int,
 bio varchar(750) default "",
 
 CONSTRAINT `studentID`
