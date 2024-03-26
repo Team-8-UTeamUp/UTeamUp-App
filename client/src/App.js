@@ -1,7 +1,7 @@
 import React from 'react'
-import Quiz_Skills from './pages/Quiz_Skills.js';
-import Faculty_Page from './pages/Faculty_Page.js';
-import Home_Page from './pages/Home_Page.js';
+import Quiz_Skills from './components/Quiz_Skills.js';
+import Faculty_Page from './components/Faculty_Page.js';
+import Home_Page from './components/Home_Page.js';
 
 function App() {
   return (
@@ -14,8 +14,8 @@ function App() {
       </head>
 
        {/* <Quiz_Skills />  */}
-       {/* <Faculty_Page /> */}
        <Home_Page />
+       {/* <Faculty_Page /> */}
     </div>
   );
 }

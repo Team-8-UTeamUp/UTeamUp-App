@@ -1,5 +1,5 @@
 import React from 'react'
-import Validate from '../pages/Validate';
+import Validate from './Validate';
 
 function Faculty_Page() {
     return (
