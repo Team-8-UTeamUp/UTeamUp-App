@@ -17,7 +17,6 @@ header{
     justify-content: space-between;
     border-bottom: solid gray;
     max-height: 10vh;
-    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -37,6 +36,10 @@ footer{
 header .logo{
   width: 5%;
   height: 5%;
+}
+
+header .link{
+  margin: 20px;
 }
 
 #page_title{
@@ -119,6 +122,10 @@ header .logo{
   margin-top: 20px;
 }
 
+.faculty-top .link{
+  margin: 20px;
+}
+
 table{
   margin-left: auto;
   margin-right: auto;
@@ -127,9 +134,9 @@ table{
   margin-top: 5%;
 }
 
-h2 {
+/*h2 {
   margin-left: 10%;
-}
+} */
 
 table, th, td {
   border: 1px solid black;
@@ -171,10 +178,23 @@ control{ /*doesnt work*/
   text-decoration: none;
   color: black;
   display: block;
+  transition: all 0.3s ease;
+}
+
+.sidenav link {
+  padding: 6px 6px 0px 32px;
+  text-decoration: none;
+  color: black;
+  display: block;
+  transition: all 0.3s ease;
 }
 
 .sidenav a:hover {
   color: orange;
+}
+
+.sidenav a:active {
+  background-color: #157636;
 }
 
 .right {

@@ -1,7 +1,28 @@
 import React from 'react'
 import Quiz_Skills from './components/Quiz_Skills.js';
+import Quiz_Page from './components/Quiz_Page.js';
 import Faculty_Page from './components/Faculty_Page.js';
 import Home_Page from './components/Home_Page.js';
+
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <div><Home_Page/></div>,
+  },
+  {
+    path: "/quiz",
+    element: <div><Quiz_Page/></div>,
+  },
+  {
+    path: "/admin",
+    element: <div><Faculty_Page/></div>,
+  },
+]);
 
 function App() {
   return (
@@ -13,8 +34,11 @@ function App() {
         <title>Quiz (Whole) </title>
       </head>
 
+        <div className="container">
+        <RouterProvider router={router}/>
+        </div>
        {/* <Quiz_Skills />  */}
-       <Home_Page />
+       {/* <Home_Page /> */}
        {/* <Faculty_Page /> */}
     </div>
   );

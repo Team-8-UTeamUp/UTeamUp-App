@@ -1,18 +1,20 @@
 import React from 'react'
 import Validate from './Validate';
+import { Link } from 'react-router-dom';
 
 function Faculty_Page() {
     return (
         <>
-        <div class="faculty-top">
-            <h2>Faculty</h2><br></br>s
+        <header class="header">
+            <h2>Faculty</h2>
             {/* import header and get the button click to faculty page as a js function to change the title  */}
-        </div>
+            <Link className="link" to="/"><p>Return to Home</p></Link>
+        </header>
         <div>
-            <form>
+            {/* <form>
                 <label for="name">Search:</label>
                 <input type="text" name="name"/>
-            </form>
+            </form> */}
             <h2>Groups</h2>
             <table id="Groups" width="90%">
             <tr>
