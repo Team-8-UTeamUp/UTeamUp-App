@@ -91,6 +91,22 @@ header .link{
   background-color: #157636;
 }
 
+.button_disabled {
+  display: inline-block;
+  padding: 5px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: gray;
+  border: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  margin: 15px 15px 15px;
+}
+
 .button_page {
   display: inline-block;
   padding: 5px 20px;

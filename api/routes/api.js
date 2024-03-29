@@ -14,7 +14,7 @@ const quiz = {
     bio: '',
 };
 
-app.get('/quiz', (req, res) => {
+router.get('/quiz', (req, res) => {
     res.send(quiz);
 });
 
@@ -22,14 +22,53 @@ router.get("/", (req, res) => {
     res.json("Testing");
 })
 
-const testing = (req, res) => {
-    const q = "SELECT * FROM People";
 
-    db.query(q, [req.body.testing], (err, data) => {
+// QUIZ
+// Question 1 - Skills
+router.post('/quiz/q1', (req, res) => {
+    //TODO: Check if studentId exists in DB before adding new
+    const q = "INSERT INTO SKILLS(`studentId`, `skill`) VALUES (?)"
+    const values = [
+        req.body.studentId,
+        req.body.skills
+    ]
+    db.query(q,[values], (err,data) => {
         if (err) return res.json(err);
-
-        if (data.length) return res.status(409).json("User already exists")
+        return res.status(200).json("Question 1 updated for " + studentId)
     })
-}
+})
+
+// Question 2 - Languages
+router.post('/quiz/q2', (req, res) => {
+    const q = "INSERT INTO LANGUAGES(`studentId`, `languages`) VALUES (?)"
+    const values = [
+        req.body.studentId,
+        req.body.languages
+    ]
+    db.query(q,[values], (err,data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 2 updated for " + studentId)
+    })
+})
+
+// TODO: Quesiton 3 - Top 5 CS Projects
+// TODO: Quesiton 4 - Top 5 UTDesign Projects
+// TODO: Quesiton 5 - Prefered Team Size
+
+// Quesiton 6 - Bio
+router.post('/quiz/q6', (req, res) => {
+    const q = "INSERT INTO STUDENT(`studentId`, `prefGroupSize`, `bio`) VALUES (?)"
+    const values = [
+        req.body.studentId,
+        req.body.prefGroupSize,
+        req.body.bio
+    ]
+    db.query(q,[values], (err,data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 2 updated for " + studentId)
+    })
+})
+
+
 
 export default router;

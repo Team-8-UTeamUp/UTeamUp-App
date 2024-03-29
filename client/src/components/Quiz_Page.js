@@ -1,9 +1,11 @@
 import {React, useState} from 'react'
 import Header from './Header.js'
-// import Footer from '../components/Footer.js'
+import axios from "axios"
 
 
 function Quiz_Handler() {
+    const studentId = "ABC120012"
+
     const [showq1, setShow1] = useState(true);
     const [showq2, setShow2] = useState(false);
     const [showq3, setShow3] = useState(false);
@@ -65,106 +67,167 @@ function Quiz_Handler() {
     <>
         <Header />
 
-            {showq1 ? <Question1 /> : null}
-            {showq2 ? <Question2 /> : null}
-            {showq3 ? <Question3 /> : null}
-            {showq4 ? <Question4 /> : null}
-            {showq5 ? <Question5 /> : null}
-            {showq6 ? <Question6 /> : null}
+            {showq1 ? <Question1 studentId={studentId}/> : null}
+            {showq2 ? <Question2 studentId={studentId}/> : null}
+            {showq3 ? <Question3 studentId={studentId}/> : null}
+            {showq4 ? <Question4 studentId={studentId}/> : null}
+            {showq5 ? <Question5 studentId={studentId}/> : null}
+            {showq6 ? <Question6 studentId={studentId}/> : null}
 
 
         <footer class="footer">
-            <button class="button_page" onClick={handlePrev}>Back</button>
-            <button class="button_page" onClick={handleNext}>Continue</button>
+            <button class={ showq1 ? 'button_disabled' : 'button_page' } disabled={showq1} onClick={handlePrev}>Back</button>
+            <button class='button_page' onClick={handleNext}>{ !showq6 ? "Continue" : "Exit" }</button>
         </footer>
     </>
     )
 }
 
-function Question1() { // Skills/Interests
+function Question1({studentId}) { // Skills/Interests
+
+    const [active, setActive] = useState([])
+    const options = ["Database", "AI", "Machine Learning", "Front-End", "Back-End", "Virtual Reality", "Mobile Development", "UI/UX"]
+
+    const handleSumbit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("/api/quiz/q1", {studentId: studentId, skills: active})
+            console.log(res)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <>
             <div class="centered">
-                <p>What are some of your strengths?</p><br></br>
+                <p>What are some of your strengths? <button class="button" onClick={handleSumbit}>Save</button></p>
+                <br></br>
             </div>
             <div class="button_layout">
-                <button class="button">Database</button>
-                <button class="button">AI</button>
-                <button class="button">Machine Learning</button>
-                <button class="button">Front-End</button>
-                <button class="button">Back-End</button>
-                <button class="button">Virtual Reality</button>
-                <button class="button">Mobile Development</button>
-                <button class="button">UI/UX</button>
+                {
+                    options.map(key => {
+                        const isActive = active.includes(key)
+
+                        return (
+                            <button
+                                onClick={() => setActive(isActive
+                                    ? active.filter(current => current !== key)
+                                    : [...active, key]
+                                )}
+                                style={{ 'background-color': isActive ? '#157636' : '#FC8E28' }}
+                                class="button">{key}</button>
+                        )
+                    })
+                }
             </div>
         </>
     )
 }
 
-function Question2() { // Languages
+function Question2({studentId}) { // Languages
+
+    const [active, setActive] = useState([])
+    const options = ["Java", "C++", "Python", "HTML", "CSS", "SQL", "JavaScript", "Nodejs"]
+
+    const handleSumbit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("/api/quiz/q2", {studentId: studentId, languages: active})
+            console.log(res)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return (
         <>
-           <div class="centered">
-                <p>What are some programming languages do you know?</p><br></br>
+            <div class="centered">
+                <p>What are some programming languages do you know? <button class="button" onClick={handleSumbit}>Save</button></p>
+                <br></br>
             </div>
             <div class="button_layout">
-                <button class="button">Java</button>
-                <button class="button">C++</button>
-                <button class="button">Python</button>
-                <button class="button">HTML</button>
-                <button class="button">CSS</button>
-                <button class="button">SQL</button>
-                <button class="button">JavaScript</button>
-                <button class="button">Nodejs</button>
+                {
+                    options.map(key => {
+                        const isActive = active.includes(key)
+
+                        return (
+                            <button
+                                onClick={() => setActive(isActive
+                                    ? active.filter(current => current !== key)
+                                    : [...active, key]
+                                )}
+                                style={{ 'background-color': isActive ? '#157636' : '#FC8E28' }}
+                                class="button">{key}</button>
+                        )
+                    })
+                }
             </div>
         </>
     )
 }
 
-function Question3() { // Project Preference: CS Project
+function Question3({studentId}) { // Project Preference: CS Project
     return (
         <>
             <div class="centered">
-             <p>Rank your top 5 CS Projects</p><br></br> 
-                          
+                <p>Rank your top 5 CS Projects</p><br></br> 
+
             </div>
         </>
     )
 }
 
-function Question4() { // Project Preference: CS Project
+function Question4({studentId}) { // Project Preference: CS Project
     return (
         <>
             <div class="centered">
-             <p>Rank your top 5 UTD Design Projects</p><br></br> 
-                          
+                <p>Rank your top 5 UTD Design Projects</p><br></br> 
+            
             </div>
         </>
     )
 }
 
-function Question5() { // About Me
+function Question5({studentId}) { // About Me
+
+    const [teamSize, setSize] = useState("");
+
+    const handleChange = (event) => {
+        const value = event.target.value;
+        setSize(value);
+    };
+
     return (
         <>
             <div class="centered">
-             <p>What is your ideal team size?</p><br></br> 
-             <form name="myForm">
-                Ideal Team Size: <input type="text" name="teamSize"/>
-                <button class="button">Save</button>
-            </form>                
+                <p>What is your ideal team size?</p><br></br> 
+                <form name="myForm">
+                    Ideal Team Size: 
+                    <input type="text" name="teamSize" onChange={handleChange} value={teamSize}/>
+                    <button class="button">Save</button>
+                </form>                
             </div>
         </>
     )
 }
 
-function Question6() { // About Me
+function Question6({studentId}) { // About Me
+
+    const [bio, setBio] = useState("");
+
+    const handleChange = (event) => {
+        const value = event.target.value;
+        setBio(value);
+    };
+
     return (
         <>
             <div class="centered">
-             <p>Create Your bio. Tell potential teammates a little bit about yourself!</p><br></br> 
-             <form name="myForm">
-                <textarea name="paragraph_text" cols="90" rows="20"></textarea>
-                <div><button class="button">Save</button></div>
+                <p>Create Your bio. Tell potential teammates a little bit about yourself!</p><br></br> 
+                <form name="myForm">
+                    <textarea name="paragraph_text" cols="90" rows="20" onChange={handleChange} value={bio}></textarea>
+                    <div><button class="button">Save</button></div>
             </form>                
             </div>
         </>
