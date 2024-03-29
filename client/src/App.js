@@ -3,6 +3,8 @@ import Quiz_Skills from './components/Quiz_Skills.js';
 import Quiz_Page from './components/Quiz_Page.js';
 import Faculty_Page from './components/Faculty_Page.js';
 import Home_Page from './components/Home_Page.js';
+import theme from './components/Project_Preferences/theme.js';
+import { ChakraProvider } from "@chakra-ui/react";
 
 import {
   createBrowserRouter,
@@ -35,7 +37,9 @@ function App() {
       </head>
 
         <div className="container">
+        <ChakraProvider theme={theme}>
         <RouterProvider router={router}/>
+        </ChakraProvider>
         </div>
        {/* <Quiz_Skills />  */}
        {/* <Home_Page /> */}
