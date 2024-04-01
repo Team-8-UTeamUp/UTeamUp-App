@@ -141,6 +141,55 @@ constraint reqPK
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+create table studentRequestStudent(
+senderId varchar(9) not null, 
+receiverId varchar(9) not null,
+
+CONSTRAINT SRSPK
+	PRIMARY KEY (`senderId`, `receiverId`),
+CONSTRAINT SIDFK
+	FOREIGN KEY (`senderId`) REFERENCES `student`(`studentId`)
+	ON DELETE CASCADE	
+	ON UPDATE CASCADE,
+CONSTRAINT RIDFK
+	FOREIGN KEY (`receiverId`) REFERENCES `student`(`studentId`)
+	ON DELETE CASCADE	
+	ON UPDATE CASCADE
+);
+
+create table studentRequestGroup(
+senderId varchar(9) not null, 
+receiverId int not null,
+
+CONSTRAINT SRGPK
+	PRIMARY KEY (`senderId`, `receiverId`),
+CONSTRAINT SRGSIDFK
+	FOREIGN KEY (`senderId`) REFERENCES `student`(`studentId`)
+	ON DELETE CASCADE	
+	ON UPDATE CASCADE,
+CONSTRAINT SRGRIDFK
+	FOREIGN KEY (`receiverId`) REFERENCES `formedgroups`(`groupId`)
+	ON DELETE CASCADE	
+	ON UPDATE CASCADE
+);
+
+create table groupRequestStudent(
+senderId int not null, 
+receiverId varchar(9) not null,
+
+CONSTRAINT GRSPK
+	PRIMARY KEY (`senderId`, `receiverId`),
+CONSTRAINT GRSSIDFK
+	FOREIGN KEY (`senderId`) REFERENCES `formedgroups`(`groupId`)
+	ON DELETE CASCADE	
+	ON UPDATE CASCADE,
+CONSTRAINT GRSRIDFK
+	FOREIGN KEY (`receiverId`) REFERENCES `student`(`studentId`)
+	ON DELETE CASCADE	
+	ON UPDATE CASCADE
+);
+
+
 
 
 create view groupInfo AS
