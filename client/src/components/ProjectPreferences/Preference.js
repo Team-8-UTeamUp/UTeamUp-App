@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import Rank from "./Rank.js";
 import theme from "./theme.js";
-import dynamic from 'next/dynamic';
+//import dynamic from 'next/dynamic';
 import "../../App.js";
 
-const Column = dynamic(() => import("./Column.js"), { ssr: false }); // To make draggable
+//const Column = dynamic(() => import("./Column.js"), { ssr: false }); // To make draggable
 
 const reorderColumnList = (sourceCol, startIndex, endIndex) => {
   const newTaskIds = Array.from(sourceCol.taskIds);

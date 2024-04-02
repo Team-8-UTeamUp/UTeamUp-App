@@ -129,7 +129,7 @@ header .link{
 }
 
 .border-around {
-  border-style: "solid"; 
+  border-style: "solid";
   border-width: 2px;
 }
 
@@ -221,3 +221,278 @@ control{ /*doesnt work*/
 .right {
   width: 85%;
 }
+
+.filerbar
+{
+  position: relative;
+  top:0;
+  height:70px;
+  width: auto;
+  background-color:rgb(194, 194, 194);
+  border: 1px solid red;
+  flex-direction: row;
+  display: flex;
+  gap: 30px
+
+}
+
+
+/* Single student page*/
+.split1 { /*Student Scroll*/
+  height: 100vh;
+  width: 40%;
+  position: relative;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 0px;
+}
+
+.split2 {  /*Student enlarged*/
+  height: 100vh;
+  width: 60%;
+  position: relative;
+  top: 0;
+  z-index: 1;
+  
+  padding-top: 20px;
+}
+
+.screenleft {
+  overflow-x: hidden;
+
+  left: 0;
+  background-color: white;
+  border:1px solid gray;
+}
+
+.screenright {
+  overflow-x: hidden;
+
+  right: 0;
+  background-color: white;
+  border:1px solid gray;
+}
+
+.textcentered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Existing .tile styles with slight modifications for better layout control */
+.tile {
+  position: relative;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+  background-color: white;
+  width: 450px; /* Adjusted for layout */
+  height: 180px; /* Changed to min-height for flexible content fitting */
+  padding: 5px;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 2px 2px rgb(165, 164, 164);
+  display: flex; /* New */
+  flex-direction: column; /* New */
+  align-items: flex-start; /* New - align items to the start of the flex container */
+}
+
+
+.tile .h2 {
+   position: relative;
+   left:125px;
+   font-weight: bold;
+   font-size: 24px;
+   color:#157636;
+   text-align: left;
+}
+
+.tile .p{
+    position: relative;
+    left:0px;
+    font-size: 12px;
+    font-weight: bold;
+    color:black;
+    text-align: left;
+}
+
+.tile .p1{
+    position: relative;
+    left:125px;
+    font-size: 11px;
+    color:#157636
+}
+
+.tile .skillbubble
+  {
+    border-radius: 10px;
+    background-color: rgb(186, 236, 208);
+    height: fit-content;
+    font-size: 10px;
+    width:fit-content;
+    margin-right: 3px;
+    padding: 0px 5px 0px 5px;
+    position: relative;
+    left:125px;
+   
+  }
+
+  .skills-container
+  {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2px;
+    
+  }
+
+.tile .langbubble
+  {
+    border-radius: 10px;
+    background-color: rgb(139, 189, 172);
+    height: fit-content;
+    font-size: 10px;
+    width:fit-content;
+    flex-direction: row;
+    margin-right: 3px;
+    padding: 0px 5px 0px 5px;
+    position: relative;
+    left:125px;
+  }
+
+  .languages-container
+  {
+    display: flex;
+    flex-direction: row;
+    
+  }
+
+.tile .photo
+  {
+    max-width:25%;
+    height:90%;
+    border-radius: 10px;
+    position: absolute;
+    left:5px;
+    top:7px;
+    margin-right: 100px;
+  }
+
+.tile .sizetile
+  {
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    font-size:24px;
+    color:#157636;
+    position:absolute;
+    left:86%;
+    top:66%;
+  }
+  
+
+
+.tile:hover
+{
+  border: 1px solid lightorange;
+}
+
+
+
+
+.tilecentered{
+  padding-top: 10px;
+  padding-bottom: 0;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  
+}
+
+.dropbtn {
+  background-color: white;
+  color: black;
+  padding: 3px;
+  font-size: 11px;
+  border: 1px solid lightgray;
+  height:fit-content;
+  width: 230px;
+  border-radius: 5px;
+  text-align: center;
+
+  .dropicon
+  {
+    position:absolute;
+  }
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  border: 1px solid lightgray;
+  background-color: white;
+  min-width: 230px;
+  text-align: left;
+  z-index: 1;
+  font-size: 11px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: lightgray;}
+
+.dropdown-container{
+  position: relative;
+  top: 10px;
+  left: 125px;
+  display:flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+
+.screen
+{
+  position: relative;
+  display:flex;
+  flex-direction:column;
+  left: 0%;
+  top: 0%;
+  background-color: white;
+  width: var(--parentWidth) ; 
+  height: 91.5vh;
+  border: 1px solid rgb(187, 0, 255);
+}
+
+.screen2
+{
+  position: relative;
+  display:flex;
+  flex-direction: row;
+  left: 0%;
+  top: 0%;
+}
+
+.form1
+{
+  display:inline-block;
+}
+
+
+
