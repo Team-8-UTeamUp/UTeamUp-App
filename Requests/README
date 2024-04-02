@@ -1,0 +1,18 @@
+have:
+node js app
+mysql database
+postman + postman agent
+
+1. navigate to your testexpress.js program in your terminal/cmd line
+
+2. command node textexpress.js
+	should recieve message "Connected to the MySQL server."
+
+3. in postman, make sure you have your agent running.
+
+4. in a workspace in the top middle, click the + icon to make a new request
+
+5. change GET to POST, and in the url next to it put "http://localhost:3000/quiz"
+
+6. below click body and raw, ensure JSON is selected, and paste the request at the bottom of the node js code.
+	Change values accordingly especially the student ID.
