@@ -1,11 +1,11 @@
 import React from 'react'
-import QuizPage from './components/QuizPage.js';
-import FacultyPage from './components/FacultyPage.js';
-import HomePage from './components/HomePage.js';
+import QuizPage from './components/Quiz_Page.js';
+import FacultyPage from './components/Faculty_Page.js';
+import HomePage from './components/Home_Page.js';
 import InvitationsPage from './components/InvitationsPage.js';
 import RequestsPage from './components/RequestsPage.js';
 import FAQPage from './components/FAQPage.js';
-/*import theme from './components/Project_Preferences/theme.js';*/
+
 import { ChakraProvider } from "@chakra-ui/react";
 
 import {

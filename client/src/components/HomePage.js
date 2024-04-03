@@ -1,7 +1,11 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import Student from './student_view/Student';
+
+
 
 function Home_Page() {
+    
     return (
     <>
     <div class="row">
@@ -28,12 +32,27 @@ function Home_Page() {
             <p>Some text..</p>
         </div>
     </div>
-    <div class="body">
-        <h2>Body</h2>
-        <p>Some text..</p>
+    
+    
+    <div class="screen">
+      <div class="filerbar">
+        <button class="button">Group Size</button>
+        <button class="button">Project Preference</button>
+        <button class="button">Skills</button>
+        <form>
+                <input class="outline" type="text" name="search"/>
+                <button class="button">search</button>
+        </form>                
+      </div>
+      <Student/>
     </div>
-    </>
+    
+    
+  </>
     )
 }
 
 export default Home_Page;
+
+
+
