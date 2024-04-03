@@ -13,7 +13,7 @@ function Home_Page() {
           <NavBar/>
         </div>
         <div class="column right">
-            <h2>Column 2</h2>
+            <h2>Home</h2>
             <p>Some text..</p>
         </div>
     </div>

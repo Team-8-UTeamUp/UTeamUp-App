@@ -220,6 +220,7 @@ control{ /*doesnt work*/
 
 .right {
   width: 85%;
+  text-align: center;
 }
 
 .filerbar
