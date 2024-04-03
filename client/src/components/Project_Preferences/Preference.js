@@ -1,9 +1,8 @@
-import React, { useState } from "react"
-import Rank from "./Rank.js"
+import React, { useState } from "react";
 
 function Preference(){
   return(
-    <Rank/>
+    <div>tocodelater</div>
   )
 }
-export default Preference;
+return Preference;

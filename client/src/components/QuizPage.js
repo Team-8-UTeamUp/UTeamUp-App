@@ -1,7 +1,6 @@
 import {React, useState} from 'react'
 import Header from './Header.js'
 import axios from "axios"
-import Preference from "./Project_Preferences/Preference.js"
 
 
 function Quiz_Handler() {
@@ -173,7 +172,7 @@ function Question3({studentId}) { // Project Preference: CS Project
         <>
             <div class="centered">
                 <p>Rank your top 5 CS Projects</p><br></br> 
-                <Preference/>
+ 
 
             </div>
         </>
@@ -185,7 +184,6 @@ function Question4({studentId}) { // Project Preference: CS Project
         <>
             <div class="centered">
                 <p>Rank your top 5 UTD Design Projects</p><br></br>
-                <Preference/>
             </div>
         </>
     )
