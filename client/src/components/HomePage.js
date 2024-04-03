@@ -1,12 +1,7 @@
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import Student from './StudentView/Student';
-=======
 import {React, useState} from 'react'
-import Student from './student_view/Student';
+import Student from './StudentView/Student';
 import NavBar from './NavBar';
->>>>>>> 00160a6d174edbabe6dbe4965bb8a72dcc35edf4
 
 
 
