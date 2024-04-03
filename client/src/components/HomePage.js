@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
-import Student from './student_view/Student';
+import Student from './StudentView/Student';
 
 
 
