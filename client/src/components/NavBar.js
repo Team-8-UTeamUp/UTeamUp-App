@@ -1,33 +1,56 @@
-import React from 'react'
+import {React, useState} from 'react'
 import { Link } from 'react-router-dom';
 
 function NavBar() {
+    const [active, setActive] = useState(0);
+
+    const navigations = {
+        0: {
+            Name: "TeamUp",
+            Link: "/"
+        },
+        1: {
+            Name: "Invitations",
+            Link: "/invitations"
+        },
+        2: {
+            Name: "Requests",
+            Link: "/requests"
+        },
+        3: {
+            Name: "Quiz",
+            Link: "/quiz"
+        },
+        4: {
+            Name: "Admin",
+            Link: "/admin"
+        },
+        5: {
+            Name: "FAQ",
+            Link: "/faq"
+        }
+    }
+
     return (
         <>
-        <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
-        <div class="sidenav">
-            <Link className="active" id="link" to="/"><p>Home Page</p>
-            </Link>
-            <Link className="inactive" id="link" onclick="changeClass()" to="/invitations"><p>Invitations</p>
-            </Link>
-            <Link className="link" to="/requests"><p>Requests</p>
-            </Link>
-            <Link className="link" to="/quiz"><p>Quiz</p>
-            </Link>
-            <Link className="link" to="/admin"><p>Admin</p>
-            </Link>
-            <Link className="link" to="/faq"><p>FAQ</p>
-            </Link>
-        </div>
-        <script>
-        </script>
+            <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
+            <h2>Column 1</h2>
+            <div class="sidenav">
+                {
+                    Object.keys(navigations).map(id => {
+                        let navLink = navigations[id]
+                        const isActive = active === id
+
+                        return (
+                            <Link className={isActive ? "link active" : "link inactive"} id="link" to={navLink.Link} onClick={() => {setActive(id)}}>
+                                <p>{navLink.Name}</p>
+                            </Link>
+                        )
+                    })
+                }
+            </div>
         </>
     )
-}
-
-function changeClass() {
-    var element = document.querySelector("#link");
-    element.classList.replace("inactive", "active");
 }
 
 export default NavBar;

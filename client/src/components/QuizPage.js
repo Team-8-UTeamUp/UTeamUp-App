@@ -91,7 +91,7 @@ function Question1({studentId}) { // Skills/Interests
     const handleSumbit = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post("/api/quiz/q1", {studentId: studentId, skills: active})
+            const res = await axios.post("http://localhost:8800/api/quiz/q1", {studentId: studentId, skills: active})
             console.log(res)
         } catch (err) {
             console.log(err)
@@ -133,7 +133,7 @@ function Question2({studentId}) { // Languages
     const handleSumbit = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.post("/api/quiz/q2", {studentId: studentId, languages: active})
+            const res = await axios.post("http://localhost:8800/api/quiz/q2", {studentId: studentId, languages: active})
             console.log(res)
         } catch (err) {
             console.log(err)

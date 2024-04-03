@@ -1,31 +1,16 @@
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import {React, useState} from 'react'
 import Student from './student_view/Student';
+import NavBar from './NavBar';
 
 
 
 function Home_Page() {
-    
     return (
     <>
     <div class="row">
         <div class="column left">
-        <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
-            <h2>Column 1</h2>
-            <div class="sidenav">
-                <Link className="link" to="/"><p>TeamUp</p>
-                </Link>
-                <Link className="link" to="/"><p>Invitations</p>
-                </Link>
-                <Link className="link" to="/"><p>Requests</p>
-                </Link>
-                <Link className="link" to="/quiz"><p>Quiz</p>
-                </Link>
-                <Link className="link" to="/admin"><p>Admin</p>
-                </Link>
-                <Link className="link" to="/"><p>FAQ</p>
-                </Link>
-            </div>
+          <NavBar/>
         </div>
         <div class="column right">
             <h2>Column 2</h2>
