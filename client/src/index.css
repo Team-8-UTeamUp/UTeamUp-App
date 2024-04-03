@@ -494,5 +494,61 @@ control{ /*doesnt work*/
   display:inline-block;
 }
 
+/* Project Preference*/
+.rank
+{
+  width: 120px;
+  height: fit-content;
+  border: 1px solid lightgray;
+  display:flex;
+  flex-direction: column;
+  border-radius: 10px 10px 0 0;
+  justify-content: center;
+
+
+  .ranktitle
+  {
+    width:auto;
+    height: 34px;
+    background-color: #157636;
+    color: white;
+    font-size: 24;
+    border-radius: 10px 10px 0px 0px;
+    text-align: center;
+    justify-content: bottom;
+    padding-top: 10px;
+
+  }
+
+  .ranknumber
+  {
+      display:flex;
+      flex-direction: row;
+      font-size: 24px;
+      gap:10px;
+      justify-content: center;
+      padding-top: 5px;
+      padding-bottom: 5px;
+
+      .numbertile
+      {
+        border-radius: 0px 0px 0px 0px;
+        border: 1px solid lightgray;
+        background-color: #FC8E28;
+        height: 30px;
+        width: 30px;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .inputrank
+      {
+        width:40px;
+        height:auto;
+        justify-self: center;
+        font-size: 24px;
+      }
+  }
+}
 
 
