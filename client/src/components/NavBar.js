@@ -6,7 +6,7 @@ function NavBar() {
 
     const navigations = {
         0: {
-            Name: "TeamUp",
+            Name: "Home",
             Link: "/"
         },
         1: {
@@ -34,7 +34,6 @@ function NavBar() {
     return (
         <>
             <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
-            <h2>Column 1</h2>
             <div class="sidenav">
                 {
                     Object.keys(navigations).map(id => {
