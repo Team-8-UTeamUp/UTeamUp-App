@@ -1,4 +1,3 @@
-import { Flex, Text } from "@chakra-ui/react";
 import React, {useState} from 'react';
 
 const Student_Tile= ({name, skills, languages, preferences, groupSz, sid, bio, onClick}) => {
