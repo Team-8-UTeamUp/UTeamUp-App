@@ -310,7 +310,7 @@ control{ /*doesnt work*/
 .tile {
   position: relative;
   left: 0;
-  top: 0;
+  top: 10px;
   border-radius: 10px;
   border: 0px;
   background-color: white;
@@ -607,8 +607,8 @@ control{ /*doesnt work*/
   top: 0%;
   background-color: white;
   width: var(--parentWidth) ; 
-  height: 661px;
-  border: 1px solid red;
+  height: var(--parentHeight);
+  border: 1px solid gray;
 }
 
 .screen2
