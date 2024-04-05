@@ -234,7 +234,7 @@ control{ /*doesnt work*/
   height:60px;
   width: auto;
   background-color:white;
-  border: 1px solid red;
+  border: 0px 0px 0px 0px solid black;
   flex-direction: row;
   display: flex;
   gap: 50px;
@@ -259,7 +259,7 @@ control{ /*doesnt work*/
 
 /* Single student page*/
 .split1 { /*Student Scroll*/
-  height: 655px;
+  height:631px;
   width: 40%;
   position: relative;
   z-index: 1;
@@ -283,7 +283,9 @@ control{ /*doesnt work*/
 
   left: 0;
   background-color: white;
-  border:1px solid gray;
+  border: 1px solid gray;
+  border-left: 0px;
+  border-bottom: 0px;
 }
 
 .screenright {
@@ -292,6 +294,8 @@ control{ /*doesnt work*/
   right: 0;
   background-color: white;
   border:1px solid gray;
+  border-right: 0px;
+  border-bottom: 0px;
 }
 
 .textcentered {
@@ -603,8 +607,8 @@ control{ /*doesnt work*/
   top: 0%;
   background-color: white;
   width: var(--parentWidth) ; 
-  height: auto;
-  border: 1px solid black;
+  height: 661px;
+  border: 1px solid red;
 }
 
 .screen2

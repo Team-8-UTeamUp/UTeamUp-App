@@ -26,7 +26,8 @@ function Requests_Page() {
     <div class="screen">
       <FilterBar/>
       <Student 
-        button1={unsendInvite} />
+        button1={unsendInvite} 
+        Profiles={Profiles}/>
     </div>
     
     
@@ -35,3 +36,48 @@ function Requests_Page() {
 }
 
 export default Requests_Page;
+
+const Profiles = [ // single student profiles
+{
+    name: "Liam Martinez",
+    id: "p13",
+    index: 0,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Java", "JavaScript", "HTML"],
+    skills: ["Back-End", "Front-End", "UI/UX"],
+    preferences: [
+      ["ProjectC", "ProjectA", "ProjectE", "ProjectB", "ProjectD"],
+      ["ProjectD", "ProjectB", "ProjectA", "ProjectC", "ProjectE"]
+    ],
+    groupSizePreference: 6,
+    bio: "Java and JavaScript developer with a passion for backend and frontend development. Skilled in HTML and dedicated to creating intuitive user interfaces."
+  },
+  {
+    name: "Emma Lopez",
+    id: "p14",
+    index: 1,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Python"],
+    skills: ["AI", "Machine Learning"],
+    preferences: [
+      ["ProjectE", "ProjectC", "ProjectD", "ProjectB", "ProjectA"],
+      ["ProjectA", "ProjectB", "ProjectC", "ProjectD", "ProjectE"]
+    ],
+    groupSizePreference: 7,
+    bio: "Python developer specializing in AI and machine learning. Dedicated to leveraging technology to solve complex problems and drive innovation."
+  },
+  {
+    name: "Henry Johnson",
+    id: "p15",
+    index: 2,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Python", "JavaScript", "Ruby"],
+    skills: ["Database", "Mobile Development"],
+    preferences: [
+      ["ProjectE", "ProjectD", "ProjectA", "ProjectB", "ProjectC"],
+      ["ProjectA", "ProjectC", "ProjectD", "ProjectB", "ProjectE"]
+    ],
+    groupSizePreference: 7,
+    bio: "Seasoned developer proficient in Python, JavaScript, and Ruby. Specialized in database management and mobile app development."
+  }
+]

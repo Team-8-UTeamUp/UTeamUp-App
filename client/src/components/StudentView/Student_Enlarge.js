@@ -76,7 +76,7 @@ return(
             </div> 
         </div>
         <h2 style={{marginBottom: "20px"}}>About Me</h2>
-        <div style={{marginBottom: "20px"}}>{bio}</div>
+        <div style={{marginBottom: "40px"}}>{bio}</div>
       
     </div>
    
