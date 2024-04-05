@@ -218,11 +218,7 @@ control{ /*doesnt work*/
   background-color: #157636;
 }
 
-.sidenav .active {
-  color: #FC8E28
-}
-
-.right {
+.right { /*Change to apply to only title*/
   width: 85%;
   text-align: center;
 }

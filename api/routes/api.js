@@ -69,6 +69,16 @@ router.post('/quiz/q6', (req, res) => {
     })
 })
 
-
+//STUDENTS PAGE
+//get student info
+router.get('/student/info', (req, res) => {
+    const q = "select studentId, firstName, lastName, bio, prefGroupSize from student, user where userId=studentId and studentId in (select studentId from individualStudents);"
+    
+    db.query(q, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        
+        return res.status(200).json(data);
+    });
+})
 
 export default router;

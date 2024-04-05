@@ -1,5 +1,4 @@
-import React, { useState } from "react"
-import Rank from "./Rank.js"
+import React, { useState } from "react";
 
 function Preference({projects =[]}){
 

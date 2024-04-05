@@ -1,7 +1,6 @@
 import {React, useState} from 'react'
 import Header from './Header.js'
 import axios from "axios"
-import Preference from "./Project_Preferences/Preference.js"
 
 
 function Quiz_Handler() {
