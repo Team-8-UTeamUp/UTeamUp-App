@@ -424,7 +424,17 @@ control{ /*doesnt work*/
 
 .tile:hover
 {
-  border: 1px solid rgb(243, 208, 142);
+  border: 1.5px solid rgb(243, 208, 142);
+}
+
+.selected
+{
+  border: 2px solid orange;
+}
+
+.selected:hover
+{
+  border: 2px solid orange;
 }
 
 

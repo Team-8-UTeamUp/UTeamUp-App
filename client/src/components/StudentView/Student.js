@@ -43,14 +43,14 @@ function Student({button1, button2, Profiles})
           // Reset border color of all elements
           const elements = document.querySelectorAll('.tile');
           elements.forEach(element => {
-              element.style.border = "0px";
+              element.classList.remove('selected');
     
           });
       
           // Find the clicked element and apply the border style
           var chosenTile = document.getElementById(uid);
           if (chosenTile) {
-              chosenTile.style.border = "2px solid orange";
+              chosenTile.classList.add("selected");
               
               setExpanded(expandedProfiles[ind]);
           }
@@ -60,7 +60,7 @@ function Student({button1, button2, Profiles})
     React.useEffect(() => {
         const firstTile = document.querySelector('.tile');
         if (firstTile) {
-            firstTile.style.border = "2px solid orange";
+            firstTile.classList.add("selected");
             setExpanded(expandedProfiles[0]); // Set the expanded profile to the first one
         }
     }, []); // Empty dependency array ensures this effect runs only once
