@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 function Preference({projects =[]}){
 
-  const labels= ['Project Number', 'Compant Name', 'Project Title', 'Max Teams'];
+  const labels= ['Project Number', 'Company Name', 'Project Title', 'Max Teams'];
   const projs = projects;
 
   return(
