@@ -7,6 +7,9 @@ import FilterBar from './FilterBar';
 
 
 function Invitations_Page() {
+    const acceptButton = <button class="teamupbutton" style={{backgroundColor: "green"}}> Accept</button>
+    const rejectButton= <button class="teamupbutton" style={{backgroundColor: "red"}}>Reject</button>
+    
     return (
     <>
     <div class="row">
@@ -25,7 +28,9 @@ function Invitations_Page() {
     
     <div class="screen">
       <FilterBar/>
-      <Student/>
+      <Student 
+        button1={acceptButton} 
+        button2={rejectButton}/>
     </div>
     
     

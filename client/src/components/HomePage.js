@@ -7,6 +7,7 @@ import FilterBar from './FilterBar';
 
 
 function Home_Page() {
+  const teamUpButton = <button class="teamupbutton" style={{backgroundColor: "#FC8E28"}}>Team Up</button>
     return (
     <>
     <div class="row">
@@ -25,7 +26,8 @@ function Home_Page() {
     
     <div class="screen">
       <FilterBar/>
-      <Student/>
+      <Student 
+        button1={teamUpButton}/>
     </div>
     
     

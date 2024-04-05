@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Student_Tile from "./Student_Tile";
 import Student_Enlarge from './Student_Enlarge';
 
-function Student()
+function Student({button1, button2})
 {
     // in-depth look at profile 
     const expandedProfiles = Profiles.map(student => (
@@ -14,6 +14,8 @@ function Student()
             preferences={student.preferences}
             groupSz={student.groupSizePreference}
             bio={student.bio}
+            button1={button1}
+            button2={button2 ? button2 : null} 
         />
       ));
 

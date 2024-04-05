@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
 
-const Student_Enlarge= ({name, skillset, languages, preferences, groupSz, bio}) => {
+const Student_Enlarge= ({name, skillset, languages, preferences, groupSz, bio, button1, button2}) => {
 
     const [preferencesRow, setPreferencesRow] = useState(preferences[0] || []);
 
 React.useEffect(() => {
     const firstButton = document.querySelector('.togglebutton');
     if (firstButton) {
-        firstButton.style.backgroundColor = "green";
+        firstButton.style.backgroundColor =  "#baecd0";
         setPreferencesRow(preferences[0] || []); // Set the expanded profile to the first one
     }
 }, []) // Empty dependency array ensures this effect runs only once
@@ -28,7 +28,7 @@ function displayProjs(uid) {
       // Find the clicked element and apply the border style
       var chosenButton = document.getElementById(uid);
       if (chosenButton) {
-          chosenButton.style.backgroundColor= "green";
+          chosenButton.style.backgroundColor=  "#baecd0";
           
           if(uid == "CSP")
             setPreferencesRow(preferences[1] || []);
@@ -42,7 +42,7 @@ return(
 
     <div class="expanded" style={{ margin: "0px 60px 0px 60px"}}>
        
-        <h2 style={{fontSize: "64px", textAlign: "left", color:"#157636"}}>{name}</h2>
+        <h2 style={{fontSize: "64px", textAlign: "left", color:"#157636", marginBottom:"10px"}}>{name}</h2>
         <div className="skills-container" >
             {skillset.map((skill, index) => (
                  <div class="skillbubble"> {skill} </div>
@@ -53,7 +53,10 @@ return(
                  <div class="langbubble"> {language} </div>
             ))}
         </div>
-        <div class="teamupbutton">TeamUp</div>
+        <div style={{display: "flex", flexDirection: "row", gap:"15px"}}>
+            <div>{button1}</div>
+            {button2 && <div>{button2}</div>}
+        </div>
         <h2 style={{marginBottom: "20px"}}>Project Preferences:</h2>
         <div style={{display: "flex", flexDirection: "row", gap: "30px", justifyContent: "center"}}>
             <div class="preferences">

@@ -7,6 +7,7 @@ import FilterBar from './FilterBar';
 
 
 function Requests_Page() {
+    const unsendInvite = <button class="teamupbutton" style={{backgroundColor: "gray"}}>Unsend</button>
     return (
     <>
     <div class="row">
@@ -24,7 +25,8 @@ function Requests_Page() {
     
     <div class="screen">
       <FilterBar/>
-      <Student/>
+      <Student 
+        button1={unsendInvite} />
     </div>
     
     
