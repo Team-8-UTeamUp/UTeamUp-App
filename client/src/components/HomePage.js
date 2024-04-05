@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import {React, useState} from 'react'
 import Student from './StudentView/Student';
 import NavBar from './NavBar';
+import FilterBar from './FilterBar';
 
 
 
@@ -14,21 +15,16 @@ function Home_Page() {
         </div>
         <div class="column right">
             <h2>Home</h2>
-            <p>Some text..</p>
+            <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
+                <button class="pageswitchbutton" style={{margin:"0px"}}>Student Profiles</button>
+                <button class="pageswitchbutton" style={{margin:"0px"}}>Group Profiles</button>
+            </div>
         </div>
     </div>
     
     
     <div class="screen">
-      <div class="filerbar">
-        <button class="button">Group Size</button>
-        <button class="button">Project Preference</button>
-        <button class="button">Skills</button>
-        <form>
-                <input class="outline" type="text" name="search"/>
-                <button class="button">search</button>
-        </form>                
-      </div>
+      <FilterBar/>
       <Student/>
     </div>
     

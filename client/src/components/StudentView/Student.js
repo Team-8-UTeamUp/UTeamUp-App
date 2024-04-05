@@ -72,7 +72,7 @@ function Student()
             </div>
         </div>
         <div class="split2 screenright">
-            <div class="centered">
+            <div>
             {expanded}
             </div>
         </div>
@@ -166,7 +166,7 @@ const Profiles = [ // single student profiles
         ["ProjectA", "ProjectE", "ProjectC", "ProjectD", "ProjectB"],
         ["ProjectB", "ProjectA", "ProjectD", "ProjectE", "ProjectC"]
     ],
-    groupSizePreference: 8,
+    groupSizePreference: 6,
     bio: "I looooove CS!"
 }
 ];
