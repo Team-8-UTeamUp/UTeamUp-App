@@ -5,6 +5,9 @@ import Preference from "./Project_Preferences/Preference.js"
 
 
 function Quiz_Handler() {
+
+    
+
     const studentId = "ABC120012"
 
     const [showq1, setShow1] = useState(true);
@@ -173,7 +176,8 @@ function Question3({studentId}) { // Project Preference: CS Project
         <>
             <div class="centered">
                 <p>Rank your top 5 CS Projects</p><br></br> 
-                <Preference/>
+                <Preference
+                 projects={CSProjects}/>
 
             </div>
         </>
@@ -181,11 +185,13 @@ function Question3({studentId}) { // Project Preference: CS Project
 }
 
 function Question4({studentId}) { // Project Preference: CS Project
+    
     return (
         <>
-            <div class="centered">
+            <div class="centered"> 
                 <p>Rank your top 5 UTD Design Projects</p><br></br>
-                <Preference/>
+                <Preference
+                projects={UDProjects}/>
             </div>
         </>
     )
@@ -237,3 +243,73 @@ function Question6({studentId}) { // About Me
 }
 
 export default Quiz_Handler;
+
+
+// load projects
+
+//UTD Design Projects
+const UDProjects = [ // single student profiles
+  {
+    number:1,
+    company:"Amandus",
+    title:"VR Game for Lupus Patients - with AHT Team",
+    maxTeams: 1
+  },
+ 
+  {
+    number: 2,
+    company: "Athlete Reserve",
+    title:	"Athlete Reserve App - Phase 2",
+    maxTeams:1
+  },
+
+{
+    number: 3,
+    maxTeams:2,
+    company: "CataBoom Technologies",
+    title:	"AI assisted data exploration of complex data"
+},
+
+{
+    number: 4,
+    maxTeams: 1,
+    company:"Ellison Fluid Calipers",
+    title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
+},
+
+]
+
+
+//UTD Design Projects
+const CSProjects = [ // single student profiles
+  {
+    number:1,
+    company:"Amandus",
+    title:"VR Game for Lupus Patients - with AHT Team",
+    maxTeams: 1
+  },
+ 
+  {
+    number: 2,
+    company: "Athlete Reserve",
+    title:	"Athlete Reserve App - Phase 2",
+    maxTeams:1
+  },
+
+{
+    number: 3,
+    maxTeams:2,
+    company: "CataBoom Technologies",
+    title:	"AI assisted data exploration of complex data"
+},
+
+{
+    number: 4,
+    maxTeams: 1,
+    company:"Ellison Fluid Calipers",
+    title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
+},
+
+]
+
+

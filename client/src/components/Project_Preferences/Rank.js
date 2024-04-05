@@ -9,11 +9,11 @@ function Rank() {
   const ranks = Array(rankSize).fill(null);
 
   return (
-    <div className="rank">
-      <div className="ranktitle">My Top {rankSize}</div>
+    <div className="list">
+      <div className="listtitle">My Top {rankSize}</div>
       {
         ranks.map((_, index) => (
-          <div className="ranknumber" key={index}>
+          <div className="listnumber" key={index}>
             <div className="numbertile">{index + 1}</div>
             <input className="inputrank" type="text" id={`choice${index}`}/>
           </div>
