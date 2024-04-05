@@ -1,7 +1,6 @@
-create database if not exists `UTeamUp` default character set utf8 collate utf8_general_ci;
+create database if not exists `uteamup` default character set utf8 collate utf8_general_ci;
 
-use UTeamUp;
-
+use uteamup;
 
 create table User(
 userId varchar(9) unique primary key not null,
@@ -23,8 +22,8 @@ create table formedGroups(
 groupId int primary key not null auto_increment,
 groupName varchar(20) not null,
 groupCompleted bool not null,
-groupSizePref int not null
-
+groupSizePref int not null,
+groupLeader varchar(9) not null
 );
 
 create table groupSkills(
@@ -62,6 +61,14 @@ foreign key(studentId) references `user`(`userId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
+# add leader constraing to group
+Alter table formedgroups add CONSTRAINT `GLFK`
+	foreign key(groupLeader) references `student`(`studentId`);
+    
+alter table student add constraint `SGIDFK`
+	foreign key(groupId) references `formedgroups`(`groupId`);
+	
+
 
 create table skills(
 studentId varchar(9) not null,
