@@ -14,21 +14,21 @@ def sortRemainingStudents( studentJson, groupJson,membersJson, min, max):
     # add sql call, change later to read json
 
     # get all students that aren't in a group
-    df = pd.read_json(StringIO(studentJson))
+    df = pd.DataFrame.from_dict(studentJson)
     # pivot and inverse the values
     studentData = pd.pivot(df, index='studentId', columns='projectNum', values='projRank').fillna(0)
     studentData = studentData[studentData.columns].apply(lambda x: x.map({5: 1, 4: 2, 3: 3, 2: 4, 1: 5, 0: 0}))
 
     studentData = pd.DataFrame(studentData)
 
-    df = pd.read_json(StringIO(groupJson))
+    df = pd.DataFrame.from_dict(groupJson)
     # pivot and inverse the values
     groupData = pd.pivot(df, index='groupId', columns='projectNum', values='projRank').fillna(0)
     groupData = groupData[groupData.columns].apply(lambda x: x.map({5: 1, 4: 2, 3: 3, 2: 4, 1: 5, 0: 0}))
 
 
-    groupData = pd.DataFrame(groupData)
-    groupMembers = pd.read_json(StringIO(membersJson))
+
+    groupMembers = pd.DataFrame.from_dict(membersJson)
     groupMembers.set_index('groupId', inplace=True)
     ## X is only being used since there are 450+ students in database currently
     x = pd.DataFrame(studentData.values[0:40], index=studentData.index[:40], columns=studentData.columns)
@@ -53,11 +53,11 @@ def sortRemainingStudents( studentJson, groupJson,membersJson, min, max):
     return groups
 
 
-def studentToStudentsMatches(studentId, projectJson, skillJson):
+def studentToStudentsMatches(studentId, projectData, skillData):
     """ Show a specific student a list of other students that match their preferences"""
 
     # get all students that aren't in a group
-    df = pd.read_json(StringIO(projectJson))
+    df = pd.DataFrame.from_dict(projectData)
 
     # create DF that have specific columns
     allStudentDF = pd.pivot(df, index='studentId', columns='projectNum', values='projRank').fillna(0)
@@ -77,7 +77,7 @@ def studentToStudentsMatches(studentId, projectJson, skillJson):
         projMatches = Convert(list(projMatches.items())[:indexes])
 
     # using sublist from above, sort based on # of different skills
-    dfs = pd.read_json(StringIO(skillJson))
+    dfs = pd.DataFrame.from_dict(skillData)
     # value of 1/0, has/doesn't have skill
     dfs['value'] = 1
     dfs = pd.pivot(dfs, index='studentId', columns='skill', values='value').fillna(0)
@@ -86,14 +86,14 @@ def studentToStudentsMatches(studentId, projectJson, skillJson):
     possibleMatches = studentSkillMatch(studentId, dfs, projMatches)
     return list(possibleMatches.keys())
 
-def studentToGroupsMatch(studentId, studentJson, groupJson):
+def studentToGroupsMatch(studentId, studentData, groupData):
     """ Show a specific student the list of groups that match their preferences"""
-    df = pd.read_json(StringIO(studentJson))
+    df = pd.DataFrame.from_dict(studentData)
     # pivot data frame to show rank values for each project columns
     studentDF = pd.pivot(df, index='studentId', columns='projectNum', values='projRank').fillna(0)
     # transform df to vertical format
     studentDF = pd.DataFrame(studentDF.loc[studentId])
-    df = pd.read_json(StringIO(groupJson))
+    df = pd.DataFrame.from_dict(groupData)
     groupsDF = pd.pivot(df, index='groupId',columns='projectNum', values='projRank').fillna(0)
 
     if groupsDF.shape[0] == 0:
@@ -102,23 +102,27 @@ def studentToGroupsMatch(studentId, studentJson, groupJson):
     possibleMatches = ProjMatch(studentDF, groupsDF)
 
     # return list of IDs in order of highest to lowest match score
-    return list(possibleMatches.keys())
+    return [int(k) for k in possibleMatches.keys()]
 
 
-def groupToStudentsMatch(groupId, groupJson, studentJson):
+def groupToStudentsMatch(groupId, groupData, studentData):
     """ Show specific group a list of possible students that match their preferences"""
-    df = pd.read_json(StringIO(groupJson))
+    df = pd.DataFrame.from_dict(groupData)
     # switch data frame to show rank values in each project columns
     groupDF = pd.pivot(df, index='groupId', columns='projectNum', values='projRank')
     # transform pd to list format
     groupDF = pd.DataFrame(groupDF.loc[groupId])
-    df = pd.read_json(StringIO(studentJson))
+    df = pd.DataFrame.from_dict(studentData)
     studentDF = pd.pivot(df, index='studentId',columns='projectNum', values='projRank').fillna(0)
 
     if studentDF.shape[0] == 0:
         return []
 
     possibleMatches = ProjMatch(groupDF, studentDF)
+
+    if len(possibleMatches) > 100:
+        indexes = round(len(possibleMatches) * .2)
+        possibleMatches = Convert(list(possibleMatches.items())[:indexes])
 
     return list(possibleMatches.keys())
 
@@ -269,153 +273,43 @@ def Convert(list):
 
 if __name__ == "__main__":
     # run with node.js
-    """
-    params = json.loads(sys.argv[1])
-    #algType = params['algType']
-    algType = "s2s"
+    inputs = input()
+    params = json.loads(inputs)
+    algType = params['algType']
+
     match algType:
         case "s2s":
-            #studentId = params['studentId']
-            #projectJson = params['projData']
-            #skillJson = params['skillData']
-            #listOfStudents = studentToStudentsMatches(studentId, projectJson, skillJson)
-            #listOfStudents = ['LIS272273', 'JGC282667', 'EMH210739', 'TFT282167', 'INC259441']
-            #result = {"matches": projectJson}
-            #print(json.dumps(result))
-            result = {'matches': params}
+            studentId = params['studentId']
+            projectData = params['projData']
+            skillData = params['skillData']
+            listOfStudents = studentToStudentsMatches(studentId, projectData, skillData)
+            result = {'matches': listOfStudents}
             print(json.dumps(result))
         case "s2g":
-            studentId = sys.argv[2]
-            studentJson = json.loads(sys.argv[3])
-            groupJson = json.loads(sys.argv[4])
-            listOfGroups = studentToGroupsMatch(studentId, studentJson, groupJson)
+            studentId = params['studentId']
+            studentData = params['studentData']
+            groupData = params['groupData']
+            listOfGroups = studentToGroupsMatch(studentId, studentData, groupData)
             result = {"matches": listOfGroups}
             print(json.dumps(result))
 
         case "g2s":
-            groupId = sys.argv[2]
-            groupJson = json.loads(sys.argv[3])
-            studentJson = json.loads(sys.argv[4])
-            groupListofStudents = groupToStudentsMatch(groupId, groupJson, studentJson)
+            groupId = params['groupId']
+            groupData = params['groupData']
+            studentData = params['studentData']
+            groupListofStudents = groupToStudentsMatch(groupId, groupData, studentData)
             result = {"matches": groupListofStudents}
             print(json.dumps(result))
         case "rs":
-            studentData = json.loads(sys.argv[2])
-            groupData = json.loads(sys.argv[3])
-            membersData = json.loads(sys.argv[4])
-            min =  json.loads(sys.argv[5])
-            max = json.loads(sys.argv[6])
+            studentData = params['studentData']
+            groupData = params['groupData']
+            membersData = params['memberData']
+            min = params['min']
+            max = params['max']
             remainingGroups = sortRemainingStudents(studentData, groupData, membersData, min, max)
-            result = {"groups": remainingGroups}
+            result = {"matches": remainingGroups}
             print(json.dumps(result))
 
-    """
-    #run independent
-
-    """ Connect to database using sqlalchemy since this is what pandas uses"""
-    engine = create_engine(f'mysql+mysqlconnector://root:password@localhost/uteamup')
-    db = engine.connect()
-    projTypes = ['UTDProject', 'CSProject']
-
-    """ example of function calls in use """
-    """
-    # student to student matches
-    sql = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
-    data = db.execute(text(sql))
-    dict = {'studentId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['studentId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-    projectJson = json.dumps(dict)
-
-
-    sql = "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
-    data = db.execute(text(sql))
-    dict = {'studentId': [], 'skill': []}
-    for line in data.all():
-        dict['studentId'].append(line[0])
-        dict['skill'].append(line[1])
-    skillJson = json.dumps(dict)
-
-    listOfStudents = studentToStudentsMatches('AAE297154', projectJson, skillJson)
-    result = {"matches": listOfStudents}
-    print(json.dumps(result))
-    #print(f' Student matches for student AAE297154:\n {listOfStudents}')
-    
-    # student to group matches
-    studentId = 'AAE297154'
-    sql = f"SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId='{studentId}';"
-    data = db.execute(text(sql))
-    dict = {'studentId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['studentId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-    studentJson = json.dumps(dict)
-
-    sql = "SELECT p.groupId, projectNum, projRank FROM uteamup.grouppreference as p, formedgroups as f where f.groupId=p.groupId and groupCompleted=0;"
-    data = db.execute(text(sql))
-    dict = {'groupId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['groupId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-    groupJson = json.dumps(dict)
-    listOfGroups = studentToGroupsMatch(studentId, studentJson, groupJson)
-    print(f'group matches for student {studentId}: \n {listOfGroups}')
-
-    # group to student matches
-    groupId = 10
-    sql = f"SELECT p.groupId, projectNum, projRank FROM uteamup.grouppreference as p where p.groupId='{groupId}';"
-    data = db.execute(text(sql))
-    dict = {'groupId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['groupId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-    groupJson = json.dumps(dict)
-    sql = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
-    data = db.execute(text(sql))
-    dict = {'studentId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['studentId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-    studentJson = json.dumps(dict)
-    groupListofStudents = groupToStudentsMatch(groupId, groupJson, studentJson)
-    print(f'Student matches for group {groupId}:\n {groupListofStudents}')
-    
-    """
-    # remaining students grouping
-    sql = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
-    data = db.execute(text(sql))
-    dict = {'studentId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['studentId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-    studentData = json.dumps(dict)
-
-    # 4 is the min given
-    sql = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < 4 order by g.groupId asc;"
-    data = db.execute(text(sql))
-    dict = {'groupId': [], 'projectNum': [], 'projRank': []}
-    for line in data.all():
-        dict['groupId'].append(line[0])
-        dict['projectNum'].append(line[1])
-        dict['projRank'].append(line[2])
-
-    groupData = json.dumps(dict)
-    sql = f"select groupId, count(*) as totalMembers from groupInfo where groupId in {tuple(np.unique(np.array(dict['groupId'])))} group by groupId"
-    data = db.execute(text(sql))
-    dict['totalMembers'] = {'groupId': [], 'totalMembers': []}
-    for line in data.all():
-        dict['totalMembers']['groupId'].append(line[0])
-        dict['totalMembers']['totalMembers'].append(line[1])
-    membersData = json.dumps(dict['totalMembers'])
-    remainingGroups = sortRemainingStudents(studentData,groupData,membersData,4,6)
-    print(remainingGroups)
 
 
 
