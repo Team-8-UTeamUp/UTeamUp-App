@@ -10,8 +10,9 @@ const [preferencesRow2, setPreferencesRow2] = useState(preferences[1] || []);
 
 return(
 
-    <button class="tile" id={sid} onClick={onClick}>
+    <button class="tile" id={sid} onClick={onClick} >
         <div className="Student_Tile">
+        <img class="photo" src={require('../../assets/logoTeam.png')} ></img>
         <h2 class="h2">{name}</h2>
         <div className="skills-container" >
             {skills.map((skill, index) => (

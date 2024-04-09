@@ -1,7 +1,7 @@
 import express from "express"
 import {db} from "../db.js"
+
 const router = express.Router()
-import {PythonShell} from 'python-shell'
 
 const quiz = {
     studentId: '',
@@ -63,61 +63,10 @@ router.post('/quiz/q6', (req, res) => {
         req.body.prefGroupSize,
         req.body.bio
     ]
-
     db.query(q,[values], (err,data) => {
         if (err) return res.json(err);
         return res.status(200).json("Question 2 updated for " + studentId)
     })
 })
-
-//STUDENTS PAGE
-//get student info
-router.get('/student/info', (req, res) => {
-    // queries needed for alg
-    const p =  "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
-    const studentId = 'AAE297154' // res.body.studentId
-    db.query(p, [], (err, data) => {
-        let params = {
-            //'studentId':req.body.studentId,   //once connected use this version
-            'studentId': studentId,
-            'algType': 's2s'
-        }
-        if (err) return res.status(500).send(err);
-        params["projData"] = data;
-
-        const s = "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
-
-        db.query(s, [], (err, data) => {
-            if (err) return res.status(500).send(err);
-            //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
-            params['skillData'] = data
-            const stringifieidData = JSON.stringify(params)
-            const options = {
-                pythonPath: '../Database/.venv/Scripts/python.exe',
-                pythonOptions: ['-u'],
-                scriptPath: '../Database/',
-            };
-
-            const pyShell = new PythonShell('sortAlg.py', options);
-            pyShell.send(stringifieidData);
-            // Handle received data from the Python script
-            pyShell.on('message', (message) => {
-                let resultData = JSON.parse(message);
-
-                let match = resultData['matches'];
-
-                return res.status(200).json(match)
-
-            });
-
-                // Handle errors
-            pyShell.on('error', (error) => {
-                return res.status(500).send(error);
-            });
-        });
-    });
-});
-
-
 
 export default router;

@@ -1,24 +1,145 @@
-import React from 'react'
+import { Link } from 'react-router-dom';
+import {React, useState} from 'react'
+import Student from './StudentView/Student';
 import NavBar from './NavBar';
+import FilterBar from './FilterBar';
+
+
 
 function Invitations_Page() {
+    const acceptButton = <button class="teamupbutton" style={{backgroundColor: "green"}}> Accept</button>
+    const rejectButton= <button class="teamupbutton" style={{backgroundColor: "red"}}>Reject</button>
+    
     return (
     <>
     <div class="row">
         <div class="column left">
-            <NavBar/>
+          <NavBar/>
         </div>
         <div class="column right">
-            <h2>Invitations</h2>
-            <p>Some text..</p>
+            <h2>Invitations Recieved</h2>
+            <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
+                <button class="pageswitchbutton" style={{margin:"0px"}}>Student Invitations</button>
+                <button class="pageswitchbutton" style={{margin:"0px"}}>Student Group Invitations</button>
+            </div>
         </div>
     </div>
-    <div class="body">
-        <h2>Body</h2>
-        <p>Some text..</p>
+    
+    
+    <div class="screen">
+      <FilterBar/>
+      <Student 
+        button1={acceptButton} 
+        button2={rejectButton}
+        Profiles={Profiles}/>
     </div>
-    </>
+    
+    
+  </>
     )
 }
 
 export default Invitations_Page;
+
+const Profiles = [ // single student profiles
+  {
+    name: "Franklin Smith",
+    id: "p6",
+    index: 0,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["C++", "Python", "JavaScript"],
+    skills: ["Machine Learning", "Database", "Front-End"],
+    preferences: [
+      ["ProjectB", "ProjectC", "ProjectD", "ProjectE", "ProjectA"],
+      ["ProjectA", "ProjectD", "ProjectC", "ProjectB", "ProjectE"]
+    ],
+    groupSizePreference: 4,
+    bio: "Versatile software engineer proficient in C++, Python, and JavaScript. Experienced in machine learning and database management. Passionate about frontend development."
+  },
+  {
+    name: "Grace Lee",
+    id: "p7",
+    index: 1,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Java", "HTML", "CSS"],
+    skills: ["Back-End", "Front-End", "UI/UX"],
+    preferences: [
+      ["ProjectC", "ProjectA", "ProjectE", "ProjectB", "ProjectD"],
+      ["ProjectB", "ProjectD", "ProjectA", "ProjectE", "ProjectC"]
+    ],
+    groupSizePreference: 3,
+    bio: "Java developer with a strong background in HTML and CSS. Specialized in backend and frontend development with a keen eye for UI/UX design."
+  },
+
+  {
+    name: "Isabella Martinez",
+    id: "p8",
+    index: 2,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Java", "JavaScript"],
+    skills: ["Back-End", "UI/UX"],
+    preferences: [
+      ["ProjectA", "ProjectC", "ProjectB", "ProjectE", "ProjectD"],
+      ["ProjectD", "ProjectB", "ProjectE", "ProjectA", "ProjectC"]
+    ],
+    groupSizePreference: 5,
+    bio: "Java and JavaScript developer with expertise in backend development and UI/UX design. Committed to delivering high-quality software solutions."
+  },
+
+  {
+    name: "Jackson Brown",
+    id: "p9",
+    index: 3,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["C#", "HTML", "CSS", "JavaScript"],
+    skills: ["Back-End", "Front-End", "Database"],
+    preferences: [
+      ["ProjectE", "ProjectD", "ProjectC", "ProjectB", "ProjectA"],
+      ["ProjectA", "ProjectB", "ProjectC", "ProjectD", "ProjectE"]
+    ],
+    groupSizePreference: 6,
+    bio: "Full-stack developer proficient in C#, HTML, CSS, and JavaScript. Experienced in backend and frontend development as well as database management."
+  },
+  {
+    name: "Olivia Taylor",
+    id: "p10",
+    index: 4,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Swift", "Python"],
+    skills: ["Mobile Development", "AI"],
+    preferences: [
+      ["ProjectC", "ProjectE", "ProjectA", "ProjectB", "ProjectD"],
+      ["ProjectD", "ProjectA", "ProjectE", "ProjectC", "ProjectB"]
+    ],
+    groupSizePreference: 3,
+    bio: "Passionate iOS developer with expertise in Swift and Python. Specialized in mobile app development and artificial intelligence."
+  },
+  {
+    name: "William Rodriguez",
+    id: "p11",
+    index: 5,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Ruby", "JavaScript"],
+    skills: ["Back-End", "Front-End"],
+    preferences: [
+      ["ProjectA", "ProjectB", "ProjectC", "ProjectD", "ProjectE"],
+      ["ProjectB", "ProjectA", "ProjectE", "ProjectD", "ProjectC"]
+    ],
+    groupSizePreference: 4,
+    bio: "Ruby and JavaScript developer with a focus on backend and frontend development. Committed to writing clean, maintainable code."
+  },
+  {
+    name: "Sophia Hernandez",
+    id: "p12",
+    index: 6,
+    photo: '../assets/profilePhoto.png',
+    codingLanguages: ["Python", "JavaScript"],
+    skills: ["Database", "Front-End"],
+    preferences: [
+      ["ProjectD", "ProjectB", "ProjectE", "ProjectA", "ProjectC"],
+      ["ProjectA", "ProjectC", "ProjectB", "ProjectE", "ProjectD"]
+    ],
+    groupSizePreference: 5,
+    bio: "Python and JavaScript developer with expertise in database management and frontend development. Enthusiastic about creating user-friendly interfaces."
+  }
+]
