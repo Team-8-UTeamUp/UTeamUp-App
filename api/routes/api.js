@@ -1,11 +1,11 @@
 import express from "express"
 import {db} from "../db.js"
-
 const router = express.Router()
+import {PythonShell} from 'python-shell'
 
 const quiz = {
     studentId: '',
-    projectpreference: ['1','2','3'], 
+    projectpreference: ['1','2','3'],
     rank: ['1','2','3'],
     groupsize: ['1', '2', '3', '4', '5', '6'],
     skills: ['Front-End', 'Back-End', 'Full-Stack', 'Database', 'Machine Learning', 'Artificial Intelligence', 'Virtual Reality', 'Mobile Dev', 'Other'],
@@ -63,6 +63,7 @@ router.post('/quiz/q6', (req, res) => {
         req.body.prefGroupSize,
         req.body.bio
     ]
+
     db.query(q,[values], (err,data) => {
         if (err) return res.json(err);
         return res.status(200).json("Question 2 updated for " + studentId)
@@ -72,13 +73,51 @@ router.post('/quiz/q6', (req, res) => {
 //STUDENTS PAGE
 //get student info
 router.get('/student/info', (req, res) => {
-    const q = "select studentId, firstName, lastName, bio, prefGroupSize from student, user where userId=studentId and studentId in (select studentId from individualStudents);"
-    
-    db.query(q, [], (err, data) => {
+    // queries needed for alg
+    const p =  "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
+    const studentId = 'AAE297154' // res.body.studentId
+    db.query(p, [], (err, data) => {
+        let params = {
+            //'studentId':req.body.studentId,   //once connected use this version
+            'studentId': studentId,
+            'algType': 's2s'
+        }
         if (err) return res.status(500).send(err);
-        
-        return res.status(200).json(data);
+        params["projData"] = data;
+
+        const s = "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+
+        db.query(s, [], (err, data) => {
+            if (err) return res.status(500).send(err);
+            //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+            params['skillData'] = data
+            const stringifieidData = JSON.stringify(params)
+            const options = {
+                pythonPath: '../Database/.venv/Scripts/python.exe',
+                pythonOptions: ['-u'],
+                scriptPath: '../Database/',
+            };
+
+            const pyShell = new PythonShell('sortAlg.py', options);
+            pyShell.send(stringifieidData);
+            // Handle received data from the Python script
+            pyShell.on('message', (message) => {
+                let resultData = JSON.parse(message);
+
+                let match = resultData['matches'];
+
+                return res.status(200).json(match)
+
+            });
+
+                // Handle errors
+            pyShell.on('error', (error) => {
+                return res.status(500).send(error);
+            });
+        });
     });
-})
+});
+
+
 
 export default router;
