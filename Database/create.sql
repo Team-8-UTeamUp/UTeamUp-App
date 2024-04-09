@@ -2,6 +2,14 @@ create database if not exists `uteamup` default character set utf8 collate utf8_
 
 use uteamup;
 
+
+
+create table globalVars(
+varName varchar(10) primary key,
+varValue int
+);
+insert into globalVars(varName, varValue) values ("minMembers",4);
+insert into globalVars(varName,varValue) values("maxMembers",6);
 create table User(
 userId varchar(9) unique primary key not null,
 firstName varchar(20) ,
@@ -9,7 +17,7 @@ lastName varchar(30)
 );
 
 create table admin(
-adminId varchar(9) primary	key not null,
+adminId varchar(9) primary key not null,
 
 CONSTRAINT `adminID`
 foreign key(adminID) references `user`(`userId`)
@@ -137,17 +145,7 @@ CONSTRAINT groupPrefPNumFK
 		ON UPDATE CASCADE
 );
 
-create table requirements(
-adminId varchar(9) primary key not null,
-minMemebers int default 4,
-maxMembers int default 6,
-numPreferences int default 5,
 
-constraint reqPK
-	foreign key(adminId) references `admin`(`adminId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
 create table studentRequestStudent(
 senderId varchar(9) not null, 
 receiverId varchar(9) not null,
