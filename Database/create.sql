@@ -10,14 +10,13 @@ lastName varchar(30)
 );
 
 create table admin(
-adminId varchar(9) primary	key not null,
+adminId varchar(9) primary key not null,
 
 CONSTRAINT `adminID`
 foreign key(adminID) references `user`(`userId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
-
-);
+); 
 
 create table formedGroups(
 groupId int primary key not null auto_increment,
@@ -109,8 +108,7 @@ CONSTRAINT projPrefStuIDFK
 CONSTRAINT projPrefPNumFK
 	FOREIGN KEY (`projectNum`) REFERENCES `project`(`projectNum`)
 		ON DELETE CASCADE
-		ON UPDATE CASCADE
-        
+		ON UPDATE CASCADE      
 );
 
 create table groupPreference(
@@ -141,6 +139,7 @@ constraint reqPK
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
 create table studentRequestStudent(
 senderId varchar(9) not null, 
 receiverId varchar(9) not null,

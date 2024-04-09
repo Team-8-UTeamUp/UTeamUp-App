@@ -88,7 +88,7 @@ if __name__ == "__main__":
     mydb = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="password123!",
+        password="Dinu1$monu",
         database="uteamup"
     )
 
