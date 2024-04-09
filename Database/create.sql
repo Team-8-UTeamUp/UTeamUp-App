@@ -94,7 +94,6 @@ ON UPDATE CASCADE
 create table languages(
 studentId varchar(9)  not null,
 languages varchar(15) not null,
-expLevel varchar(3) not null,
 
 CONSTRAINT langPK
 	PRIMARY KEY (`studentId`, `languages`),
