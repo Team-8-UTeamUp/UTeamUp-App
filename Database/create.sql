@@ -1,8 +1,15 @@
-create database if not exists `UTeamUp` default character set utf8 collate utf8_general_ci;
+create database if not exists `uteamup` default character set utf8 collate utf8_general_ci;
 
-use UTeamUp;
+use uteamup;
 
 
+
+create table globalVars(
+varName varchar(10) primary key,
+varValue int
+);
+insert into globalVars(varName, varValue) values ("minMembers",4);
+insert into globalVars(varName,varValue) values("maxMembers",6);
 create table User(
 userId varchar(9) unique primary key not null,
 firstName varchar(20) ,
@@ -10,6 +17,7 @@ lastName varchar(30)
 );
 
 create table admin(
+adminId varchar(9) primary key not null,
 adminId varchar(9) primary key not null,
 
 CONSTRAINT `adminID`
@@ -22,8 +30,8 @@ create table formedGroups(
 groupId int primary key not null auto_increment,
 groupName varchar(20) not null,
 groupCompleted bool not null,
-groupSizePref int not null
-
+groupSizePref int not null,
+groupLeader varchar(9) not null
 );
 
 create table groupSkills(
@@ -61,6 +69,14 @@ foreign key(studentId) references `user`(`userId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
+# add leader constraing to group
+Alter table formedgroups add CONSTRAINT `GLFK`
+	foreign key(groupLeader) references `student`(`studentId`);
+    
+alter table student add constraint `SGIDFK`
+	foreign key(groupId) references `formedgroups`(`groupId`);
+	
+
 
 create table skills(
 studentId varchar(9) not null,
@@ -128,11 +144,6 @@ CONSTRAINT groupPrefPNumFK
 		ON UPDATE CASCADE
 );
 
-create table requirements(
-adminId varchar(9) primary key not null,
-minMemebers int default 4,
-maxMembers int default 6,
-numPreferences int default 5,
 
 constraint reqPK
 	foreign key(adminId) references `admin`(`adminId`)

@@ -1,7 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
-const Student_Enlarge= ({name, skillset, languages, preferences, groupSz, bio}) => {
+const Group_Enlarge= ({name, skillset, languages, preferences, groupSz, bio}) => {
 return(
 
     <div>
@@ -20,4 +20,4 @@ return(
 
 }
 
-export default Student_Enlarge;
+export default Group_Enlarge;

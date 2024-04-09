@@ -2,10 +2,11 @@ import express from "express"
 import {db} from "../db.js"
 
 const router = express.Router()
+import {PythonShell} from "python-shell";
 
 const quiz = {
     studentId: '',
-    projectpreference: ['1','2','3'], 
+    projectpreference: ['1','2','3'],
     rank: ['1','2','3'],
     groupsize: ['1', '2', '3', '4', '5', '6'],
     skills: ['Front-End', 'Back-End', 'Full-Stack', 'Database', 'Machine Learning', 'Artificial Intelligence', 'Virtual Reality', 'Mobile Dev', 'Other'],
@@ -76,8 +77,38 @@ router.get('/student/info', (req, res) => {
     
     db.query(q, [], (err, data) => {
         if (err) return res.status(500).send(err);
-        
-        return res.status(200).json(data);
+        params["projData"] = data;
+
+        const s = "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+
+        db.query(s, [], (err, data) => {
+            if (err) return res.status(500).send(err);
+            //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+            params['skillData'] = data
+            const stringifieidData = JSON.stringify(params)
+            const options = {
+                pythonPath: '../Database/.venv/Scripts/python.exe',
+                pythonOptions: ['-u'],
+                scriptPath: '../Database/',
+            };
+
+            const pyShell = new PythonShell('sortAlg.py', options);
+            pyShell.send(stringifieidData);
+            // Handle received data from the Python script
+            pyShell.on('message', (message) => {
+                let resultData = JSON.parse(message);
+
+                let match = resultData['matches'];
+                return res.status(200).json(match)
+            });
+
+            // Handle errors
+            pyShell.on('error', (error) => {
+                return res.status(500).send(error);
+            });
+
+        });
+
     });
 })
 

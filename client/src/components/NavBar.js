@@ -1,8 +1,9 @@
-import {React, useState} from 'react'
-import { Link } from 'react-router-dom';
+import { React, useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom';
 
 function NavBar() {
-    const [active, setActive] = useState(0);
+    const location = useLocation();
+    const [url, setUrl] = useState(null);
 
     const navigations = {
         0: {
@@ -31,6 +32,10 @@ function NavBar() {
         }
     }
 
+    useEffect(() => {
+        setUrl(location.pathname);
+    }, [location]);
+
     return (
         <>
             <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
@@ -38,10 +43,9 @@ function NavBar() {
                 {
                     Object.keys(navigations).map(id => {
                         let navLink = navigations[id]
-                        const isActive = active === id
 
                         return (
-                            <Link className={isActive ? "link active" : "link inactive"} id="link" to={navLink.Link} onClick={() => {setActive(id)}}>
+                            <Link className={"link " + (url === navLink.Link ? "active" : "inactive")} id="link" to={navLink.Link}>
                                 <p>{navLink.Name}</p>
                             </Link>
                         )

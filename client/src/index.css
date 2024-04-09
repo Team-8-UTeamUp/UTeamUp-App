@@ -222,7 +222,11 @@ control{ /*doesnt work*/
   background-color: #157636;
 }
 
-.right { /*Change to apply to only title*/
+.sidenav .active {
+  color: #FC8E28
+}
+
+.right {
   width: 85%;
   text-align: center;
 }
@@ -231,20 +235,35 @@ control{ /*doesnt work*/
 {
   position: relative;
   top:0;
-  height:70px;
+  height:60px;
   width: auto;
-  background-color:rgb(194, 194, 194);
-  border: 1px solid red;
+  background-color:white;
+  border: 0px 0px 0px 0px solid black;
   flex-direction: row;
   display: flex;
-  gap: 30px
+  gap: 50px;
+  justify-content: center;
+  align-items: center;
+
+  .filterbutton
+  {
+    width:fit-content;
+    height: 40px;
+    font-size: 16px;
+    border-radius: 20px;
+    padding: 0px 30px 0px 30px;
+    background-color: white;
+    border: 1px solid lightgray;
+    color:#157636;
+    box-shadow: 0px 1px 1px 1px rgb(207, 205, 205);
+  }
 
 }
 
 
 /* Single student page*/
 .split1 { /*Student Scroll*/
-  height: 100vh;
+  height:631px;
   width: 40%;
   position: relative;
   z-index: 1;
@@ -254,12 +273,12 @@ control{ /*doesnt work*/
 }
 
 .split2 {  /*Student enlarged*/
-  height: 100vh;
+  height:auto;
   width: 60%;
   position: relative;
   top: 0;
   z-index: 1;
-  
+  overflow-x: hidden;
   padding-top: 20px;
 }
 
@@ -268,7 +287,9 @@ control{ /*doesnt work*/
 
   left: 0;
   background-color: white;
-  border:1px solid gray;
+  border: 1px solid gray;
+  border-left: 0px;
+  border-bottom: 0px;
 }
 
 .screenright {
@@ -277,6 +298,8 @@ control{ /*doesnt work*/
   right: 0;
   background-color: white;
   border:1px solid gray;
+  border-right: 0px;
+  border-bottom: 0px;
 }
 
 .textcentered {
@@ -291,17 +314,18 @@ control{ /*doesnt work*/
 .tile {
   position: relative;
   left: 0;
-  top: 0;
+  top: 10px;
   border-radius: 10px;
+  border: 0px;
   background-color: white;
   width: 450px; /* Adjusted for layout */
   height: 180px; /* Changed to min-height for flexible content fitting */
-  padding: 5px;
+  padding: 10px;
   margin-bottom: 10px;
-  box-shadow: 0px 2px 2px 2px rgb(165, 164, 164);
   display: flex; /* New */
   flex-direction: column; /* New */
   align-items: flex-start; /* New - align items to the start of the flex container */
+  box-shadow: 0px 2px 2px 2px rgb(165, 164, 164);
 }
 
 
@@ -390,19 +414,31 @@ control{ /*doesnt work*/
     border: 1px solid lightgray;
     height: 50px;
     width: 50px;
-    text-align: center;
+    text-align:center;
+    margin:0px;
     font-size:24px;
     color:#157636;
     position:absolute;
     left:86%;
-    top:66%;
+    top:60%;
+    padding-top: 10px;
   }
   
 
 
 .tile:hover
 {
-  border: 1px solid lightorange;
+  border: 1.5px solid rgb(243, 208, 142);
+}
+
+.selected
+{
+  border: 2px solid orange;
+}
+
+.selected:hover
+{
+  border: 2px solid orange;
 }
 
 
@@ -471,6 +507,110 @@ control{ /*doesnt work*/
   gap: 5px;
 }
 
+.expanded
+{
+  text-align: "left";
+ padding-top: 10px;
+
+ 
+ 
+
+   .skillbubble
+  {
+    border-radius: 20px;
+    background-color: rgb(186, 236, 208);
+    height: fit-content;
+    font-size: 15px;
+    width:fit-content;
+    margin-right: 3px;
+    padding: 5px 10px 5px 10px;
+    margin-bottom: 5px;
+   
+  }
+  .langbubble
+  {
+    border-radius: 20px;
+    background-color: rgb(139, 189, 172);
+    height: fit-content;
+    font-size: 15px;
+    width:fit-content;
+    margin-right: 3px;
+    padding: 5px 10px 5px 10px;
+    margin-bottom: 30px;
+   
+  }
+
+  .preferences
+  {
+    display:flex;
+    flex-direction: column;
+    width: 550px;
+    gap:0px;
+    margin-bottom: 20px;
+   
+
+    .toggle
+    {
+      display:flex;
+      flex-direction: row;
+      width:inherit;
+      
+
+      .togglebutton
+      {
+        width:50%;
+        border: 1px solid gray;
+        font-size: 16px;
+
+      }
+
+    
+    }
+
+    .projlist
+    {
+      display:flex;
+      flex-direction: column;
+      border: 1px solid gray;
+      border-radius: 0px 0px 10px 10px;
+      padding: 10px;
+
+    }
+  }
+
+  .sizetile
+  {
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    height: 100px;
+    width: 100px;
+    text-align:center;
+    padding-top: 30px;
+    margin-top:0px;
+    font-size:48px;
+    color:#157636;
+  }
+}
+
+.teamupbutton
+  {
+    height:fit-content;
+    width:fit-content;
+    font-size:20px;
+    color:white;
+    border-radius: 10px;
+    text-align: center;
+    justify-content:center;
+    padding: 2px 20px 2px 20px;
+    margin-bottom:40px;
+    border: 0px;
+  }
+
+  .teamupbutton:hover
+  {
+    opacity: 0.8;
+  }
+
 
 .screen
 {
@@ -481,8 +621,8 @@ control{ /*doesnt work*/
   top: 0%;
   background-color: white;
   width: var(--parentWidth) ; 
-  height: 91.5vh;
-  border: 1px solid rgb(187, 0, 255);
+  height: var(--parentHeight);
+  border: 1px solid gray;
 }
 
 .screen2
@@ -499,5 +639,78 @@ control{ /*doesnt work*/
   display:inline-block;
 }
 
+/* Project Preference*/
+.list
+{
+  width:fit-content;
+  height: fit-content;
+  display:flex;
+  flex-direction: column;
+  border-radius: 10px 10px 10px 10px;
+  margin: 0px;
+  padding-bottom: 10px;
+  box-shadow: 0px 2px 2px 2px rgb(165, 164, 164);
 
 
+
+  .listtitle
+  {
+    width:auto;
+    height: 34px;
+    background-color: #157636;
+    color: white;
+    font-size: 24;
+    border-radius: 10px 10px 0px 0px;
+    padding: 10px 30px 10px 30px;
+
+  }
+
+  .listnumber
+  {
+      display:flex;
+      flex-direction: row;
+      font-size: 24px;
+      gap:10px;
+      justify-content: center;
+      padding-top: 5px;
+      padding-bottom: 5px;
+
+      .numbertile
+      {
+        border-radius: 0px 0px 0px 0px;
+        border: 1px solid lightgray;
+        background-color: #FC8E28;
+        height: fit-content;
+        width: 30px;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .inputrank
+      {
+        width:40px;
+        height:auto;
+        justify-self: center;
+        font-size: 24px;
+      }
+  }
+}
+
+.pageswitchbutton
+{
+  width:300px;
+  padding-bottom: 0px;
+  font-size: 16px;
+  color:black;
+  background-color: transparent;
+  border-bottom: 1px solid black;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.pageswitchbutton:hover
+{
+  color:#157636;
+  border-bottom: 1px solid green;
+}
