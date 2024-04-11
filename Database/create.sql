@@ -18,7 +18,6 @@ lastName varchar(30)
 
 create table admin(
 adminId varchar(9) primary key not null,
-adminId varchar(9) primary key not null,
 
 CONSTRAINT `adminID`
 foreign key(adminID) references `user`(`userId`)
@@ -73,8 +72,7 @@ ON UPDATE CASCADE
 Alter table formedgroups add CONSTRAINT `GLFK`
 	foreign key(groupLeader) references `student`(`studentId`);
     
-alter table student add constraint `SGIDFK`
-	foreign key(groupId) references `formedgroups`(`groupId`);
+
 	
 
 
@@ -144,11 +142,6 @@ CONSTRAINT groupPrefPNumFK
 );
 
 
-constraint reqPK
-	foreign key(adminId) references `admin`(`adminId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
 
 create table studentRequestStudent(
 senderId varchar(9) not null, 
