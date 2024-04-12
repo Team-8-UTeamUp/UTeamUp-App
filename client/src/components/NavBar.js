@@ -33,6 +33,10 @@ function NavBar() {
         6: {
             Name: "FAQ",
             Link: "/faq"
+        },
+        7: {
+            Name: "Login",
+            Link: "/login"
         }
     }
 

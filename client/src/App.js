@@ -6,14 +6,12 @@ import InvitationsPage from './components/InvitationsPage.js';
 import RequestsPage from './components/RequestsPage.js';
 import FAQPage from './components/FAQPage.js';
 import ProfilePage from './components/ProfilePage.js'
-
-import { ChakraProvider } from "@chakra-ui/react";
+import LoginPage from './components/LoginPage.js';
 
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Profile_Page from './components/ProfilePage.js';
 
 const router = createBrowserRouter([
   {
@@ -43,6 +41,10 @@ const router = createBrowserRouter([
   {
     path: "/faq",
     element: <div><FAQPage/></div>,
+  },
+  {
+    path: "/login",
+    element: <div><LoginPage/></div>,
   },
 ]);
 
