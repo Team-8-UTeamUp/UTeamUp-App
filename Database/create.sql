@@ -1,6 +1,6 @@
-create database if not exists `testuteamup` default character set utf8 collate utf8_general_ci;
+create database if not exists `uteamup` default character set utf8 collate utf8_general_ci;
 
-use testuteamup;
+use uteamup;
 
 
 
