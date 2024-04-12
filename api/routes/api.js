@@ -204,6 +204,7 @@ router.post('/login', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
+        console.log(err)
         if (err) return res.status(500).json(err);
         if (data.length === 0) return res.status(404).json("User not found!");
 
