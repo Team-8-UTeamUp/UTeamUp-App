@@ -1,7 +1,37 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useContext } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios"
 
 function LoginPage() {
+    const [inputs, setInputs] = useState({
+        username: "",
+        password: "pass",
+    });
+
+    const [err, setError] = useState(null);
+
+    const navigate = useNavigate();
+
+    const onChange = (e) => {
+        setInputs((previous) => ({ 
+            ...previous, 
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(inputs)
+        try {
+            await axios.post("http://localhost:8800/api/login", inputs);
+            navigate("/admin");
+        } catch (err) {
+            console.log(err)
+            setError(err.response.data);
+        }
+    }
+
     return (
     <>
     <header class="header">
@@ -13,27 +43,30 @@ function LoginPage() {
         <h3>Enter your login credentials</h3>
         <form action="">
             <label for="first">
-                  Username:
-              </label>
+                    Username:
+            </label>
             <input type="text"
-                   id="first"
-                   name="first"
-                   placeholder="Enter your Username" required>
+                    id="first"
+                    name="username"
+                    onChange={onChange}
+                    placeholder="Enter your Username" required>
             </input>
             <label for="password">
-                  Password:
-              </label>
+                    Password:
+            </label>
             <input type="password"
-                   id="password"
-                   name="password"
-                   placeholder="Enter your Password" required>
+                    id="password"
+                    name="password"
+                    onChange={onChange}
+                    placeholder="Enter your Password" required>
             </input>
             <div class="wrap">
                 <button type="submit"
-                        onclick="solve()">
+                        onClick={handleSubmit}>
                     Submit
                 </button>
             </div>
+            {err && <p>{err}</p>}
         </form>
     </div>
     </>

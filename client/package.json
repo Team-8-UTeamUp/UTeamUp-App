@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    
     "@babel/runtime": "^7.24.1",
     "@chakra-ui/next-js": "^2.2.0",
     "@chakra-ui/react": "^2.8.2",
@@ -27,16 +26,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "set \"DISABLE_ESLINT_PLUGIN=true\" && react-scripts start",
-    "build": "set \"DISABLE_ESLINT_PLUGIN=true\" && react-scripts build",
-    "test": "set \"DISABLE_ESLINT_PLUGIN=true\" && react-scripts test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -51,12 +44,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "eslint": "^8.57.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-react": "^7.34.1"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
