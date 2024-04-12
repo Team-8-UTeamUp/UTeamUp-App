@@ -39,26 +39,23 @@ function Home_Page_Render({StudentProfiles, isLoading}) {
   if (isLoading) {
     return (
       <>
-  <div class="row">
-      <div class="column left">
-        <NavBar/>
-      </div>
-      <div class="column right">
-          <h2>Home</h2>
-          <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
-              <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Profiles</button>
-              <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")}>Group Profiles</button>
+        <div class="row">
+          <div class="column left">
+            <NavBar />
           </div>
-      </div>
-  </div>
-  
-  <div className="screen">
-    <FilterBar/>
-    <h2>Loading...</h2>
-  </div>
-  
-  
-</>
+          <div class="column right">
+            <h2>Home</h2>
+            <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
+              <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={()=> showView("sprofbutton")}>Student Profiles</button>
+              <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={()=> showView("gprofbutton")}>Group Profiles</button>
+            </div>
+          </div>
+        </div>
+        <div className="screen">
+          <FilterBar />
+          <h2>Loading...</h2>
+        </div>
+      </>
     )
   }
 
@@ -66,19 +63,7 @@ function Home_Page_Render({StudentProfiles, isLoading}) {
   const TeamUpButton = <button class="teamupbutton" style={{backgroundColor: "#FC8E28"}}>Team Up</button>
   const StudentView = <Student button1={TeamUpButton} Profiles={StudentProfiles}/>;
   const GroupView = <Group button1={TeamUpButton} Profiles={GroupProfiles}/>;
-  /*const GroupView = 
-    <MyGroup 
-        groupName={group.groupName}
-        studentNames={group.studentNames}
-        skillset={group.skills}
-        languages={group.codingLanguages}
-        preferences={group.preferences}
-        currGroupSz={group.currentGroupSize}
-        prefGroupSz={group.preferedGroupSize}
-        bios={group.bio}
-        button1={null}
-        button2={null} 
-    />;*/
+
   const [CurrentView, setCurrentView] =  useState(null);
 
   function showView(uid) {
@@ -109,29 +94,27 @@ function Home_Page_Render({StudentProfiles, isLoading}) {
     }
   }, []); // Empty dependency array ensures this effect runs only once
 
-    return (
+  return (
     <>
-    <div class="row">
-        <div class="column left">
-          <NavBar/>
-        </div>
-        <div class="column right">
-            <h2>Home</h2>
-            <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
-                <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Profiles</button>
-                <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Group Profiles</button>
-            </div>
-        </div>
-    </div>
-    
-    <div className="screen">
-      <FilterBar/>
-      {CurrentView}
-    </div>
-    
-    
-  </>
-    )
+      <div class="row">
+          <div class="column left">
+            <NavBar/>
+          </div>
+          <div class="column right">
+              <h2>Home</h2>
+              <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
+                  <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Profiles</button>
+                  <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Group Profiles</button>
+              </div>
+          </div>
+      </div>
+      
+      <div className="screen">
+        <FilterBar/>
+        {CurrentView}
+      </div>
+    </>
+  )
 
 }
 

@@ -294,6 +294,10 @@ control{ /*doesnt work*/
   border: 1px solid gray;
   border-left: 0px;
   border-bottom: 0px;
+
+  /* height: 100%; */
+  height: 85vh;
+  /* max-height: 85vh; */
 }
 
 .screenright {
@@ -458,6 +462,10 @@ control{ /*doesnt work*/
   
 }
 
+/* .Student_Tile {
+  overflow: hidden;
+} */
+
 .dropbtn {
   background-color: white;
   color: black;
@@ -477,7 +485,7 @@ control{ /*doesnt work*/
 
 .dropdown {
   position: relative;
-  display: inline-block;
+  display: -webkit-box;
 }
 
 .dropdown-content {
@@ -627,7 +635,7 @@ control{ /*doesnt work*/
   top: 0;
   background-color: white;
   width:85%; 
-  height: calc(100vh - 20px);
+  /* height: calc(100vh - 20px); */
   border: 0px solid blue;
   overflow:auto;
 }
