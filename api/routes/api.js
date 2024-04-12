@@ -198,17 +198,30 @@ router.get('/student/info', (req, res) => {
     });
 })
 
+//login page
 
 router.post('/login', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
+        console.log(err)
         if (err) return res.status(500).json(err);
         if (data.length === 0) return res.status(404).json("User not found!");
 
         return res.status(200).json("Logged in!");
     });
 });
+
+router.get('/admin/group_info', (req, res) => {
+    const q = "SELECT g.groupId, g.groupName as groupName, group_concat( firstName , lastName ) as members, count(*) as totalMembers, f.groupCompleted as groupStatus FROM groupinfo as g, formedgroups as f where f.groupId=g.groupId group by g.groupId;"
+    //add white space in the group_concat in between the names
+    // gets group id, name, members (firstName,lastName), # of members, groupStatus, and formedgroup?
+    db.query(q, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        
+        return res.status(200).json(data);
+    });
+})
 
 
 

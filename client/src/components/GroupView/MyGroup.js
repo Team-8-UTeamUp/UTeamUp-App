@@ -1,11 +1,23 @@
 
 import React, { useState } from 'react';
 
-const Student_Enlarge= ({name, skillset, languages, preferences, groupSz, bio, button1, button2}) => {
+const MyGroup= ({groupName, studentNames, skillset, languages, preferences, currGroupSz, prefGroupSz, bios, button1, button2}) => {
 
     const [preferencesRow, setPreferencesRow] = useState(preferences[0] || []);
 
-React.useEffect(() => {
+    // States to manage editable fields
+    const [editableGroupName, setEditableGroupName] = useState(groupName);
+    //const [editablePreferences, setEditablePreferences] = useState(preferences);
+    const [editablePrefGroupSz, setEditablePrefGroupSz] = useState(prefGroupSz);
+
+    // Handle change in preferences dynamically
+    const handlePreferenceChange = (index, newValue) => {
+        const updatedPreferences = [...editablePreferences];
+        updatedPreferences[index] = newValue;
+        setEditablePreferences(updatedPreferences);
+    };
+
+    React.useEffect(() => {
     const firstButton = document.querySelector('.togglebutton');
     if (firstButton) {
         firstButton.style.backgroundColor =  "#baecd0";
@@ -41,8 +53,15 @@ function displayProjs(uid) {
 return(
 
     <div class="expanded" style={{ margin: "0px 60px 0px 60px"}}>
-       
-        <h2 style={{fontSize: "64px", textAlign: "left", color:"#157636", marginBottom:"10px"}}>{name}</h2>
+        <input
+                type="text"
+                value={editableGroupName}
+                onChange={(e) => setEditableGroupName(e.target.value)}
+                style={{fontSize: "64px", textAlign: "left", color:"#157636", marginBottom:"10px"}}
+        />
+        <div className="names-container">
+            <h3 style={{marginBottom:"20px"}}>{studentNames.join(", ")}</h3>
+        </div>
         <div className="skills-container" >
             {skillset.map((skill, index) => (
                  <div class="skillbubble"> {skill} </div>
@@ -57,8 +76,8 @@ return(
             <div>{button1}</div>
             {button2 && <div>{button2}</div>}
         </div>
-        <h2 style={{marginBottom: "20px"}}>Project Preferences:</h2>
-        <div style={{display: "flex", flexDirection: "row", gap: "30px", justifyContent: "left"}}>
+        <h2 style={{marginBottom: "20px"}}>Project Preferences</h2>
+        <div style={{display: "flex", flexDirection: "row", gap: "30px", justifyContent: "center"}}>
             <div class="preferences">
                 <div class="toggle">
                     <button class="togglebutton" id="UTDP" style={{borderRadius: "10px 0px 0px 0px"}} onClick={() => displayProjs("UTDP")}>UTD Design</button>
@@ -71,13 +90,26 @@ return(
                 </div>
             </div>
             <div style={{display: "flex", flexDirection:"column", gap:"5px"}}>
-                <div class="sizetile">{groupSz}</div>
-                <div style={{textAlign: "center", fontSize:"12px", fontWeight:"bold", marginBottom: "20px"}}>Prefered Group Size</div>  
+                <div class="sizetile" style ={{display:"flex", flexDirection:"row"}}>
+                    {currGroupSz}/
+                    <input
+                        type="number"
+                        value={editablePrefGroupSz}
+                        onChange={(e) => setEditablePrefGroupSz(e.target.value)}
+                    />
+                </div>
+                <div style={{textAlign: "center", fontSize:"12px", fontWeight:"bold", marginBottom: "20px"}}>Currrent Size/Prefered</div>  
             </div> 
         </div>
-        <h2 style={{marginBottom: "20px"}}>About Me</h2>
-        <div style={{marginBottom: "40px"}}>{bio}</div>
-      
+        <h2 style={{marginBottom: "20px"}}>About Us</h2>
+        <div className='bio-list'>
+            {bios.map((bio, index) => (
+                <div>
+                    <h3> {studentNames[index]}</h3> 
+                    <div key={index} style={{marginBottom: "20px"}}>{bio}</div>
+                </div>
+            ))}
+        </div>   
     </div>
    
         
@@ -86,4 +118,4 @@ return(
 
 }
 
-export default Student_Enlarge;
+export default MyGroup;

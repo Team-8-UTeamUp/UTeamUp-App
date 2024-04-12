@@ -42,27 +42,27 @@ function LoginPage() {
     <div class="login_body">
         <h3>Enter your login credentials</h3>
         <form action="">
-            <label for="first">
-                    Username:
-            </label>
+            <label for="first" class="loginlabel">
+                  Username:
+              </label>
             <input type="text"
-                    id="first"
-                    name="username"
-                    onChange={onChange}
-                    placeholder="Enter your Username" required>
+                   id="first"
+                   name="first"
+                   class="logininput"
+                   placeholder="Enter your Username" required>
             </input>
-            <label for="password">
-                    Password:
-            </label>
-            <input type="password"
-                    id="password"
-                    name="password"
-                    onChange={onChange}
-                    placeholder="Enter your Password" required>
+            <label for="password" class="loginlabel">
+                  Password:
+              </label>
+            <input type="password" 
+                   id="password"
+                   name="password"
+                   class="logininput"
+                   placeholder="Enter your Password" required>
             </input>
             <div class="wrap">
-                <button type="submit"
-                        onClick={handleSubmit}>
+                <button type="submit" class="loginbutton"
+                        onclick="solve()">
                     Submit
                 </button>
             </div>

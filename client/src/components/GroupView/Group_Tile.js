@@ -13,7 +13,6 @@ return(
         <div className="Student_Tile">
         <img class="photo" src={require('../../assets/logoTeam.png')} ></img>
         <h2 class="h2">{groupName}</h2>
-        <div style={{fontSize: "10px", position: "relative", left: "60px", marginBottom: "4px"}}>{studentNames.join(", ")}</div>
         <div className="skills-container" >
             {skills.map((skill, index) => (
                  <div class="skillbubble"> {skill} </div>
