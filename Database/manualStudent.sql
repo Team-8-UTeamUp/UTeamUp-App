@@ -1,4 +1,4 @@
-use testuteamup;
+use uteamup;
 
 update student
 set groupId =1
