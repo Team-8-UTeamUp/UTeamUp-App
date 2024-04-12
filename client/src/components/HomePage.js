@@ -4,6 +4,7 @@ import Student from './StudentView/Student';
 import NavBar from './NavBar';
 import FilterBar from './FilterBar';
 import Group from './GroupView/Group'
+import MyGroup from './GroupView/MyGroup'
 
 
 
@@ -11,6 +12,19 @@ function Home_Page() {
   const TeamUpButton = <button class="teamupbutton" style={{backgroundColor: "#FC8E28"}}>Team Up</button>
   const StudentView = <Student button1={TeamUpButton} Profiles={StudentProfiles}/>;
   const GroupView = <Group button1={TeamUpButton} Profiles={GroupProfiles}/>;
+  /*const GroupView = 
+    <MyGroup 
+        groupName={group.groupName}
+        studentNames={group.studentNames}
+        skillset={group.skills}
+        languages={group.codingLanguages}
+        preferences={group.preferences}
+        currGroupSz={group.currentGroupSize}
+        prefGroupSz={group.preferedGroupSize}
+        bios={group.bio}
+        button1={null}
+        button2={null} 
+    />;*/
   const [CurrentView, setCurrentView] =  useState(null);
 
   function showView(uid)
@@ -42,9 +56,6 @@ function Home_Page() {
         setCurrentView(StudentView); // Set the current view to student 
     }
 }, []); // Empty dependency array ensures this effect runs only once
-
-
-
 
 
     return (
@@ -187,6 +198,27 @@ const GroupProfiles=
   }
  
 ]
+
+const group =
+{
+  groupName: "Avalanche1",
+    studentNames:["Alice Turner", "Bob Job"],
+    id: "g0",
+    index:0,
+    codingLanguages: ["JavaScript", "Python", "C++", "HTML"],
+    skills: ["Database", "Front End", "Back End", "UI/UX"],
+    preferences: [
+        ["ProjectA", "ProjectB", "ProjectC", "ProjectD", "ProjectE"],
+        ["ProjectB", "ProjectA", "ProjectE", "ProjectC", "ProjectD"]
+    ],
+    currentGroupSize: 2,
+    preferedGroupSize: 3,
+    bio: [
+      ["I'm a passionate developer with expertise in JavaScript, React, and Node.js. Excited to collaborate on interesting projects!"],
+      [ "Experienced Python developer with a focus on web development using Django. Eager to contribute to innovative projects!"]
+    ]
+}
+
 
 export default Home_Page;
 

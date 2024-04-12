@@ -252,27 +252,23 @@ const UDProjects = [ // single student profiles
   {
     number:1,
     company:"Amandus",
-    title:"VR Game for Lupus Patients - with AHT Team",
-    maxTeams: 1
+    title:"VR Game for Lupus Patients - with AHT Team"
   },
  
   {
     number: 2,
     company: "Athlete Reserve",
-    title:	"Athlete Reserve App - Phase 2",
-    maxTeams:1
+    title:	"Athlete Reserve App - Phase 2"
   },
 
 {
     number: 3,
-    maxTeams:2,
     company: "CataBoom Technologies",
     title:	"AI assisted data exploration of complex data"
 },
 
 {
     number: 4,
-    maxTeams: 1,
     company:"Ellison Fluid Calipers",
     title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
 },
@@ -285,27 +281,23 @@ const CSProjects = [ // single student profiles
   {
     number:1,
     company:"Amandus",
-    title:"VR Game for Lupus Patients - with AHT Team",
-    maxTeams: 1
+    title:"VR Game for Lupus Patients - with AHT Team"
   },
  
   {
     number: 2,
     company: "Athlete Reserve",
-    title:	"Athlete Reserve App - Phase 2",
-    maxTeams:1
+    title:	"Athlete Reserve App - Phase 2"
   },
 
 {
     number: 3,
-    maxTeams:2,
     company: "CataBoom Technologies",
     title:	"AI assisted data exploration of complex data"
 },
 
 {
     number: 4,
-    maxTeams: 1,
     company:"Ellison Fluid Calipers",
     title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
 },
