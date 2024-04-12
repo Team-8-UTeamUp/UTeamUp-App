@@ -147,6 +147,10 @@ header .link{
   margin: 20px;
 }
 
+.admin_body h2{
+  text-align: center;
+}
+
 table{
   margin-left: auto;
   margin-right: auto;
@@ -187,6 +191,8 @@ control{ /*doesnt work*/
   left: 0;
   overflow-x: hidden;
   padding-top: 20px;
+  padding-right: 5px;
+  border-right: 1px solid black;
 }
 
 .logo{
@@ -225,6 +231,8 @@ control{ /*doesnt work*/
 .right {
   width: 85%;
   text-align: center;
+  padding-left: 5px;
+  border-left: 1px solid black;
 }
 
 .filerbar
@@ -286,6 +294,10 @@ control{ /*doesnt work*/
   border: 1px solid gray;
   border-left: 0px;
   border-bottom: 0px;
+
+  /* height: 100%; */
+  height: 85vh;
+  /* max-height: 85vh; */
 }
 
 .screenright {
@@ -424,7 +436,7 @@ control{ /*doesnt work*/
 
 .tile:hover
 {
-  border: 1.5px solid rgb(243, 208, 142);
+  border: 1.5px solid lightgray;
 }
 
 .selected
@@ -450,6 +462,10 @@ control{ /*doesnt work*/
   
 }
 
+/* .Student_Tile {
+  overflow: hidden;
+} */
+
 .dropbtn {
   background-color: white;
   color: black;
@@ -469,7 +485,7 @@ control{ /*doesnt work*/
 
 .dropdown {
   position: relative;
-  display: inline-block;
+  display: -webkit-box;
 }
 
 .dropdown-content {
@@ -507,6 +523,7 @@ control{ /*doesnt work*/
 {
   text-align: "left";
  padding-top: 10px;
+ max-width: 800px;
 
  
  
@@ -610,15 +627,17 @@ control{ /*doesnt work*/
 
 .screen
 {
+  box-sizing: border-box;
   position: relative;
   display:flex;
   flex-direction:column;
-  left: 0%;
-  top: 0%;
+  left: 0;
+  top: 0;
   background-color: white;
-  width: var(--parentWidth) ; 
-  height: var(--parentHeight);
-  border: 1px solid gray;
+  width:85%; 
+  /* height: calc(100vh - 20px); */
+  border: 0px solid blue;
+  overflow:auto;
 }
 
 .screen2
@@ -709,4 +728,78 @@ control{ /*doesnt work*/
 {
   color:#157636;
   border-bottom: 1px solid green;
+}
+
+.pageswitchselect
+{
+  color:#157636;
+  border-bottom: 1px solid green;
+}
+
+/*login page css*/
+
+body {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  background: #f3f3f3;
+  flex-direction: column;
+  margin: 0;
+}
+
+.login_body {
+  margin: auto;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  transition: transform 0.2s;
+  width: 500px;
+}
+
+.loginh1 {
+  color: #4CAF50;
+}
+
+.loginlabel {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  text-align: left;
+  color: #555;
+  font-weight: bold;
+}
+
+
+.logininput {
+  display: block;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.loginbutton {
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  background-color: #4CAF50;
+  width: 100%;
+  font-size: 16px;
+}
+
+.login_body .wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

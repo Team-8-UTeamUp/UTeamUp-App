@@ -2,6 +2,14 @@ create database if not exists `uteamup` default character set utf8 collate utf8_
 
 use uteamup;
 
+
+
+create table globalVars(
+varName varchar(10) primary key,
+varValue int
+);
+insert into globalVars(varName, varValue) values ("minMembers",4);
+insert into globalVars(varName,varValue) values("maxMembers",6);
 create table User(
 userId varchar(9) unique primary key not null,
 firstName varchar(20) ,
@@ -9,14 +17,13 @@ lastName varchar(30)
 );
 
 create table admin(
-adminId varchar(9) primary	key not null,
+adminId varchar(9) primary key not null,
 
 CONSTRAINT `adminID`
 foreign key(adminID) references `user`(`userId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
-
-);
+); 
 
 create table formedGroups(
 groupId int primary key not null auto_increment,
@@ -61,12 +68,9 @@ foreign key(studentId) references `user`(`userId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
-# add leader constraing to group
-Alter table formedgroups add CONSTRAINT `GLFK`
-	foreign key(groupLeader) references `student`(`studentId`);
-    
-alter table student add constraint `SGIDFK`
-	foreign key(groupId) references `formedgroups`(`groupId`);
+
+
+
 	
 
 
@@ -86,7 +90,6 @@ ON UPDATE CASCADE
 create table languages(
 studentId varchar(9)  not null,
 languages varchar(15) not null,
-expLevel varchar(3) not null,
 
 CONSTRAINT langPK
 	PRIMARY KEY (`studentId`, `languages`),
@@ -116,8 +119,7 @@ CONSTRAINT projPrefStuIDFK
 CONSTRAINT projPrefPNumFK
 	FOREIGN KEY (`projectNum`) REFERENCES `project`(`projectNum`)
 		ON DELETE CASCADE
-		ON UPDATE CASCADE
-        
+		ON UPDATE CASCADE      
 );
 
 create table groupPreference(
@@ -137,17 +139,8 @@ CONSTRAINT groupPrefPNumFK
 		ON UPDATE CASCADE
 );
 
-create table requirements(
-adminId varchar(9) primary key not null,
-minMemebers int default 4,
-maxMembers int default 6,
-numPreferences int default 5,
 
-constraint reqPK
-	foreign key(adminId) references `admin`(`adminId`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
+
 create table studentRequestStudent(
 senderId varchar(9) not null, 
 receiverId varchar(9) not null,

@@ -3,7 +3,7 @@ import Rank from "./Rank.js"
 
 function Preference({projects =[]}){
 
-  const labels= ['Project Number', 'Company Name', 'Project Title', 'Max Teams'];
+  const labels= ['Project Number', 'Company Name', 'Project Title'];
   const projs = projects;
 
   return(
@@ -24,7 +24,6 @@ function Preference({projects =[]}){
                 <td>{project.number}</td>
                 <td>{project.company}</td>
                 <td>{project.title}</td>
-                <td>{project.maxTeams}</td>
               </tr> 
           ))
       }
