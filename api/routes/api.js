@@ -197,6 +197,7 @@ router.get('/student/info', (req, res) => {
     });
 })
 
+//login page
 
 router.post('/login', (req, res) => {
     console.log("HELLO")
@@ -211,6 +212,17 @@ router.post('/login', (req, res) => {
         return res.status(200).json("Logged in!");
     });
 });
+
+router.get('/admin/group_info', (req, res) => {
+    const q = "SELECT g.groupId, g.groupName as groupName, group_concat( firstName , lastName ) as members, count(*) as totalMembers, f.groupCompleted as groupStatus FROM groupinfo as g, formedgroups as f where f.groupId=g.groupId group by g.groupId;"
+    //add white space in the group_concat in between the names
+    // gets group id, name, members (firstName,lastName), # of members, groupStatus, and formedgroup?
+    db.query(q, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        
+        return res.status(200).json(data);
+    });
+})
 
 
 
