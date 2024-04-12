@@ -2,10 +2,11 @@ import express from "express"
 import {db} from "../db.js"
 
 const router = express.Router()
+import {PythonShell} from "python-shell";
 
 const quiz = {
     studentId: '',
-    projectpreference: ['1','2','3'], 
+    projectpreference: ['1','2','3'],
     rank: ['1','2','3'],
     groupsize: ['1', '2', '3', '4', '5', '6'],
     skills: ['Front-End', 'Back-End', 'Full-Stack', 'Database', 'Machine Learning', 'Artificial Intelligence', 'Virtual Reality', 'Mobile Dev', 'Other'],
@@ -69,6 +70,131 @@ router.post('/quiz/q6', (req, res) => {
     })
 })
 
+//STUDENTS PAGE
+//get student info
+router.get('/student/info', (req, res) => {
+    const p =  "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
 
+    db.query(p, [], (err, data) => {
+        let params = {
+            'studentId':req.body.studentId,   //once connected use this version
+            'algType':'s2s'
+        }
+        if (err) return res.status(500).send(err);
+        params["projData"] = data;
+
+        const s = "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+
+        db.query(s, [], (err, data) => {
+            if (err) return res.status(500).send(err);
+            //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+            params['skillData'] = data
+            const stringifieidData = JSON.stringify(params)
+            const options = {
+                pythonPath: '../Database/.venv/Scripts/python.exe',
+                pythonOptions: ['-u'],
+                scriptPath: '../Database/',
+            };
+
+            const pyShell = new PythonShell('sortAlg.py', options);
+            pyShell.send(stringifieidData);
+            // Handle received data from the Python script
+            pyShell.on('message', (message) => {
+                let resultData = JSON.parse(message);
+
+                let match = resultData['matches'];
+                const profileQuery = `SELECT 
+                                    combined.studentId,
+                                    combined.UTDProjects,
+                                    combined.CSProjects,
+                                    details.languages,
+                                    details.skills,
+                                    details.name,
+                                    details.bio,
+                                    details.prefGroupSize
+                                FROM (
+                                    SELECT 
+                                        s.studentId, 
+                                        GROUP_CONCAT('"',
+                                            CASE 
+                                                WHEN p.projType = 'UTDProject' THEN p.title 
+                                                ELSE NULL 
+                                            END 
+                                            ORDER BY s.projRank SEPARATOR '",') AS UTDProjects,
+                                        GROUP_CONCAT('"',
+                                            CASE 
+                                                WHEN p.projType = 'CSProject' THEN p.title 
+                                                ELSE NULL 
+                                            END 
+                                            ORDER BY s.projRank SEPARATOR '",') AS CSProjects
+                                    FROM 
+                                        projectPreference AS s 
+                                    JOIN 
+                                        project AS p ON p.projectNum = s.projectNum 
+                                    GROUP BY 
+                                        s.studentId
+                                ) AS combined
+                                JOIN (
+                                    SELECT
+                                        s.studentId, 
+                                        GROUP_CONCAT(DISTINCT CONCAT('"', l.languages, '"')) AS languages,  
+                                        GROUP_CONCAT(DISTINCT CONCAT('"', sk.skill, '"')) AS skills,
+                                        CONCAT(u.firstName, ' ', u.lastName) AS name,
+                                        s.bio,
+                                        s.prefGroupSize
+                                    FROM 
+                                        student s
+                                    JOIN 
+                                        languages l ON s.studentId = l.studentId
+                                    JOIN 
+                                        skills sk ON s.studentId = sk.studentId
+                                    JOIN 
+                                        user u ON s.studentId = u.userId
+                                    GROUP BY 
+                                        s.studentId
+                                ) AS details ON combined.studentId = details.studentId
+                                WHERE
+                                    combined.studentId IN ?;`
+                db.query(profileQuery, [[match]], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                    let studentData = data;
+                    let studentIndex = 0;
+                    let orderedList = [];
+                    match.forEach(studentId => {
+                        // Filter the data based on the current studentId
+                        let searchResultsProfile = studentData.filter(entry => entry.studentId === studentId);
+
+                        if (searchResultsProfile.length > 0) {
+                            let temp = {
+                                name: searchResultsProfile[0]['name'],
+                                id: searchResultsProfile[0]['studentId'],
+                                index:studentIndex,
+                                bio: searchResultsProfile[0]['bio'],
+                                groupSizePreference: searchResultsProfile[0]['prefGroupSize'],
+                                skills: searchResultsProfile[0]['skills'].replace(/"/g, '').split(','),
+                                codingLanguages: searchResultsProfile[0]['languages'].replace(/"/g, '').split(','),
+                                preferences: [searchResultsProfile[0]['UTDProjects'].replace(/"/g, '').split(','),searchResultsProfile[0]['CSProjects'].replace(/"/g, '').split(',')]
+                            }
+
+                            studentIndex = studentIndex +1;
+
+                            // Add the filtered results to the query object
+                            orderedList.push(temp);
+                        }
+                    });
+
+                    return res.status(200).json(orderedList)
+                });
+            });
+
+            // Handle errors
+            pyShell.on('error', (error) => {
+                return res.status(500).send(error);
+            });
+
+        });
+
+    });
+})
 
 export default router;

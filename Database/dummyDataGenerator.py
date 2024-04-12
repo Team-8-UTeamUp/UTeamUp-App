@@ -42,11 +42,8 @@ def languageList(userId):
                  ]
     numLangs = random.randint(0, len(languages))
 
-    level = ["beg", "int", "adv"]
-
     randLang = random.sample(languages, numLangs)
-    randLevel = [random.choice(level) for l in range(numLangs)]
-    randLangDict = [{"studentId": userId, "languages": randLang[i], "expLevel": randLevel[i]} for i in range(numLangs)]
+    randLangDict = [{"studentId": userId, "languages": randLang[i]} for i in range(numLangs)]
 
     return randLangDict
 
@@ -144,9 +141,9 @@ if __name__ == "__main__":
 
     mydb.commit()
 
-    sql = "INSERT into languages(studentId, languages, expLevel) values(%s, %s, %s)"
+    sql = "INSERT into languages(studentId, languages) values(%s, %s)"
     for lang in languages:
-        val = (lang['studentId'], lang['languages'], lang['expLevel'])
+        val = (lang['studentId'], lang['languages'])
         mycursor.execute(sql, val)
     mydb.commit()
 

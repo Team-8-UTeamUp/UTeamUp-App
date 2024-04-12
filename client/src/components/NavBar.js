@@ -11,24 +11,32 @@ function NavBar() {
             Link: "/"
         },
         1: {
+            Name: "Profile",
+            Link: "/profile"
+        },
+        2: {
             Name: "Invitations",
             Link: "/invitations"
         },
-        2: {
+        3: {
             Name: "Requests",
             Link: "/requests"
         },
-        3: {
+        4: {
             Name: "Quiz",
             Link: "/quiz"
         },
-        4: {
+        5: {
             Name: "Admin",
             Link: "/admin"
         },
-        5: {
+        6: {
             Name: "FAQ",
             Link: "/faq"
+        },
+        7: {
+            Name: "Login",
+            Link: "/login"
         }
     }
 
