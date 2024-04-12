@@ -73,9 +73,13 @@ router.post('/quiz/q6', (req, res) => {
 //STUDENTS PAGE
 //get student info
 router.get('/student/info', (req, res) => {
-    const q = "select studentId, firstName, lastName, bio, prefGroupSize from student, user where userId=studentId and studentId in (select studentId from individualStudents);"
-    
-    db.query(q, [], (err, data) => {
+    const p =  "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
+
+    db.query(p, [], (err, data) => {
+        let params = {
+            'studentId':req.body.studentId,   //once connected use this version
+            'algType':'s2s'
+        }
         if (err) return res.status(500).send(err);
         params["projData"] = data;
 
@@ -99,7 +103,88 @@ router.get('/student/info', (req, res) => {
                 let resultData = JSON.parse(message);
 
                 let match = resultData['matches'];
-                return res.status(200).json(match)
+                const profileQuery = `SELECT 
+                                    combined.studentId,
+                                    combined.UTDProjects,
+                                    combined.CSProjects,
+                                    details.languages,
+                                    details.skills,
+                                    details.name,
+                                    details.bio,
+                                    details.prefGroupSize
+                                FROM (
+                                    SELECT 
+                                        s.studentId, 
+                                        GROUP_CONCAT('"',
+                                            CASE 
+                                                WHEN p.projType = 'UTDProject' THEN p.title 
+                                                ELSE NULL 
+                                            END 
+                                            ORDER BY s.projRank SEPARATOR '",') AS UTDProjects,
+                                        GROUP_CONCAT('"',
+                                            CASE 
+                                                WHEN p.projType = 'CSProject' THEN p.title 
+                                                ELSE NULL 
+                                            END 
+                                            ORDER BY s.projRank SEPARATOR '",') AS CSProjects
+                                    FROM 
+                                        projectPreference AS s 
+                                    JOIN 
+                                        project AS p ON p.projectNum = s.projectNum 
+                                    GROUP BY 
+                                        s.studentId
+                                ) AS combined
+                                JOIN (
+                                    SELECT
+                                        s.studentId, 
+                                        GROUP_CONCAT(DISTINCT CONCAT('"', l.languages, '"')) AS languages,  
+                                        GROUP_CONCAT(DISTINCT CONCAT('"', sk.skill, '"')) AS skills,
+                                        CONCAT(u.firstName, ' ', u.lastName) AS name,
+                                        s.bio,
+                                        s.prefGroupSize
+                                    FROM 
+                                        student s
+                                    JOIN 
+                                        languages l ON s.studentId = l.studentId
+                                    JOIN 
+                                        skills sk ON s.studentId = sk.studentId
+                                    JOIN 
+                                        user u ON s.studentId = u.userId
+                                    GROUP BY 
+                                        s.studentId
+                                ) AS details ON combined.studentId = details.studentId
+                                WHERE
+                                    combined.studentId IN ?;`
+                db.query(profileQuery, [[match]], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                    let studentData = data;
+                    let studentIndex = 0;
+                    let orderedList = [];
+                    match.forEach(studentId => {
+                        // Filter the data based on the current studentId
+                        let searchResultsProfile = studentData.filter(entry => entry.studentId === studentId);
+
+                        if (searchResultsProfile.length > 0) {
+                            let temp = {
+                                name: searchResultsProfile[0]['name'],
+                                id: searchResultsProfile[0]['studentId'],
+                                index:studentIndex,
+                                bio: searchResultsProfile[0]['bio'],
+                                groupSizePreference: searchResultsProfile[0]['prefGroupSize'],
+                                skills: searchResultsProfile[0]['skills'].replace(/"/g, '').split(','),
+                                codingLanguages: searchResultsProfile[0]['languages'].replace(/"/g, '').split(','),
+                                preferences: [searchResultsProfile[0]['UTDProjects'].replace(/"/g, '').split(','),searchResultsProfile[0]['CSProjects'].replace(/"/g, '').split(',')]
+                            }
+
+                            studentIndex = studentIndex +1;
+
+                            // Add the filtered results to the query object
+                            orderedList.push(temp);
+                        }
+                    });
+
+                    return res.status(200).json(orderedList)
+                });
             });
 
             // Handle errors
@@ -109,20 +194,6 @@ router.get('/student/info', (req, res) => {
 
         });
 
-    });
-})
-
-//Faculty Page
-//get group info
-
-router.get('/admin/group_info', (req, res) => {
-    const q = "SELECT g.groupId, g.groupName as groupName, group_concat( firstName , lastName ) as members, count(*) as totalMembers, f.groupCompleted as groupStatus FROM groupinfo as g, formedgroups as f where f.groupId=g.groupId group by g.groupId;"
-    //add white space in the group_concat in between the names
-    // gets group id, name, members (firstName,lastName), # of members, groupStatus, and formedgroup?
-    db.query(q, [], (err, data) => {
-        if (err) return res.status(500).send(err);
-        
-        return res.status(200).json(data);
     });
 })
 
