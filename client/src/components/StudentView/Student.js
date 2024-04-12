@@ -5,7 +5,6 @@ import Student_Enlarge from './Student_Enlarge';
 function Student({button1, button2, Profiles}) {
     const [expanded, setExpanded] = useState(null);
 
-    console.log(Profiles)
     // in-depth look at profile 
     const expandedProfiles = Profiles.map(student => (
         //name, skillset, languages, preferences, groupSz, bio

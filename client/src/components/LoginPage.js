@@ -22,7 +22,6 @@ function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(inputs)
         try {
             await axios.post("http://localhost:8800/api/login", inputs);
             navigate("/admin");

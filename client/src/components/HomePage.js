@@ -26,16 +26,43 @@ function Home_Page () {
   }, []);
 
   if (isLoading) {
-    return <div className="App">Loading...</div>;
+    return <Home_Page_Render isLoading={true}/>;
   }
 
   return (
-    <Home_Page_Render StudentProfiles={StudentProfiles}/>
+    <Home_Page_Render StudentProfiles={StudentProfiles} isLoading={false}/>
   )
 }
 
 
-function Home_Page_Render({StudentProfiles}) {
+function Home_Page_Render({StudentProfiles, isLoading}) {
+  if (isLoading) {
+    return (
+      <>
+  <div class="row">
+      <div class="column left">
+        <NavBar/>
+      </div>
+      <div class="column right">
+          <h2>Home</h2>
+          <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
+              <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Profiles</button>
+              <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")}>Group Profiles</button>
+          </div>
+      </div>
+  </div>
+  
+  <div className="screen">
+    <FilterBar/>
+    <h2>Loading...</h2>
+  </div>
+  
+  
+</>
+    )
+  }
+
+
   const TeamUpButton = <button class="teamupbutton" style={{backgroundColor: "#FC8E28"}}>Team Up</button>
   const StudentView = <Student button1={TeamUpButton} Profiles={StudentProfiles}/>;
   const GroupView = <Group button1={TeamUpButton} Profiles={GroupProfiles}/>;
@@ -81,7 +108,6 @@ function Home_Page_Render({StudentProfiles}) {
       setCurrentView(StudentView); // Set the current view to student 
     }
   }, []); // Empty dependency array ensures this effect runs only once
-
 
     return (
     <>
