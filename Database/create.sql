@@ -1,6 +1,6 @@
-create database if not exists `uteamup` default character set utf8 collate utf8_general_ci;
+create database if not exists `testuteamup` default character set utf8 collate utf8_general_ci;
 
-use uteamup;
+use testuteamup;
 
 
 
@@ -68,10 +68,8 @@ foreign key(studentId) references `user`(`userId`)
 ON DELETE CASCADE
 ON UPDATE CASCADE
 );
-# add leader constraing to group
-Alter table formedgroups add CONSTRAINT `GLFK`
-	foreign key(groupLeader) references `student`(`studentId`);
-    
+
+
 
 	
 
