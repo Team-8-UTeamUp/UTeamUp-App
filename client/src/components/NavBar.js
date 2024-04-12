@@ -27,15 +27,11 @@ function NavBar() {
             Link: "/quiz"
         },
         5: {
-            Name: "Admin",
-            Link: "/admin"
-        },
-        6: {
             Name: "FAQ",
             Link: "/faq"
         },
-        7: {
-            Name: "Login",
+        6: {
+            Name: "Admin",
             Link: "/login"
         }
     }

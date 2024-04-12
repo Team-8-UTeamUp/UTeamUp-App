@@ -88,7 +88,6 @@ function Quiz_Handler() {
 }
 
 function Question1({studentId}) { // Skills/Interests
-
     const [active, setActive] = useState([])
     const options = ["Database", "AI", "Machine Learning", "Front-End", "Back-End", "Virtual Reality", "Mobile Development", "UI/UX"]
 

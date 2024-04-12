@@ -1,7 +1,37 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useContext } from "react";
+import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios"
 
 function LoginPage() {
+    const [inputs, setInputs] = useState({
+        username: "",
+        password: "pass",
+    });
+
+    const [err, setError] = useState(null);
+
+    const navigate = useNavigate();
+
+    const onChange = (e) => {
+        setInputs((previous) => ({ 
+            ...previous, 
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(inputs)
+        try {
+            await axios.post("http://localhost:8800/api/login", inputs);
+            navigate("/admin");
+        } catch (err) {
+            console.log(err)
+            setError(err.response.data);
+        }
+    }
+
     return (
     <>
     <header class="header">
@@ -36,6 +66,7 @@ function LoginPage() {
                     Submit
                 </button>
             </div>
+            {err && <p>{err}</p>}
         </form>
     </div>
     </>
