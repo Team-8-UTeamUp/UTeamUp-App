@@ -270,7 +270,6 @@ def Convert(list):
     h = {k:v for k,v in list}
     return h
 
-
 if __name__ == "__main__":
     # run with node.js
     inputs = input()

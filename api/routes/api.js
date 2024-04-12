@@ -77,7 +77,7 @@ router.get('/student/info', (req, res) => {
 
     db.query(p, [], (err, data) => {
         let params = {
-            'studentId':req.body.studentId,   //once connected use this version
+            'studentId':"AAS286443",   //once connected use this version
             'algType':'s2s'
         }
         if (err) return res.status(500).send(err);
@@ -91,7 +91,7 @@ router.get('/student/info', (req, res) => {
             params['skillData'] = data
             const stringifieidData = JSON.stringify(params)
             const options = {
-                pythonPath: '../Database/.venv/Scripts/python.exe',
+                pythonPath: '../Database/.venv/bin/python',
                 pythonOptions: ['-u'],
                 scriptPath: '../Database/',
             };
@@ -168,6 +168,7 @@ router.get('/student/info', (req, res) => {
                             let temp = {
                                 name: searchResultsProfile[0]['name'],
                                 id: searchResultsProfile[0]['studentId'],
+                                photo: '../assets/profilePhoto.png',
                                 index:studentIndex,
                                 bio: searchResultsProfile[0]['bio'],
                                 groupSizePreference: searchResultsProfile[0]['prefGroupSize'],
@@ -199,8 +200,6 @@ router.get('/student/info', (req, res) => {
 
 
 router.post('/login', (req, res) => {
-    console.log("HELLO")
-    console.log(req.body.username)
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {

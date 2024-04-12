@@ -4,44 +4,69 @@ import Student from './StudentView/Student';
 import NavBar from './NavBar';
 import FilterBar from './FilterBar';
 import Group from './GroupView/Group'
+import axios from "axios"
 
 
+function Home_Page () {
+  const [StudentProfiles, setStudents] = useState([])
+  const [isLoading, setLoading] = useState(true);
 
-function Home_Page() {
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/student/info/`);
+        setStudents(res.data);
+        setLoading(false)
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return <div className="App">Loading...</div>;
+  }
+
+  return (
+    <Home_Page_Render StudentProfiles={StudentProfiles}/>
+  )
+}
+
+
+function Home_Page_Render({StudentProfiles}) {
   const TeamUpButton = <button class="teamupbutton" style={{backgroundColor: "#FC8E28"}}>Team Up</button>
   const StudentView = <Student button1={TeamUpButton} Profiles={StudentProfiles}/>;
   const GroupView = <Group button1={TeamUpButton} Profiles={GroupProfiles}/>;
   const [CurrentView, setCurrentView] =  useState(null);
 
-  function showView(uid)
-  {
+  function showView(uid) {
 
      // Reset border color of all elements
-     const elements = document.querySelectorAll('.pageswitchbutton');
-     elements.forEach(element => {
-         element.classList.remove('pageswitchselect');
-     });
+    const elements = document.querySelectorAll('.pageswitchbutton');
+    elements.forEach(element => {
+        element.classList.remove('pageswitchselect');
+    });
 
-     var selected = document.getElementById(uid);
-     if (selected) {
+    var selected = document.getElementById(uid);
+    if (selected) {
       selected.classList.add('pageswitchselect');
-         
-       if(uid == "sprofbutton")
-         setCurrentView(StudentView);
-       else
+      if(uid == "sprofbutton")
+        setCurrentView(StudentView);
+      else
         setCurrentView(GroupView);
     }
 
   }
 
    // Set the inital green underline for student view button
-   React.useEffect(() => {
+  React.useEffect(() => {
     const initialView = document.getElementById('sprofbutton');
     if (initialView ) {
-        initialView.classList.add("pageswitchselect");
-        setCurrentView(StudentView); // Set the current view to student 
+      initialView.classList.add("pageswitchselect");
+      setCurrentView(StudentView); // Set the current view to student 
     }
-}, []); // Empty dependency array ensures this effect runs only once
+  }, []); // Empty dependency array ensures this effect runs only once
 
 
 
