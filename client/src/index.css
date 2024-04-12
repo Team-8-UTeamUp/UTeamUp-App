@@ -187,6 +187,8 @@ control{ /*doesnt work*/
   left: 0;
   overflow-x: hidden;
   padding-top: 20px;
+  padding-right: 5px;
+  border-right: 1px solid black;
 }
 
 .logo{
@@ -225,6 +227,8 @@ control{ /*doesnt work*/
 .right {
   width: 85%;
   text-align: center;
+  padding-left: 5px;
+  border-left: 1px solid black;
 }
 
 .filerbar
@@ -424,7 +428,7 @@ control{ /*doesnt work*/
 
 .tile:hover
 {
-  border: 1.5px solid rgb(243, 208, 142);
+  border: 1.5px solid lightgray;
 }
 
 .selected
@@ -610,15 +614,17 @@ control{ /*doesnt work*/
 
 .screen
 {
+  box-sizing: border-box;
   position: relative;
   display:flex;
   flex-direction:column;
-  left: 0%;
-  top: 0%;
+  left: 0;
+  top: 0;
   background-color: white;
-  width: var(--parentWidth) ; 
-  height: var(--parentHeight);
-  border: 1px solid gray;
+  width:85%; 
+  height: calc(100vh - 20px);
+  border: 0px solid blue;
+  overflow:auto;
 }
 
 .screen2
@@ -710,3 +716,10 @@ control{ /*doesnt work*/
   color:#157636;
   border-bottom: 1px solid green;
 }
+
+.pageswitchselect
+{
+  color:#157636;
+  border-bottom: 1px solid green;
+}
+
