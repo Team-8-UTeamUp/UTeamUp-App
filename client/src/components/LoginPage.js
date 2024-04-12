@@ -47,8 +47,9 @@ function LoginPage() {
               </label>
             <input type="text"
                    id="first"
-                   name="first"
+                   name="username"
                    class="logininput"
+                   onChange={onChange}
                    placeholder="Enter your Username" required>
             </input>
             <label for="password" class="loginlabel">
@@ -58,11 +59,12 @@ function LoginPage() {
                    id="password"
                    name="password"
                    class="logininput"
+                   onChange={onChange}
                    placeholder="Enter your Password" required>
             </input>
             <div class="wrap">
                 <button type="submit" class="loginbutton"
-                        onclick="solve()">
+                        onClick={handleSubmit}>
                     Submit
                 </button>
             </div>
