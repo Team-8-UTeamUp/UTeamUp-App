@@ -72,8 +72,8 @@ def studentToStudentsMatches(studentId, projectData, skillData):
     projMatches = ProjMatch(indvStudentDF, allStudentDF)
 
     # use only top 20 % of matches if there are more than 100 matches
-    if len(projMatches) > 100:
-        indexes = round(len(projMatches) * .2)
+    if len(projMatches) > 50:
+        indexes = round(len(projMatches) * .1)
         projMatches = Convert(list(projMatches.items())[:indexes])
 
     # using sublist from above, sort based on # of different skills
