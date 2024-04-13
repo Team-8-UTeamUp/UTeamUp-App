@@ -193,7 +193,7 @@ CONSTRAINT GRSRIDFK
 
 
 create view groupInfo AS
-select groupName, formedgroups.groupId, user.firstName, user.lastName, student.studentid
+select groupName, formedgroups.groupId, user.firstName, user.lastName, student.studentid,student.bio
 from student, formedgroups, user
 where student.groupId=formedgroups.groupId and student.studentId=user.userId;
 
@@ -212,3 +212,92 @@ create view CSProjects as
 select projectNum, title
 from project
 where projType = 'CSProject';
+
+create view groupProfile as
+SELECT gi.groupId,
+       gi.members,
+       gi.bios,
+       gi.totalMembers,
+       pp.UTDProjects,
+       pp.CSProjects,
+       t.languages,
+       t.skills,
+       t.groupName,
+       t.groupSizePref
+FROM (
+         SELECT groupId,
+                GROUP_CONCAT('"',firstName, ' ', lastName,'"') AS members,
+                GROUP_CONCAT('["', bio, '"]') AS bios,
+                COUNT(firstName) AS totalMembers
+         FROM groupinfo 
+         GROUP BY groupId
+     ) AS gi
+JOIN (
+         SELECT gp.groupId,
+                GROUP_CONCAT('"',
+                             CASE
+                                 WHEN p.projType = 'UTDProject' THEN p.title
+                                 ELSE NULL
+                                 END ORDER BY gp.projRank SEPARATOR '",') AS UTDProjects,
+                GROUP_CONCAT('"',
+                             CASE
+                                 WHEN p.projType = 'CSProject' THEN p.title
+                                 ELSE NULL
+                                 END ORDER BY gp.projRank SEPARATOR '",') AS CSProjects
+         FROM grouppreference AS gp
+                  JOIN project AS p ON p.projectNum = gp.projectNum
+         GROUP BY gp.groupId
+     ) AS pp ON gi.groupId = pp.groupId
+JOIN (
+         SELECT g.groupId,
+                g.groupName,
+                g.groupSizePref,
+                GROUP_CONCAT(DISTINCT CONCAT('"', l.languages, '"')) AS languages,
+                GROUP_CONCAT(DISTINCT CONCAT('"', sk.skill, '"')) AS skills
+         FROM formedGroups g
+                  JOIN grouplang l ON g.groupId = l.groupId
+                  JOIN groupskills sk ON g.groupId = sk.groupId
+         GROUP BY g.groupId
+     ) AS t ON gi.groupId = t.groupId;
+     
+     
+     
+create view studentProfile as 
+SELECT combined.studentId,
+	 combined.UTDProjects,
+	 combined.CSProjects,
+	 details.languages,
+	 details.skills,
+	 details.name,
+	 details.bio,
+	 details.prefGroupSize
+FROM (SELECT s.studentId,
+		   GROUP_CONCAT('"',
+						CASE
+							WHEN p.projType = 'UTDProject' THEN p.title
+							ELSE NULL
+							END ORDER BY s.projRank SEPARATOR '",') AS UTDProjects,
+		   GROUP_CONCAT('"',
+						CASE
+							WHEN p.projType = 'CSProject' THEN p.title
+							ELSE NULL
+							END ORDER BY s.projRank SEPARATOR '",') AS CSProjects
+	FROM projectPreference AS s
+			 JOIN
+		 project AS p ON p.projectNum = s.projectNum
+	GROUP BY s.studentId) AS combined
+	   JOIN (SELECT s.studentId,
+					GROUP_CONCAT(DISTINCT CONCAT('"', l.languages, '"')) AS languages,
+					GROUP_CONCAT(DISTINCT CONCAT('"', sk.skill, '"'))    AS skills,
+					CONCAT(u.firstName, ' ', u.lastName)                 AS name,
+					s.bio,
+					s.prefGroupSize
+			 FROM student s
+					  JOIN
+				  languages l ON s.studentId = l.studentId
+					  JOIN
+				  skills sk ON s.studentId = sk.studentId
+					  JOIN
+				  user u ON s.studentId = u.userId
+			 GROUP BY s.studentId) AS details
+			ON combined.studentId = details.studentId;
