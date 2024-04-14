@@ -5,7 +5,7 @@ import NavBar from './NavBar';
 import FilterBar from './FilterBar';
 import Group from './GroupView/Group'
 import axios from "axios"
-import MyGroup from './GroupView/MyGroup'
+
 
 
 function Home_Page () {
