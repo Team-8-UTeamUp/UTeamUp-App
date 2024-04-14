@@ -269,5 +269,113 @@ router.get('/group_info', (req, res) => {
 })
 
 
+router.get('/requests/student_info', (req, res) => {
+    let studentId = 'AAE297154'
+    const requests = `select * from studentProfile where studentId in (select receiverId from studentrequeststudent where senderId =?);`
+    db.query(requests, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        let studentIndex = 0
+        data.forEach(item => {
+            formattedData.push({
+                name: item.name,
+                id: item.studentId,
+                photo: '../assets/profilePhoto.png',
+                index: studentIndex,
+                bio: item.bio,
+                groupSizePreference: item.prefGroupSize,
+                skills: item.skills.replace(/"/g, '').split(','),
+                codingLanguages: item.languages.replace(/"/g, '').split(','),
+                preferences: [item.UTDProjects.replace(/"/g, '').split(','), item.CSProjects.replace(/"/g, '').split(',')]
+            });
+            studentIndex = studentIndex + 1
+        });
 
+        // Send the formatted data as response
+        res.status(200).json(formattedData);
+    });
+})
+
+router.get('/requests/group_info', (req, res) => {
+    let studentId = 'AAE297154'
+    const requests = `select * from groupProfile where groupId in (select receiverId from studentrequestgroup where senderId = ?);`
+    db.query(requests, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        let groupIndex = 0
+        data.forEach(item => {
+            formattedData.push({
+                groupName: item.groupName,
+                studentNames:item.members.replace(/"/g, '').split(','),
+                id: item.groupId,
+                index: groupIndex,
+                skills: item.skills.replace(/"/g, '').split(','),
+                codingLanguages: item.languages.replace(/"/g, '').split(','),
+                preferences: [item.UTDProjects.replace(/"/g, '').split(','), item.CSProjects.replace(/"/g, '').split(',')],
+                currentGroupSize: item.totalMembers,
+                preferedGroupSize: item.groupSizePref,
+                bio: JSON.parse(`[${item.bios.replace(/\s+/g, '')}]`)
+            });
+            groupIndex = groupIndex + 1
+        });
+
+        // Send the formatted data as response
+        res.status(200).json(formattedData);
+    });
+})
+
+router.get('/invites/student_info', (req, res) => {
+    let studentId = 'AAE297154'
+    const invites =`select * from studentProfile where studentId in (select senderId from studentrequeststudent where receiverId =?);`
+    db.query(invites, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        let studentIndex = 0
+        data.forEach(item => {
+            formattedData.push({
+                name: item.name,
+                id: item.studentId,
+                photo: '../assets/profilePhoto.png',
+                index: studentIndex,
+                bio: item.bio,
+                groupSizePreference: item.prefGroupSize,
+                skills: item.skills.replace(/"/g, '').split(','),
+                codingLanguages: item.languages.replace(/"/g, '').split(','),
+                preferences: [item.UTDProjects.replace(/"/g, '').split(','), item.CSProjects.replace(/"/g, '').split(',')]
+            });
+            studentIndex = studentIndex + 1
+        });
+
+        // Send the formatted data as response
+        res.status(200).json(formattedData);
+    });
+})
+
+router.get('/invites/group_info', (req, res) => {
+    let studentId = 'AAE297154'
+    const invites = `select * from groupProfile where groupId in (select senderId from grouprequeststudent where receiverid = ?);`
+    db.query(invites, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        let groupIndex = 0
+        data.forEach(item => {
+            formattedData.push({
+                groupName: item.groupName,
+                studentNames:item.members.replace(/"/g, '').split(','),
+                id: item.groupId,
+                index: groupIndex,
+                skills: item.skills.replace(/"/g, '').split(','),
+                codingLanguages: item.languages.replace(/"/g, '').split(','),
+                preferences: [item.UTDProjects.replace(/"/g, '').split(','), item.CSProjects.replace(/"/g, '').split(',')],
+                currentGroupSize: item.totalMembers,
+                preferedGroupSize: item.groupSizePref,
+                bio: JSON.parse(`[${item.bios.replace(/\s+/g, '')}]`)
+            });
+            groupIndex = groupIndex + 1
+        });
+
+        // Send the formatted data as response
+        res.status(200).json(formattedData);
+    });
+})
 export default router;
