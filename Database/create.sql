@@ -33,28 +33,7 @@ groupSizePref int not null,
 groupLeader varchar(9) not null
 );
 
-create table groupSkills(
-groupID int not null,
-skill varchar(30) not null,
-CONSTRAINT groupSkillPK
-	PRIMARY KEY (`groupID`, `skill`),
-constraint groupSkillFK
-foreign key (groupID) references `formedGroups`(`groupId`)
-ON DELETE CASCADE
-ON UPDATE CASCADE
-);
 
-create table groupLang(
-groupID int not null,
-languages varchar(15) not null,
-
-CONSTRAINT groupLangPK
-	PRIMARY KEY (`groupID`, `languages`),
-constraint groupLangFK
-foreign key (groupID) references `formedGroups`(`groupId`)
-ON DELETE CASCADE
-ON UPDATE CASCADE
-);
 
 create table student(
 studentId varchar(9) primary key not null,
@@ -197,6 +176,19 @@ select groupName, formedgroups.groupId, user.firstName, user.lastName, student.s
 from student, formedgroups, user
 where student.groupId=formedgroups.groupId and student.studentId=user.userId;
 
+create view grouplang as 
+SELECT DISTINCT g.groupId, sg.languages
+FROM student s
+JOIN languages sg ON s.studentId = sg.studentId
+JOIN formedGroups g ON s.groupId = g.groupId
+order by g.groupId asc;
+
+create view groupskills as 
+SELECT DISTINCT g.groupId, sg.skill
+FROM student s
+JOIN skills sg ON s.studentId = sg.studentId
+JOIN formedGroups g ON s.groupId = g.groupId
+order by g.groupId asc;
 
 create view individualStudents AS
 select studentId, firstName, lastName

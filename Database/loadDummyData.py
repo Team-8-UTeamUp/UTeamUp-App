@@ -21,8 +21,6 @@ if __name__ == "__main__":
     csvToSql('projectPreferences.csv', 'projectpreference',db)
     csvToSql('formedGroups.csv', 'formedgroups', db)
     csvToSql('grouppreference.csv','grouppreference',db)
-    csvToSql('grouplang.csv','grouplang',db)
-    csvToSql('groupskills.csv','groupskills',db)
     csvToSql('GroupRequestStudent.csv','grouprequeststudent',db)
     csvToSql('StudentRequestGroup.csv','studentrequestgroup',db)
     csvToSql('StudentRequestStudent.csv','studentrequeststudent',db)
