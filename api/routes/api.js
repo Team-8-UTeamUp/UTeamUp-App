@@ -40,9 +40,44 @@ router.post('/quiz/q2', (req, res) => {
     })
 })
 
-// TODO: Quesiton 3 - Top 5 CS Projects
-// TODO: Quesiton 4 - Top 5 UTDesign Projects
-// TODO: Quesiton 5 - Prefered Team Size
+// Question 3 - Top 5 CS Projects
+router.post('/quiz/q3', (req, res) => {
+    if(req.body.csProjects.length !== 5) {
+        return res.status(400).json("Please provide exactly 5 CS Projects");
+    }
+    const q = "INSERT INTO PROJECTPREFERENCE(`studentId`, `projectNum`, `projRank`) VALUES ?";
+    const values = req.body.csProjects.map((project, index) => [req.body.studentId, project, index + 1]);
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 3 updated for " + req.body.studentId);
+    });
+});
+
+// Question 4 - Top 5 UTDesign Projects
+router.post('/quiz/q4', (req, res) => {
+    if(req.body.utdProjects.length !== 5) {
+        return res.status(400).json("Please provide exactly 5 UTDesign Projects");
+    }
+    const q = "INSERT INTO PROJECTPREFERENCE(`studentId`, `projectNum`, `projRank`) VALUES ?";
+    const values = req.body.utdProjects.map((project, index) => [req.body.studentId, project, index + 1]);
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 4 updated for " + req.body.studentId);
+    });
+});
+
+// Question 5 - Preferred Team Size
+router.post('/quiz/q5', (req, res) => {
+    if(req.body.teamSize < 3 || req.body.teamSize > 6) {
+        return res.status(400).json("Please provide a team size between 3 and 6");
+    }
+    const q = "UPDATE STUDENT SET `prefGroupSize` = ? WHERE `studentId` = ?";
+    const values = [req.body.teamSize, req.body.studentId];
+    db.query(q, values, (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 5 updated for " + req.body.studentId);
+    });
+});
 
 // Quesiton 6 - Bio
 router.post('/quiz/q6', (req, res) => {
@@ -369,4 +404,36 @@ router.get('/invites/group_info', (req, res) => {
         res.status(200).json(formattedData);
     });
 })
+
+//sending invitations
+router.post('/teamUp', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
+    const values = [senderId, receiverId];
+    db.query(q, [values], (err, data) => {
+        if (err) return res.status(500).send(err);
+        return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+    });
+});
+
+//rejecting invitations
+router.post('/denyInvite', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+    const values = [senderId, receiverId];
+    db.query(q, values, (err, data) => {
+        if (err) return res.status(500).send(err);
+        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
+    });
+});
+
+/*{
+    "senderId": "senderIdValue",
+    "receiverId": "receiverIdValue",
+    "receiverType": "student"
+}
+*/
+
 export default router;
