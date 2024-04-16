@@ -15,7 +15,7 @@ function Home_Page () {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/student/info/`);
+        const res = await axios.get(`http://localhost:8800/api/student_info/`);
         setStudents(res.data);
         setLoading(false)
       } catch (err) {
