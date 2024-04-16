@@ -4,7 +4,9 @@ import {db} from "../db.js"
 const router = express.Router()
 import {PythonShell} from "python-shell";
 
-const studentId = "AAT229473"
+//const studentId = "AAT229473"
+const studentId = 'ABG222946'
+//const studentId = "AAE297154"
 const pyPath = "../Database/.venv/bin/python" //'../Database/.venv/Scripts/python.exe'
 
 router.get("/", (req, res) => {
@@ -93,11 +95,48 @@ router.post('/quiz/q6', (req, res) => {
     })
 })
 
+// Profile page
+router.get('/student_profile', (req, res) => {
+    const q = `select * from studentProfile where studentId =?;`
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let temp = {
+            name: data[0]['name'],
+            id: data[0]['studentId'],
+            bio: data[0]['bio'],
+            groupSizePreference: data[0]['prefGroupSize'],
+            skills: data[0]['skills'].replace(/"/g, '').split(','),
+            codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')]
+        }
+        return res.status(200).json(temp)
+    });
+})
+
+// My Group profile
+router.get('/group_profile', (req, res) => {
+    const q =`select * from groupProfile where groupId in (select groupId from student where studentId= ?)`
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let temp = {
+            groupName: data[0]['groupName'],
+            studentNames:data[0]['members'].replace(/"/g, '').split(','),
+            id: data[0]['groupId'],
+            emails:data[0]['emails'].replace(/"/g, '').split(','),
+            skills: data[0]['skills'].replace(/"/g, '').split(','),
+            codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')],
+            currentGroupSize: data[0]['totalMembers'],
+            preferedGroupSize: data[0]['groupSizePref'],
+            bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
+
+                                }
+        return res.status(200).json(temp)
+    });
+})
 //STUDENTS PAGE
 //get student info
 router.get('/student_info', (req, res) => {
-    // const studentId = 'ABG222946'
-    //const studentId = "AAE297154"
     const groupCheck = `SELECT groupId from student where studentId =?`
     db.query(groupCheck, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -213,7 +252,6 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/group_info', (req, res) => {
-    // let studentId = 'AAE297154'
     console.log(studentId)
     const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId=?;"
     db.query(p, [studentId], (err, data) => {
