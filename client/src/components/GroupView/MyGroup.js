@@ -111,19 +111,9 @@ const MyGroup= ({groupName, studentNames, skillset, languages, preferences, curr
 
 return(
     
-    <div style={{display:"flex", flexDirection:"row"}}>
+    <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
         
-        <div class="expanded" style={{ margin: "0px 60px 0px 60px"}}>
-                {!isEditMode ? (
-                        <button onClick={toggleEditMode} id="editbutton">Edit Page</button>
-                    ) : (
-                        <div style={{display:"flex", flexDirection:"row"}}>
-                            <button onClick={saveEdits} id="savebutton">Save</button>
-                            <button onClick={cancelEdits} id="cancelbutton">Cancel</button>
-                        </div>
-                )}
-                    
-                
+        <div class="expanded" style={{ margin: "0px 60px 0px 60px"}}>   
                 {isEditMode ? (
                         <input
                             type="text"
@@ -229,11 +219,21 @@ return(
                             <div key={index} style={{marginBottom: "20px"}}>{bio}</div>
                         </div>
                     ))}
-                </div>   
+                </div> 
+
+                {!isEditMode ? (
+                        <button onClick={toggleEditMode} id="editbutton">Edit Profile</button>
+                    ) : (
+                        <div style={{display:"flex", flexDirection:"row", gap:"10px"}}>
+                            <button onClick={saveEdits} id="savebutton">Save</button>
+                            <button onClick={cancelEdits} id="cancelbutton">Cancel</button>
+                        </div>
+                )}  
+                
             </div>
 
-            <div class="emails" style={{marginTop:"50px", border:"1px solid gray", borderRadius:"10px", width:"400px", height:"fit-content", display:"flex", flexDirection:"column", alignItems:"center", backgroundColor:"white", gap:"10px"}}>
-            <div class="emailsHeadder" style={{backgroundColor:"lightgray", width:"400px", height:"fit-content", paddingTop:"10px", paddingBottom:"10px", color:"black", textAlign:"center", borderRadius:"10px 10px 0px 0px"}}>Contact Information</div>
+            <div class="emails" style={{marginTop:"30px", border:"1px solid gray", borderRadius:"10px", width:"300px", height:"fit-content", display:"flex", flexDirection:"column", alignItems:"center", backgroundColor:"white", gap:"10px"}}>
+            <div class="emailsHeadder" style={{backgroundColor:"lightgray", width:"inherit", height:"fit-content", paddingTop:"10px", paddingBottom:"10px", color:"black", textAlign:"center", borderRadius:"10px 10px 0px 0px"}}>Contact Information</div>
             {emails.map((email, index) => (
                         <button onClick={() => sendEmail(email)} class="email" style={{border:"1px solid gray",borderRadius:"10px", height:"fit-content", width:"fit-content", padding:"10px", color:"black", backgroundColor:"lightgray"}}> {email} </button>
             ))}
