@@ -4,6 +4,7 @@ import Student from './StudentView/Student';
 import NavBar from './NavBar';
 import FilterBar from './FilterBar';
 import Group from './GroupView/Group';
+import MyGroup from './GroupView/MyGroup'
 
 
 
@@ -12,7 +13,23 @@ function Invitations_Page() {
     const acceptButton = <button class="teamupbutton" style={{backgroundColor: "green"}}> Accept</button>
     const rejectButton= <button class="teamupbutton" style={{backgroundColor: "red"}}>Reject</button>
     const StudentView = <Student button1={acceptButton} button2={rejectButton} Profiles={StudentProfiles}/>;
-    const GroupView = <Group button1={acceptButton} button2={rejectButton} Profiles={GroupProfiles}/>;
+    const GroupView =
+    GroupProfiles.map(group=> (
+
+      <MyGroup
+        groupName={group.groupName}
+        studentNames={group.studentNames}
+        skillset={group.skills}
+        languages={group.codingLanguages}
+        preferences={group.preferences}
+        currGroupSz={group.currentGroupSize}
+        prefGroupSz={group.preferedGroupSize}
+        bios={group.bio}
+        emails={group.emails}
+      />
+    ))
+   
+    /*<Group button1={acceptButton} button2={rejectButton} Profiles={GroupProfiles}/>;*/
     const [CurrentView, setCurrentView] =  useState(null);
 
     function showView(uid)
@@ -197,7 +214,9 @@ const GroupProfiles=
     bio: [
       ["I'm a passionate developer with expertise in JavaScript, React, and Node.js. Excited to collaborate on interesting projects!"],
       [ "Experienced Python developer with a focus on web development using Django. Eager to contribute to innovative projects!"]
-    ]
+    ],
+    emails: 
+    ["ATM100298@utdallas.edu", "GHS200192@utdallas.edu"]
   }
  
 ]
