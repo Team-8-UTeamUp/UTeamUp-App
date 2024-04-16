@@ -6,7 +6,6 @@ import {PythonShell} from "python-shell";
 
 //const studentId = "AAT229473"
 const studentId = 'ABG222946'
-
 //const studentId = "AAE297154"
 const pyPath ='../Database/.venv/Scripts/python.exe'// "../Database/.venv/bin/python"
 
