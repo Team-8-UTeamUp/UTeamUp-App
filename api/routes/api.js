@@ -4,20 +4,11 @@ import {db} from "../db.js"
 const router = express.Router()
 import {PythonShell} from "python-shell";
 
-const quiz = {
-    studentId: '',
-    projectpreference: ['1','2','3'],
-    rank: ['1','2','3'],
-    groupsize: ['1', '2', '3', '4', '5', '6'],
-    skills: ['Front-End', 'Back-End', 'Full-Stack', 'Database', 'Machine Learning', 'Artificial Intelligence', 'Virtual Reality', 'Mobile Dev', 'Other'],
-    languages: ['Java', 'C++', 'Python', 'HTML', 'CSS', 'SQL', 'JavaScript', 'NodeJs', 'Other'],
-    exp: ['beg', 'int', 'adv'],
-    bio: '',
-};
+//const studentId = "AAT229473"
+const studentId = 'ABG222946'
 
-router.get('/quiz', (req, res) => {
-    res.send(quiz);
-});
+//const studentId = "AAE297154"
+const pyPath ='../Database/.venv/Scripts/python.exe'// "../Database/.venv/bin/python"
 
 router.get("/", (req, res) => {
     res.json("Testing");
@@ -52,9 +43,44 @@ router.post('/quiz/q2', (req, res) => {
     })
 })
 
-// TODO: Quesiton 3 - Top 5 CS Projects
-// TODO: Quesiton 4 - Top 5 UTDesign Projects
-// TODO: Quesiton 5 - Prefered Team Size
+// Question 3 - Top 5 CS Projects
+router.post('/quiz/q3', (req, res) => {
+    if(req.body.csProjects.length !== 5) {
+        return res.status(400).json("Please provide exactly 5 CS Projects");
+    }
+    const q = "INSERT INTO PROJECTPREFERENCE(`studentId`, `projectNum`, `projRank`) VALUES ?";
+    const values = req.body.csProjects.map((project, index) => [req.body.studentId, project, index + 1]);
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 3 updated for " + req.body.studentId);
+    });
+});
+
+// Question 4 - Top 5 UTDesign Projects
+router.post('/quiz/q4', (req, res) => {
+    if(req.body.utdProjects.length !== 5) {
+        return res.status(400).json("Please provide exactly 5 UTDesign Projects");
+    }
+    const q = "INSERT INTO PROJECTPREFERENCE(`studentId`, `projectNum`, `projRank`) VALUES ?";
+    const values = req.body.utdProjects.map((project, index) => [req.body.studentId, project, index + 1]);
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 4 updated for " + req.body.studentId);
+    });
+});
+
+// Question 5 - Preferred Team Size
+router.post('/quiz/q5', (req, res) => {
+    if(req.body.teamSize < 3 || req.body.teamSize > 6) {
+        return res.status(400).json("Please provide a team size between 3 and 6");
+    }
+    const q = "UPDATE STUDENT SET `prefGroupSize` = ? WHERE `studentId` = ?";
+    const values = [req.body.teamSize, req.body.studentId];
+    db.query(q, values, (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("Question 5 updated for " + req.body.studentId);
+    });
+});
 
 // Quesiton 6 - Bio
 router.post('/quiz/q6', (req, res) => {
@@ -70,11 +96,48 @@ router.post('/quiz/q6', (req, res) => {
     })
 })
 
+// Profile page
+router.get('/student_profile', (req, res) => {
+    const q = `select * from studentProfile where studentId =?;`
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let temp = {
+            name: data[0]['name'],
+            id: data[0]['studentId'],
+            bio: data[0]['bio'],
+            groupSizePreference: data[0]['prefGroupSize'],
+            skills: data[0]['skills'].replace(/"/g, '').split(','),
+            codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')]
+        }
+        return res.status(200).json(temp)
+    });
+})
+
+// My Group profile
+router.get('/group_profile', (req, res) => {
+    const q =`select * from groupProfile where groupId in (select groupId from student where studentId= ?)`
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let temp = {
+            groupName: data[0]['groupName'],
+            studentNames:data[0]['members'].replace(/"/g, '').split(','),
+            id: data[0]['groupId'],
+            emails:data[0]['emails'].replace(/"/g, '').split(','),
+            skills: data[0]['skills'].replace(/"/g, '').split(','),
+            codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')],
+            currentGroupSize: data[0]['totalMembers'],
+            preferedGroupSize: data[0]['groupSizePref'],
+            bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
+
+                                }
+        return res.status(200).json(temp)
+    });
+})
 //STUDENTS PAGE
 //get student info
-router.get('/student/info', (req, res) => {
-    const studentId = 'ABG222946'
-    //const studentId = "AAE297154"
+router.get('/student_info', (req, res) => {
     const groupCheck = `SELECT groupId from student where studentId =?`
     db.query(groupCheck, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -113,7 +176,7 @@ router.get('/student/info', (req, res) => {
                 //return res.status(200).json(params)
 
                 const options = {
-                    pythonPath: '../Database/.venv/Scripts/python.exe',
+                    pythonPath: pyPath,
                     pythonOptions: ['-u'],
                     scriptPath: '../Database/',
                 }
@@ -190,9 +253,10 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/group_info', (req, res) => {
-    let studentId = 'AAE297154'
+    console.log(studentId)
     const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId=?;"
     db.query(p, [studentId], (err, data) => {
+        console.log(data)
         let params = {
             //'studentId':req.body.studentId,   //once connected use this version
             'studentId': studentId,
@@ -204,12 +268,13 @@ router.get('/group_info', (req, res) => {
         const s = "SELECT p.groupId, projectNum, projRank FROM uteamup.grouppreference as p, formedgroups as f where f.groupId=p.groupId and groupCompleted=0;"
 
         db.query(s, [], (err, data) => {
+            console.log(data)
             if (err) return res.status(500).send(err);
             //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
             params['groupData'] = data
             const stringifieidData = JSON.stringify(params)
             const options = {
-                pythonPath: '../Database/.venv/Scripts/python.exe',
+                pythonPath: pyPath,
                 pythonOptions: ['-u'],
                 scriptPath: '../Database/',
             };
@@ -270,7 +335,7 @@ router.get('/group_info', (req, res) => {
 
 
 router.get('/requests/student_info', (req, res) => {
-    let studentId = 'AAE297154'
+    // let studentId = 'AAE297154'
     const requests = `select * from studentProfile where studentId in (select receiverId from studentrequeststudent where senderId =?);`
     db.query(requests, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -297,7 +362,7 @@ router.get('/requests/student_info', (req, res) => {
 })
 
 router.get('/requests/group_info', (req, res) => {
-    let studentId = 'AAE297154'
+    // let studentId = 'AAE297154'
     const requests = `select * from groupProfile where groupId in (select receiverId from studentrequestgroup where senderId = ?);`
     db.query(requests, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -325,7 +390,7 @@ router.get('/requests/group_info', (req, res) => {
 })
 
 router.get('/invites/student_info', (req, res) => {
-    let studentId = 'AAE297154'
+    // let studentId = 'AAE297154'
     const invites =`select * from studentProfile where studentId in (select senderId from studentrequeststudent where receiverId =?);`
     db.query(invites, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -352,7 +417,7 @@ router.get('/invites/student_info', (req, res) => {
 })
 
 router.get('/invites/group_info', (req, res) => {
-    let studentId = 'AAE297154'
+    // let studentId = 'AAE297154'
     const invites = `select * from groupProfile where groupId in (select senderId from grouprequeststudent where receiverid = ?);`
     db.query(invites, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -378,4 +443,36 @@ router.get('/invites/group_info', (req, res) => {
         res.status(200).json(formattedData);
     });
 })
+
+//sending invitations
+router.post('/teamUp', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
+    const values = [senderId, receiverId];
+    db.query(q, [values], (err, data) => {
+        if (err) return res.status(500).send(err);
+        return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+    });
+});
+
+//rejecting invitations
+router.post('/denyInvite', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+    const values = [senderId, receiverId];
+    db.query(q, values, (err, data) => {
+        if (err) return res.status(500).send(err);
+        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
+    });
+});
+
+/*{
+    "senderId": "senderIdValue",
+    "receiverId": "receiverIdValue",
+    "receiverType": "student"
+}
+*/
+
 export default router;

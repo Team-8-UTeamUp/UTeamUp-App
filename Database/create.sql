@@ -10,10 +10,13 @@ varValue int
 );
 insert into globalVars(varName, varValue) values ("minMembers",4);
 insert into globalVars(varName,varValue) values("maxMembers",6);
+
+
 create table User(
 userId varchar(9) unique primary key not null,
 firstName varchar(20) ,
-lastName varchar(30)
+lastName varchar(30),
+password varchar(15) not null
 );
 
 create table admin(
@@ -172,7 +175,7 @@ CONSTRAINT GRSRIDFK
 
 
 create view groupInfo AS
-select groupName, formedgroups.groupId, user.firstName, user.lastName, student.studentid,student.bio
+select groupName, formedgroups.groupId, user.firstName, user.lastName, student.studentid,student.bio,student.email
 from student, formedgroups, user
 where student.groupId=formedgroups.groupId and student.studentId=user.userId;
 
@@ -206,9 +209,11 @@ from project
 where projType = 'CSProject';
 
 create view groupProfile as
+
 SELECT gi.groupId,
        gi.members,
        gi.bios,
+       gi.emails,
        gi.totalMembers,
        pp.UTDProjects,
        pp.CSProjects,
@@ -220,7 +225,8 @@ FROM (
          SELECT groupId,
                 GROUP_CONCAT('"',firstName, ' ', lastName,'"') AS members,
                 GROUP_CONCAT('["', bio, '"]') AS bios,
-                COUNT(firstName) AS totalMembers
+                COUNT(firstName) AS totalMembers,
+                GROUP_CONCAT('"',email,'"') as emails
          FROM groupinfo 
          GROUP BY groupId
      ) AS gi

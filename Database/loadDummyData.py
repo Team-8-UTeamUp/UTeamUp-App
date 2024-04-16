@@ -14,6 +14,7 @@ if __name__ == "__main__":
 
 
     csvToSql('user.csv', 'user', db)
+    csvToSql('admin.csv', 'admin', db)
     csvToSql('student.csv', 'student', db)
     csvToSql('languages.csv', 'languages', db)
     csvToSql('skills.csv', 'skills', db)
