@@ -7,7 +7,7 @@ import {PythonShell} from "python-shell";
 //const studentId = "AAT229473"
 const studentId = 'ABG222946'
 //const studentId = "AAE297154"
-const pyPath ='../Database/.venv/Scripts/python.exe'// "../Database/.venv/bin/python"
+const pyPath = "../Database/.venv/bin/python" //'../Database/.venv/Scripts/python.exe'
 
 router.get("/", (req, res) => {
     res.json("Testing");
