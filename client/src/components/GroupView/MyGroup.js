@@ -229,6 +229,8 @@ return(
                             <button onClick={cancelEdits} id="cancelbutton">Cancel</button>
                         </div>
                 )}  
+
+                <button>Close Group</button>
                 
             </div>
 

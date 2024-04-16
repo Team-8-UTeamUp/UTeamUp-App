@@ -14,14 +14,16 @@ return(
         <img class="photo" src={require('../../assets/logoTeam.png')} ></img>
         <h2 class="h2">{groupName}</h2>
         <div className="skills-container" >
-            {skills.map((skill, index) => (
-                 <div class="skillbubble"> {skill} </div>
-            ))}
+            {skills.slice(0, 5).map((skill, index) => (
+                    <div key={index} class="skillbubble"> {skill} </div>
+                ))}
+            {skills.length > 5 && <div>...</div>}
         </div>
         <div className="languages-container" >
-            {languages.map((language, index) => (
-                 <div class="langbubble"> {language} </div>
-            ))}
+            {languages.slice(0, 5).map((language, index) => (
+                    <div key={index} class="langbubble"> {language} </div>
+                ))}
+            {languages.length > 5 && <div>...</div>}
         </div>
         <div className="dropdown-container">
             <p class="p">Project Preference:</p>
