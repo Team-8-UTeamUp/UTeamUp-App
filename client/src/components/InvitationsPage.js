@@ -25,6 +25,7 @@ function Invitations_Page() {
         currGroupSz={group.currentGroupSize}
         prefGroupSz={group.preferedGroupSize}
         bios={group.bio}
+        emails={group.emails}
       />
     ))
    
@@ -213,7 +214,9 @@ const GroupProfiles=
     bio: [
       ["I'm a passionate developer with expertise in JavaScript, React, and Node.js. Excited to collaborate on interesting projects!"],
       [ "Experienced Python developer with a focus on web development using Django. Eager to contribute to innovative projects!"]
-    ]
+    ],
+    emails: 
+    ["ATM100298@utdallas.edu", "GHS200192@utdallas.edu"]
   }
  
 ]
