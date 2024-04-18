@@ -1,5 +1,6 @@
 import express from "express"
 import {db} from "../db.js"
+//import bcrypt from "bcryptjs";
 
 const router = express.Router()
 import {PythonShell} from "python-shell";
@@ -239,7 +240,7 @@ router.get('/student_info', (req, res) => {
 })
 
 //login page
-
+//for admin(?) - brandon
 router.post('/login', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
@@ -249,6 +250,46 @@ router.post('/login', (req, res) => {
 
         return res.status(200).json("Logged in!");
     });
+});
+
+//student registration
+router.post('/register', async (req, res) => {
+    const { firstName, lastName, userId, password } = req.body;
+
+    //assume userId is already in database with no name or password
+    const existingUser = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
+    if (!existingUser || existingUser.firstName || existingUser.lastName || (existingUser.password && existingUser.password !== '')) {
+        return res.status(400).json({ msg: 'User already exists or user details already set' });
+    }
+
+    //const salt = await bcrypt.genSalt(10);
+    //const hashedPassword = await bcrypt.hash(password, salt);
+
+    await db.query('UPDATE users SET firstName = ?, lastName = ?, password = ? WHERE userId = ?', [firstName, lastName, hashedPassword, userId]);
+
+    res.json({ msg: 'User details updated successfully' });
+});
+
+//student login
+router.post('/login', async (req, res) => {
+    const { userId, password } = req.body;
+
+    const user = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
+    if (!user) {
+        return res.status(400).json({ msg: 'User does not exist' });
+    }
+
+    /*const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ msg: 'Invalid credentials' });
+    }*/
+    if (password !== user.password) {   //non decrpyted isMatch
+        return res.status(400).json({ msg: 'Invalid credentials' });
+    }
+
+    console.log(`${user.firstName} ${user.lastName} has logged in. (but actually that was a lie)`);
+
+    //create user session(?)
 });
 
 router.get('/group_info', (req, res) => {
