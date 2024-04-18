@@ -241,7 +241,7 @@ router.get('/student_info', (req, res) => {
 
 //login page
 //for admin(?) - brandon
-router.post('/login', (req, res) => {
+router.post('/admin', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
@@ -505,6 +505,19 @@ router.post('/denyInvite', (req, res) => {
         return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
     });
 });
+
+//unsend invitations
+router.post('/unsendInvite', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+    const values = [senderId, receiverId];
+    db.query(q, values, (err, data) => {
+        if (err) return res.status(500).send(err);
+        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
+    });
+});
+
 
 /*{
     "senderId": "senderIdValue",
