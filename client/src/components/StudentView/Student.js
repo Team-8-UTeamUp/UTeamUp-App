@@ -26,8 +26,8 @@ function Student({button1, button2, Profiles}) {
         <Student_Tile 
             sid={student.id}
             name={student.name}
-            skills={student.skills}
-            languages={student.codingLanguages}
+            skills={student.skills.slice(0,4)}
+            languages={student.codingLanguages.slice(0,5)}
             preferences={student.preferences}
             groupSz={student.groupSizePreference}
             onClick={() => displayInfo(student.id, student.index)} // Pass onClick handler to Student_Tile

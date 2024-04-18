@@ -5,8 +5,8 @@ const router = express.Router()
 import {PythonShell} from "python-shell";
 
 //const studentId = "AAT229473"
-const studentId = 'ABG222946'
-//const studentId = "AAE297154"
+// const studentId = 'ABG222946'
+const studentId = "AAE297154"
 const pyPath = "../Database/.venv/bin/python" //'../Database/.venv/Scripts/python.exe'
 
 router.get("/", (req, res) => {
@@ -252,10 +252,8 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/group_info', (req, res) => {
-    console.log(studentId)
     const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId=?;"
     db.query(p, [studentId], (err, data) => {
-        console.log(data)
         let params = {
             //'studentId':req.body.studentId,   //once connected use this version
             'studentId': studentId,
@@ -267,7 +265,6 @@ router.get('/group_info', (req, res) => {
         const s = "SELECT p.groupId, projectNum, projRank FROM uteamup.grouppreference as p, formedgroups as f where f.groupId=p.groupId and groupCompleted=0;"
 
         db.query(s, [], (err, data) => {
-            console.log(data)
             if (err) return res.status(500).send(err);
             //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
             params['groupData'] = data
@@ -433,7 +430,8 @@ router.get('/invites/group_info', (req, res) => {
                 preferences: [item.UTDProjects.replace(/"/g, '').split(','), item.CSProjects.replace(/"/g, '').split(',')],
                 currentGroupSize: item.totalMembers,
                 preferedGroupSize: item.groupSizePref,
-                bio: JSON.parse(`[${item.bios.replace(/\s+/g, '')}]`)
+                bio: JSON.parse(`[${item.bios.replace(/\s+/g, '')}]`),
+                emails: item.emails.replace(/"/g, '').split(',')
             });
             groupIndex = groupIndex + 1
         });

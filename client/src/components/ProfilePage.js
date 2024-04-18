@@ -1,53 +1,79 @@
-import React from 'react'
+import React, {useState} from 'react'
 import NavBar from './NavBar';
 import Student_Enlarge from './StudentView/Student_Enlarge';
+import axios from "axios"
 
 function Profile_Page() {
-    const MyProfile= 
-    <Student_Enlarge
-        name={Profile.name}
-        skillset={Profile.skills}
-        languages={Profile.codingLanguages}
-        preferences={Profile.preferences}
-        groupSz={Profile.groupSizePreference}
-        bio={Profile.bio}
-    />
+    const [Profile, setSProfile] = useState([])
+    const [isLoading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await axios.get(`http://localhost:8800/api/student_profile`);
+                setSProfile(res.data);
+                setLoading(false)
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    if (isLoading) {
+        return <Profile_Page_Render isLoading={true}/>
+    }
+
+    return <Profile_Page_Render Profile={Profile} isLoading={false}/>
+}
+
+function Profile_Page_Render({Profile, isLoading}) {
+    if (isLoading) {
+        return (
+            <>
+                <div class="row">
+                    <div class="column left">
+                        <NavBar/>
+                    </div>
+                    <div class="column right">
+                        <h2>My Profile</h2>
+                    </div>
+                </div>
+                <div class="screen">
+                    <div style={{display:"flex", justifyContent: "center", alignItems: "center"}}>
+                        <h2>Loading...</h2>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
+    const MyProfile = <Student_Enlarge
+            name={Profile.name}
+            skillset={Profile.skills}
+            languages={Profile.codingLanguages}
+            preferences={Profile.preferences}
+            groupSz={Profile.groupSizePreference}
+            bio={Profile.bio}/>
+
     return (
     <>
-    <div class="row">
-        <div class="column left">
-            <NavBar/>
+        <div class="row">
+            <div class="column left">
+                <NavBar/>
+            </div>
+            <div class="column right">
+                <h2>My Profile</h2>
+            </div>
         </div>
-        <div class="column right">
-            <h2>My Profile</h2>
+        <div class="screen">
+            <div style={{display:"flex", justifyContent: "center", alignItems: "center"}}>
+                {MyProfile}
+            </div>
         </div>
-    </div>
-    <div class="screen">
-        <div style={{display:"flex", justifyContent: "center",
-  alignItems: "center"}}>
-        {MyProfile}
-        </div>
-    </div>
     </>
     )
 }
 
 export default Profile_Page;
-
-const Profile=
-{
-    
-        name: "Henry Johnson",
-        id: "p15",
-        index: 2,
-        photo: '../assets/profilePhoto.png',
-        codingLanguages: ["Python", "JavaScript", "Ruby"],
-        skills: ["Database", "Mobile Development"],
-        preferences: [
-          ["ProjectE", "ProjectD", "ProjectA", "ProjectB", "ProjectC"],
-          ["ProjectA", "ProjectC", "ProjectD", "ProjectB", "ProjectE"]
-        ],
-        groupSizePreference: 7,
-        bio: "Seasoned developer proficient in Python, JavaScript, and Ruby. Specialized in database management and mobile app development."
-      
-}

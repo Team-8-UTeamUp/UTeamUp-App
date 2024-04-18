@@ -28,8 +28,8 @@ function Group({button1, button2, Profiles})
             gid={group.id}
             groupName={group.groupName}
             studentNames={group.studentNames}
-            skills={group.skills}
-            languages={group.codingLanguages}
+            skills={group.skills.slice(0,4)}
+            languages={group.codingLanguages.slice(0,5)}
             preferences={group.preferences}
             currGroupSz={group.currentGroupSize}
             prefGroupSz={group.preferedGroupSize}

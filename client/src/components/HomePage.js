@@ -10,7 +10,9 @@ import axios from "axios"
 
 function Home_Page () {
   const [StudentProfiles, setStudents] = useState([])
+  const [GroupProfiles, setGroups] = useState([])
   const [isLoading, setLoading] = useState(true);
+  const [groupLoading, setGLoading] = useState(true);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -22,20 +24,32 @@ function Home_Page () {
         console.log(err);
       }
     }
+
+    const fetchGroup = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/group_info/`);
+        setGroups(res.data);
+        setGLoading(false)
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     fetchData();
+    fetchGroup();
   }, []);
 
-  if (isLoading) {
+  if (isLoading && groupLoading) {
     return <Home_Page_Render isLoading={true}/>;
   }
 
   return (
-    <Home_Page_Render StudentProfiles={StudentProfiles} isLoading={false}/>
+    <Home_Page_Render StudentProfiles={StudentProfiles} GroupProfiles={GroupProfiles} isLoading={false}/>
   )
 }
 
 
-function Home_Page_Render({StudentProfiles, isLoading}) {
+function Home_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
   if (isLoading) {
     return (
       <>
@@ -117,30 +131,6 @@ function Home_Page_Render({StudentProfiles, isLoading}) {
   )
 
 }
-
-// Group profiles
-const GroupProfiles=
-[
-
-  {
-    groupName: "Avalanche1",
-    studentNames:["Alice Turner", "Bob Job"],
-    id: "g0",
-    index:0,
-    codingLanguages: ["JavaScript", "Python", "C++", "HTML"],
-    skills: ["Database", "Front End", "Back End", "UI/UX"],
-    preferences: [
-        ["ProjectA", "ProjectB", "ProjectC", "ProjectD", "ProjectE"],
-        ["ProjectB", "ProjectA", "ProjectE", "ProjectC", "ProjectD"]
-    ],
-    currentGroupSize: 2,
-    preferedGroupSize: 3,
-    bio: [
-      ["I'm a passionate developer with expertise in JavaScript, React, and Node.js. Excited to collaborate on interesting projects!"],
-      [ "Experienced Python developer with a focus on web development using Django. Eager to contribute to innovative projects!"]
-    ]
-  }
-]
 
 
 export default Home_Page;
