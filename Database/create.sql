@@ -28,13 +28,15 @@ ON DELETE CASCADE
 ON UPDATE CASCADE
 ); 
 
-create table formedGroups(
-groupId int primary key not null auto_increment,
-groupName varchar(20) not null,
-groupCompleted bool not null,
-groupSizePref int not null,
-groupLeader varchar(9) not null
+CREATE TABLE formedGroups (
+    groupId INT PRIMARY KEY AUTO_INCREMENT,
+    groupName VARCHAR(20) NOT NULL DEFAULT 'Teams', -- Default value is an empty string
+    groupCompleted BOOL NOT NULL Default False,
+    groupSizePref INT NOT NULL,
+    groupLeader VARCHAR(9) NOT NULL
 );
+
+
 
 
 

@@ -74,9 +74,8 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
   }
 
 
-  const TeamUpButton = <button class="teamupbutton" style={{backgroundColor: "#FC8E28"}}>Team Up</button>
-  const StudentView = <Student button1={TeamUpButton} Profiles={StudentProfiles}/>;
-  const GroupView = <Group button1={TeamUpButton} Profiles={GroupProfiles}/>;
+  const StudentView = <Student Profiles={StudentProfiles} Page={"student"}/>;
+  const GroupView = <Group Profiles={GroupProfiles}/>;
 
   const [CurrentView, setCurrentView] =  useState(null);
 

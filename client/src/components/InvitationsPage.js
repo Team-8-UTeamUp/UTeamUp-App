@@ -6,6 +6,7 @@ import FilterBar from './FilterBar';
 import Group from './GroupView/Group';
 import MyGroup from './GroupView/MyGroup'
 import axios from "axios"
+import {containerClasses} from "@mui/material";
 
 function Invitations_Page() {
   const [StudentProfiles, setStudents] = useState([])
@@ -71,10 +72,27 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
         </>
       )
     }
+    const studentId = "AAE297154";
+    const [params, setParams] = useState({
+        senderId: "VDW219689", // Initialize senderId as empty string
+        receiverId: studentId,
+        receiverType: "student" // Default value
+    });
+    const handleAccept = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("http://localhost:8800/api/accept", {senderId: params['senderId'], receiverId: params['receiverId'], receiverType:params['receiverType']})
+            console.log(res)
+            // refresh page automatically
+            location.href=location.href
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
-    const acceptButton = <button class="teamupbutton" style={{backgroundColor: "green"}}> Accept</button>
-    const rejectButton= <button class="teamupbutton" style={{backgroundColor: "red"}}>Reject</button>
-    const StudentView = <Student button1={acceptButton} button2={rejectButton} Profiles={StudentProfiles}/>;
+
+    const rejectButton= true
+    const StudentView = <Student button2={rejectButton} Profiles={StudentProfiles} Page={"student"} />;
     const GroupView = GroupProfiles.map(group=> (
       <MyGroup
         groupName={group.groupName}
@@ -103,13 +121,23 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
 
      var selected = document.getElementById(uid);
      if (selected) {
-      selected.classList.add('pageswitchselect');
-         
-       if(uid == "sprofbutton")
-         setCurrentView(StudentView);
-       else
-        setCurrentView(GroupView);
-    }
+         selected.classList.add('pageswitchselect');
+         if (uid === "sprofbutton") {
+             setCurrentView(StudentView);
+             setParams(prevParams => {
+                 console.log("changed to student");
+                 return { ...prevParams, receiverType: "student" }; // Return the updated state
+             });
+             console.log(params)
+         } else {
+             setCurrentView(GroupView);
+             setParams(prevParams => {
+                 console.log("changed to group");
+                 return { ...prevParams, receiverType: "group" }; // Return the updated state
+             });
+              console.log(params);
+         }
+     }
 
   }
 

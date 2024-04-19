@@ -8,7 +8,14 @@ import {PythonShell} from "python-shell";
 //const studentId = "AAT229473"
 // const studentId = 'ABG222946'
 const studentId = "AAE297154"
-const pyPath = "../Database/.venv/bin/python" //'../Database/.venv/Scripts/python.exe'
+var pyPath = process.platform;
+if (pyPath == "darwin") {
+    pyPath = '../Database/.venv/bin/python';
+} else if (pyPath == "win32" || pyPath == "win64") {
+    pyPath = '../Database/.venv/Scripts/python.exe';
+} else {
+    pyPath = '../Database/.venv/bin/python';
+}
 
 router.get("/", (req, res) => {
     res.json("Testing");
@@ -241,7 +248,7 @@ router.get('/student_info', (req, res) => {
 
 //login page
 //for admin(?) - brandon
-router.post('/admin', (req, res) => {
+router.post('/admin/login', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
@@ -372,9 +379,8 @@ router.get('/group_info', (req, res) => {
 
 
 router.get('/requests/student_info', (req, res) => {
-    // let studentId = 'AAE297154'
-    const requests = `select * from studentProfile where studentId in (select receiverId from studentrequeststudent where senderId =?);`
-    db.query(requests, [studentId], (err, data) => {
+    const requests = `SELECT * FROM studentProfile WHERE studentId IN ((SELECT receiverId FROM studentrequeststudent WHERE senderId = ?) UNION(SELECT receiverId FROM grouprequeststudent WHERE senderId IN (SELECT groupId FROM student WHERE studentId = ?)))`
+    db.query(requests, [studentId,studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -399,7 +405,6 @@ router.get('/requests/student_info', (req, res) => {
 })
 
 router.get('/requests/group_info', (req, res) => {
-    // let studentId = 'AAE297154'
     const requests = `select * from groupProfile where groupId in (select receiverId from studentrequestgroup where senderId = ?);`
     db.query(requests, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -427,7 +432,6 @@ router.get('/requests/group_info', (req, res) => {
 })
 
 router.get('/invites/student_info', (req, res) => {
-    // let studentId = 'AAE297154'
     const invites =`select * from studentProfile where studentId in (select senderId from studentrequeststudent where receiverId =?);`
     db.query(invites, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -454,7 +458,6 @@ router.get('/invites/student_info', (req, res) => {
 })
 
 router.get('/invites/group_info', (req, res) => {
-    // let studentId = 'AAE297154'
     const invites = `select * from groupProfile where groupId in (select senderId from grouprequeststudent where receiverid = ?);`
     db.query(invites, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -516,7 +519,11 @@ router.post('/denyInvite', (req, res) => {
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
-        if (err) return res.status(500).send(err);
+        if (err) {
+            console.log(err)
+            return res.status(500).send(err);
+        } 
+        console.log(data)
         return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
     });
 });
@@ -542,11 +549,193 @@ router.post('/unsend', (req, res) => {
 });
 
 
+
+
+// complete
+router.post('/accept', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+
+    if (receiverType === "group"){
+        const q = `update student set groupId=${senderId} where studentId = '${receiverId}'`
+
+        db.query(q, [], (err, data) => {
+            if (err) return res.status(500).send(err);
+        });
+
+        const rSS = `delete from studentrequeststudent where senderId ='${receiverId}' OR receiverId= '${receiverId}' `
+        db.query(rSS, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+        const rSG = `delete from studentrequestgroup where senderId ='${receiverId}'`
+        db.query(rSG, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+        const rGS = `delete from grouprequeststudent where receiverId ='${receiverId}'`
+        db.query(rGS, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+
+        return res.status(200).send("member added")
+
+    }
+    else {
+        const c = `insert into formedGroups(groupSizePref, groupLeader)
+                   values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}')`
+
+        db.query(c, [], (err, data) => {
+            if (err) return res.status(500).send(err);
+            const m = `update student set groupId = (select groupId from formedGroups where groupLeader = '${senderId}') where studentId in ('${senderId}', '${receiverId}')`
+
+            db.query(m, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+            const p = `insert into grouppreference(groupId, projectNum, projRank)
+                       SELECT s.groupId, pp.projectNum, pp.projRank
+                       FROM projectpreference pp
+                                JOIN (SELECT groupId FROM student WHERE studentId = '${senderId}') s
+                       WHERE pp.studentId = '${senderId}';`
+            db.query(p, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+            const rSS = `delete
+                     from studentrequeststudent
+                     where senderId in ('${senderId}', '${receiverId}')
+                        OR receiverId in ('${senderId}', '${receiverId}') `
+            db.query(rSS, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+            const rSG = `delete
+                         from studentrequestgroup
+                         where senderId in ('${senderId}', '${receiverId}')`
+            db.query(rSG, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+            const rGS = `delete
+                         from grouprequeststudent
+                         where receiverId in ('${senderId}', '${receiverId}')`
+            db.query(rGS, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+            });
+
+            return res.status(200).send("group created")
+
+        });
+
+    }
+});
 /*{
     "senderId": "senderIdValue",
     "receiverId": "receiverIdValue",
     "receiverType": "student"
 }
 */
+
+router.post('/remaining_students', (req, res) => {
+    const s = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
+    db.query(s, [], (err, data) => {
+        let params = {
+            'algType':'rs'
+        }
+        if (err) return res.status(500).send(err);
+        params["studentData"] = data;
+        const b = `select varValue from globalVars where varName in ('minMembers','maxMembers') order by varValue asc`
+        db.query(b, [], (err, data) => {
+            if (err) return res.status(500).send(err);
+            // fix min max error
+            params['min'] = data[0].varValue;
+            params['max'] = data[1].varValue
+
+            const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ? order by g.groupId asc;"
+
+            db.query(g, [params['min']], (err, data) => {
+                if (err) return res.status(500).send(err);
+                //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
+                params['groupData'] = data;
+                let uniqueId = [... new Set(params.groupData.map(item => item.groupId))];
+                if (uniqueId.length ==0 ) {
+                    uniqueId = [0]
+                }
+                const m = "select groupId, count(*) as totalMembers from groupInfo where groupId in ? group by groupId"
+                db.query(m, [[uniqueId]], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                    params['memberData'] = data;
+                    const stringifieidData = JSON.stringify(params)
+                    const options = {
+                        pythonPath: '../Database/.venv/Scripts/python.exe',
+                        pythonOptions: ['-u'],
+                        scriptPath: '../Database/',
+                    };
+                    const pyShell = new PythonShell('sortAlg.py', options);
+                    pyShell.send(stringifieidData);
+                    // Handle received data from the Python script
+                    pyShell.on('message', (message) => {
+                        let resultData = JSON.parse(message);
+
+                        let match = resultData['matches'];
+                        let data = match['addMembers']
+                        //add members to existing groups that are open and below min
+                        for (const groupId in data) {
+                            const members = data[groupId].members.flatMap(member => Array.isArray(member) ? member : [member]);
+                            const membersList = members.map(member => `'${member}'`).join(',');
+                            const q = `update student
+                                       set groupId=${groupId}
+                                       where studentId in (${membersList})`
+                            db.query(q, [], (err, data) => {
+                                if (err) return res.status(500).send(err);
+                            });
+                            const close = `update formedGroups
+                                           set groupCompleted = True
+                                           where groupId=${groupId}`
+                            db.query(close, [], (err, data) => {
+                                if (err) return res.status(500).send(err);
+                            });
+                        }
+                        data = match['createGroups']
+                        for (const groupId in data) {
+                            const members = data[groupId].members.flatMap(member => Array.isArray(member) ? member : [member]);
+                            const membersList = members.map(member => `'${member}'`).join(',');
+                            const groupLeader = `'${members[0]}'`
+
+                            // create team
+                            const c = `insert into formedGroups(groupSizePref, groupLeader) values ((select prefGroupSize from student where studentId = ${groupLeader}), ${groupLeader})`
+
+                            db.query(c, [], (err, data) => {
+                                if (err) return res.status(500).send(err);
+                                const m = `update student
+                                           set groupId = (select groupId from formedGroups where groupLeader=${groupLeader})
+                                           where studentId in (${membersList})`
+                                db.query(m, [], (err, data) => {
+                                    if (err) return res.status(500).send(err);
+                                });
+                                const p = `insert into grouppreference(groupId,projectNum,projRank)
+                                            SELECT s.groupId, pp.projectNum, pp.projRank FROM projectpreference pp
+                                                JOIN (SELECT groupId FROM student WHERE studentId = ${groupLeader}) s
+                                                WHERE pp.studentId = ${groupLeader};`
+                                db.query(p, [], (err, data) => {
+                                    if (err) return res.status(500).send(err);
+                                });
+
+
+                            });
+
+
+                        }
+                        return res.status(200).send("All students in a group")
+
+
+                    });
+
+                    // Handle errors
+                    pyShell.on('error', (error) => {
+                        return res.status(500).json(error);
+                    });
+
+                });
+            });
+        });
+
+    });
+})
+
 
 export default router;

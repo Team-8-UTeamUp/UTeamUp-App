@@ -55,7 +55,9 @@ function Profile_Page_Render({Profile, isLoading}) {
             languages={Profile.codingLanguages}
             preferences={Profile.preferences}
             groupSz={Profile.groupSizePreference}
-            bio={Profile.bio}/>
+            bio={Profile.bio}
+            profileView={true}
+            />
 
     return (
     <>
