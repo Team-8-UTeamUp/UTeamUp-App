@@ -289,40 +289,48 @@ router.post('/admin/login', (req, res) => {
     });
 });
 
-// Student registration
+//Student registration
 router.post('/register', async (req, res) => {
     const { firstName, lastName, userId, password } = req.body;
+
+    const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+    if (!userIdFormat.test(userId)) {
+        return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+    }
 
     const existingUser = await db.query('SELECT * FROM user WHERE userId = ?', [userId]);
     if (existingUser.length > 0) {
         return res.status(400).json({ msg: 'User already exists' });
     }
 
-    //const salt = await bcrypt.genSalt(10);
-    //const hashedPassword = await bcrypt.hash(password, salt);
-
     await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?)', [[userId, firstName, lastName, password]]);
 
     res.json({ msg: 'User registered successfully' });
 });
+/*{
+    "userId" : "ABC123456",
+    "firstName": "first",
+    "lastName": "last",
+    "password": "pass"
+}*/
 
-
-// Login route
-router.post('/login', async (req, res) => {
+//student login
+router.post('/login', (req, res) => {
     const { userId, password } = req.body;
+    const q = "SELECT * FROM user WHERE userId = ?";
 
-    const result = await db.query('SELECT password FROM user WHERE userId = ?', [userId]);
+    db.query(q, [userId], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data.length === 0) return res.status(404).json("User not found!");
 
-    if (!result) {
-        return res.status(400).json({ msg: 'User does not exist' });
-    }
+        if (password !== data[0].password) {
+            return res.status(400).json('Invalid credentials');
+        }
 
-    if (password !== result) {
-        return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-
-    res.json({ msg: 'Login successful' });
+        return res.status(200).json("Logged in!");
+    });
 });
+
 
 router.get('/group_info', (req, res) => {
     const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId=?;"
