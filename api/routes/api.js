@@ -247,7 +247,7 @@ router.get('/student_info', (req, res) => {
 })
 
 //login page
-//for admin(?) - brandon
+//for admin
 router.post('/admin/login', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
@@ -259,44 +259,39 @@ router.post('/admin/login', (req, res) => {
     });
 });
 
-//student registration
+// Student registration
 router.post('/register', async (req, res) => {
     const { firstName, lastName, userId, password } = req.body;
 
-    //assume userId is already in database with no name or password
-    const existingUser = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
-    if (!existingUser || existingUser.firstName || existingUser.lastName || (existingUser.password && existingUser.password !== '')) {
-        return res.status(400).json({ msg: 'User already exists or user details already set' });
+    const existingUser = await db.query('SELECT * FROM user WHERE userId = ?', [userId]);
+    if (existingUser.length > 0) {
+        return res.status(400).json({ msg: 'User already exists' });
     }
 
     //const salt = await bcrypt.genSalt(10);
     //const hashedPassword = await bcrypt.hash(password, salt);
 
-    await db.query('UPDATE users SET firstName = ?, lastName = ?, password = ? WHERE userId = ?', [firstName, lastName, hashedPassword, userId]);
+    await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?)', [[userId, firstName, lastName, password]]);
 
-    res.json({ msg: 'User details updated successfully' });
+    res.json({ msg: 'User registered successfully' });
 });
 
-//student login
+
+// Login route
 router.post('/login', async (req, res) => {
     const { userId, password } = req.body;
 
-    const user = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
-    if (!user) {
+    const result = await db.query('SELECT password FROM user WHERE userId = ?', [userId]);
+
+    if (!result) {
         return res.status(400).json({ msg: 'User does not exist' });
     }
 
-    /*const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        return res.status(400).json({ msg: 'Invalid credentials' });
-    }*/
-    if (password !== user.password) {   //non decrpyted isMatch
+    if (password !== result) {
         return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    console.log(`${user.firstName} ${user.lastName} has logged in. (but actually that was a lie)`);
-
-    //create user session(?)
+    res.json({ msg: 'Login successful' });
 });
 
 router.get('/group_info', (req, res) => {
@@ -548,8 +543,12 @@ router.post('/unsend', (req, res) => {
     });
 });
 
-
-
+/*{
+    "senderId": "senderIdValue",
+    "receiverId": "receiverIdValue",
+    "receiverType": "student"
+}
+*/
 
 // complete
 router.post('/accept', (req, res) => {
@@ -623,12 +622,7 @@ router.post('/accept', (req, res) => {
 
     }
 });
-/*{
-    "senderId": "senderIdValue",
-    "receiverId": "receiverIdValue",
-    "receiverType": "student"
-}
-*/
+
 
 router.post('/remaining_students', (req, res) => {
     const s = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
