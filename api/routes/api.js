@@ -515,11 +515,17 @@ router.get('/invites/group_info', (req, res) => {
     });
 })
 
-//sending invitations
 router.post('/teamUp', (req, res) => {
-    var { senderId, receiverId, receiverType, debug } = req.body;
-    senderId = debug ? studentId : senderId;
-    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const { senderId, receiverId, receiverType } = req.body;
+    const tableMap = {
+        'ss': 'studentrequeststudent',
+        'sg': 'studentrequestgroup',
+        'gs': 'grouprequeststudent'
+    };
+    let tableName = tableMap[receiverType];
+    if (!tableName) {
+        return res.status(400).json("Invalid receiverType");
+    }
     const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
     const values = [senderId, receiverId];
     db.query(q, [values], (err, data) => {
@@ -530,9 +536,16 @@ router.post('/teamUp', (req, res) => {
 
 //rejecting invitations
 router.post('/denyInvite', (req, res) => {
-    var { senderId, receiverId, receiverType, debug } = req.body;
-    receiverId = debug ? studentId : receiverId;
-    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+    const { senderId, receiverId, receiverType } = req.body;
+    const tableMap = {
+        'ss': 'studentrequeststudent',
+        'sg': 'studentrequestgroup',
+        'gs': 'grouprequeststudent'
+    };
+    let tableName = tableMap[receiverType];
+    if (!tableName) {
+        return res.status(400).json("Invalid receiverType");
+    }
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
@@ -545,16 +558,23 @@ router.post('/denyInvite', (req, res) => {
     });
 });
 
-//unsend invitations
-router.post('/unsendInvite', (req, res) => {
-    var { senderId, receiverId, receiverType, debug } = req.body;
-    senderId = debug ? studentId : senderId;
-    let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
+// Unsend an invitation
+router.post('/unsend', (req, res) => {
+    const { senderId, receiverId, receiverType } = req.body;
+    const tableMap = {
+        'studentToStudent': 'studentrequeststudent',
+        'studentToGroup': 'studentrequestgroup',
+        'groupToStudent': 'grouprequeststudent'
+    };
+    let tableName = tableMap[receiverType];
+    if (!tableName) {
+        return res.status(400).json("Invalid receiverType");
+    }
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
         if (err) return res.status(500).send(err);
-        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
+        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been unsent");
     });
 });
 
