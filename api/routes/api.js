@@ -31,6 +31,7 @@ router.post('/quiz/q1', (req, res) => {
         req.body.studentId,
         req.body.skills
     ]
+
     db.query(q,[values], (err,data) => {
         if (err) return res.json(err);
         return res.status(200).json("Question 1 updated for " + studentId)
@@ -91,18 +92,47 @@ router.post('/quiz/q5', (req, res) => {
 
 // Quesiton 6 - Bio
 router.post('/quiz/q6', (req, res) => {
-    const q = "INSERT INTO STUDENT(`studentId`, `prefGroupSize`, `bio`) VALUES (?)"
+    const q = "update student set bio=? where studentId =?"
     const values = [
         req.body.studentId,
-        req.body.prefGroupSize,
         req.body.bio
     ]
-    db.query(q,[values], (err,data) => {
+    db.query(q,[values.bio,values.studentId], (err,data) => {
         if (err) return res.json(err);
-        return res.status(200).json("Question 2 updated for " + studentId)
+        return res.status(200).json("Question 6 updated for " + studentId)
     })
 })
+router.get('/utdprojects', (req, res) => {
+    const q = `SELECT * from utdprojects order by projectNum asc`
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        data.forEach(item => {
+            formattedData.push({
+                projectNum: item.projectNum,
+                projName: item.title,
+            });
+        });
+        return res.status(200).json(formattedData)
 
+    });
+})
+
+router.get('/csprojects', (req, res) => {
+    const q = `SELECT * from csprojects order by projectNum asc`
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        data.forEach(item => {
+            formattedData.push({
+                projectNum: item.projectNum,
+                projName: item.title,
+            });
+        });
+        return res.status(200).json(formattedData)
+
+    });
+})
 // Profile page
 router.get('/student_profile', (req, res) => {
     const q = `select * from studentProfile where studentId =?;`

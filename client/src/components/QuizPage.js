@@ -8,7 +8,7 @@ function Quiz_Handler() {
 
     
 
-    const studentId = "ABC120012"
+    const studentId = "AAE297154"
 
     const [showq1, setShow1] = useState(true);
     const [showq2, setShow2] = useState(false);
@@ -174,7 +174,7 @@ function Question3({studentId}) { // Project Preference: CS Project
     return (
         <>
             <div class="centered">
-                <p>Rank your top 5 CS Projects</p><br></br> 
+                <p>Rank your top 5 CS Projects </p><br></br>
                 <Preference
                  projects={CSProjects}/>
 
@@ -204,6 +204,15 @@ function Question5({studentId}) { // About Me
         const value = event.target.value;
         setSize(value);
     };
+    const handleSumbit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("http://localhost:8800/api/quiz/q5", {studentId: studentId, teamSize:teamSize})
+            console.log(res)
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <>
@@ -212,7 +221,7 @@ function Question5({studentId}) { // About Me
                 <form name="myForm">
                     Ideal Team Size: 
                     <input type="text" name="teamSize" onChange={handleChange} value={teamSize}/>
-                    <button class="button">Save</button>
+                    <button class="button" onClick={handleSumbit}>Save</button>
                 </form>                
             </div>
         </>
@@ -226,15 +235,24 @@ function Question6({studentId}) { // About Me
     const handleChange = (event) => {
         const value = event.target.value;
         setBio(value);
-    };
 
+    };
+    const handleSumbit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("http://localhost:8800/api/quiz/q6", {studentId: studentId, bio:bio})
+            console.log(res)
+        } catch (err) {
+            console.log(err)
+        }
+    }
     return (
         <>
             <div class="centered">
                 <p>Create Your bio. Tell potential teammates a little bit about yourself!</p><br></br> 
                 <form name="myForm">
                     <textarea name="paragraph_text" cols="90" rows="20" onChange={handleChange} value={bio}></textarea>
-                    <div><button class="button">Save</button></div>
+                    <div><button class="button" onClick={handleSumbit}>Save</button></div>
             </form>                
             </div>
         </>
