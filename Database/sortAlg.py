@@ -10,7 +10,7 @@ from io import StringIO
 
 """ Main functions to call"""
 
-def sortRemainingStudents( studentJson, groupJson,membersJson, min, max):
+def sortRemainingStudents( studentJson, groupJson,membersJson, min, max,gD):
     # add sql call, change later to read json
 
     # get all students that aren't in a group
@@ -20,29 +20,29 @@ def sortRemainingStudents( studentJson, groupJson,membersJson, min, max):
     studentData = studentData[studentData.columns].apply(lambda x: x.map({5: 1, 4: 2, 3: 3, 2: 4, 1: 5, 0: 0}))
 
     studentData = pd.DataFrame(studentData)
-
-    df = pd.DataFrame.from_dict(groupJson)
-    # pivot and inverse the values
-    groupData = pd.pivot(df, index='groupId', columns='projectNum', values='projRank').fillna(0)
-    groupData = groupData[groupData.columns].apply(lambda x: x.map({5: 1, 4: 2, 3: 3, 2: 4, 1: 5, 0: 0}))
-
-
-
-    groupMembers = pd.DataFrame.from_dict(membersJson)
-    groupMembers.set_index('groupId', inplace=True)
+    #indvStudents = studentData
+    existGroups = {}
     ## X is only being used since there are 450+ students in database currently
     x = pd.DataFrame(studentData.values[0:40], index=studentData.index[:40], columns=studentData.columns)
+    indvStudents = x
     avg = math.floor((min + max) / 2)
+    if gD:
+        df = pd.DataFrame.from_dict(groupJson)
+        # pivot and inverse the values
+        groupData = pd.pivot(df, index='groupId', columns='projectNum', values='projRank').fillna(0)
+        groupData = groupData[groupData.columns].apply(lambda x: x.map({5: 1, 4: 2, 3: 3, 2: 4, 1: 5, 0: 0}))
 
-    # use existing groups
-    existGroups = {}
-    if(groupData.index.shape[0] > 0 ):
+
+
+        groupMembers = pd.DataFrame.from_dict(membersJson)
+        groupMembers.set_index('groupId', inplace=True)
+
         x = pd.concat([x, groupData]).fillna(0)
         # use existing groups
         existGroups, x, groupMembers = addToExistingGroups(x, groupMembers, min, max, avg)
+        indvStudents = x[~x.index.isin(groupMembers.index)]
 
     # create new groups
-    indvStudents = x[~x.index.isin(groupMembers.index)]
     newGroups = {}
     groupSize = []
     if indvStudents.index.shape[0] > 0:
@@ -306,7 +306,10 @@ if __name__ == "__main__":
             membersData = params['memberData']
             min = params['min']
             max = params['max']
-            remainingGroups = sortRemainingStudents(studentData, groupData, membersData, min, max)
+            gD = True
+            if len(groupData) ==0:
+                gD = False
+            remainingGroups = sortRemainingStudents(studentData, groupData, membersData, min, max,gD)
             result = {"matches": remainingGroups}
             print(json.dumps(result))
 
