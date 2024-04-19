@@ -271,7 +271,7 @@ router.post('/register', async (req, res) => {
 });
 
 //student login
-router.post('/login', async (req, res) => {
+router.post('/admin/login', async (req, res) => {
     const { userId, password } = req.body;
 
     const user = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
