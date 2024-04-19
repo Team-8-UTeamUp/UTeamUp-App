@@ -8,7 +8,14 @@ import {PythonShell} from "python-shell";
 //const studentId = "AAT229473"
 // const studentId = 'ABG222946'
 const studentId = "AAE297154"
-const pyPath =  '../Database/.venv/Scripts/python.exe' //"../Database/.venv/bin/python"
+var pyPath = process.platform;
+if (pyPath == "darwin") {
+    pyPath = '../Database/.venv/bin/python';
+} else if (pyPath == "win32" || pyPath == "win64") {
+    pyPath = '../Database/.venv/Scripts/python.exe';
+} else {
+    pyPath = '../Database/.venv/bin/python';
+}
 
 router.get("/", (req, res) => {
     res.json("Testing");
@@ -241,7 +248,7 @@ router.get('/student_info', (req, res) => {
 
 //login page
 //for admin(?) - brandon
-router.post('/admin', (req, res) => {
+router.post('/admin/login', (req, res) => {
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
@@ -271,7 +278,7 @@ router.post('/register', async (req, res) => {
 });
 
 //student login
-router.post('/admin/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { userId, password } = req.body;
 
     const user = await db.query('SELECT * FROM users WHERE userId = ?', [userId]);
@@ -480,7 +487,8 @@ router.get('/invites/group_info', (req, res) => {
 
 //sending invitations
 router.post('/teamUp', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
     const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
     const values = [senderId, receiverId];
@@ -492,19 +500,25 @@ router.post('/teamUp', (req, res) => {
 
 //rejecting invitations
 router.post('/denyInvite', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    receiverId = debug ? studentId : receiverId;
     let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
-        if (err) return res.status(500).send(err);
+        if (err) {
+            console.log(err)
+            return res.status(500).send(err);
+        } 
+        console.log(data)
         return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
     });
 });
 
 //unsend invitations
 router.post('/unsendInvite', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     let tableName = receiverType === 'student' ? 'studentrequeststudent' : 'studentrequestgroup';
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];

@@ -91,9 +91,8 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
     }
 
 
-    const acceptButton = <button class="teamupbutton" onClick={handleAccept} style={{backgroundColor: "green"}}> Accept</button>
-    const rejectButton= <button class="teamupbutton" style={{backgroundColor: "red"}}>Reject</button>
-    const StudentView = <Student button1={acceptButton} button2={rejectButton} Profiles={StudentProfiles} />;
+    const rejectButton= true
+    const StudentView = <Student button2={rejectButton} Profiles={StudentProfiles} Page={"student"} />;
     const GroupView = GroupProfiles.map(group=> (
       <MyGroup
         groupName={group.groupName}

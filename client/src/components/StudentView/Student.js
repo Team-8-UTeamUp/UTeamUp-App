@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import Student_Tile from "./Student_Tile";
 import Student_Enlarge from './Student_Enlarge';
 
-function Student({button1, button2, Profiles}) {
+function Student({button2, Profiles, Page}) {
     const [expanded, setExpanded] = useState(null);
 
     // in-depth look at profile 
     const expandedProfiles = Profiles.map(student => (
         //name, skillset, languages, preferences, groupSz, bio
         <Student_Enlarge
+            id={student.id}
             name={student.name}
             skillset={student.skills}
             languages={student.codingLanguages}
             preferences={student.preferences}
             groupSz={student.groupSizePreference}
             bio={student.bio}
-            button1={button1}
             button2={button2 ? button2 : null} 
+            Page={Page}
         />
     ));
 
