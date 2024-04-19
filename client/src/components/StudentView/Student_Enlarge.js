@@ -11,7 +11,8 @@ const Student_Enlarge = ({
     bio,
     button2,
     profileView,
-    Page
+    Page,
+    unsend
 }) => {
     const [preferencesRow, setPreferencesRow] = useState(preferences[0] || []);
 
@@ -101,9 +102,9 @@ const Student_Enlarge = ({
                     { !profileView && <button
                         class="teamupbutton"
                         name={id}
-                        style={{ backgroundColor: "#FC8E28" }}
+                        style={{ backgroundColor: unsend ? "gray" : "#FC8E28" }}
                         onClick={teamUpClick}>
-                        {button2 ? "Accept" : "Team Up"}
+                        {button2 ? "Accept" : (unsend ? "Unsend" : "Team Up")}
                     </button> }
                 </div>
                 {button2 && <div><button class="teamupbutton" name={id} style={{backgroundColor: "red"}} onClick={rejectClick}>Reject</button></div>}

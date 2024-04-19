@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Student_Tile from "./Student_Tile";
 import Student_Enlarge from './Student_Enlarge';
 
-function Student({button2, Profiles, Page}) {
+function Student({button2, Profiles, Page, unsend}) {
     const [expanded, setExpanded] = useState(null);
 
     // in-depth look at profile 
@@ -18,6 +18,7 @@ function Student({button2, Profiles, Page}) {
             bio={student.bio}
             button2={button2 ? button2 : null} 
             Page={Page}
+            unsend={unsend}
         />
     ));
 

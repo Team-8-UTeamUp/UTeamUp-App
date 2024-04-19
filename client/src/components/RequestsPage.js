@@ -74,8 +74,8 @@ function Requests_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
     }
 
     const unsendInvite = <button class="teamupbutton" style={{backgroundColor: "gray"}}>Unsend</button>
-    const StudentView = <Student button1={unsendInvite} Profiles={StudentProfiles}/>;
-    const GroupView = <Group button1={unsendInvite} Profiles={GroupProfiles}/>;
+    const StudentView = <Student unsend={true} Profiles={StudentProfiles}/>;
+    const GroupView = <Group button1={unsendInvite} unsend={true} Profiles={GroupProfiles}/>;
     const [CurrentView, setCurrentView] =  useState(null);
     function showView(uid)
   {
