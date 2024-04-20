@@ -136,6 +136,7 @@ function Question2({studentId}) { // Languages
     const handleSumbit = async (e) => {
         e.preventDefault()
         try {
+            console.log(active)
             const res = await axios.post("http://localhost:8800/api/quiz/q2", {studentId: studentId, languages: active})
             console.log(res)
         } catch (err) {
@@ -170,31 +171,86 @@ function Question2({studentId}) { // Languages
     )
 }
 
-function Question3({studentId}) { // Project Preference: CS Project
-    return (
-        <>
-            <div class="centered">
-                <p>Rank your top 5 CS Projects </p><br></br>
-                <Preference
-                 projects={CSProjects}/>
 
-            </div>
-        </>
-    )
+function Question3({ studentId }) {
+    const [rankings, setRankings] = useState(Array(5).fill(null));
+
+    const handleRankChange = (index, value) => {
+        const updatedRankings = [...rankings];
+        updatedRankings[index] = value;
+        setRankings(updatedRankings);
+    };
+
+    const handleSave = async () => {
+        try {
+        console.log(rankings)
+        const res = await axios.post("http://localhost:8800/api/quiz/q3-4", {
+            studentId: studentId,
+            rankings: rankings,
+            projType:"csprojects"
+        });
+        console.log(res);
+    } catch (err) {
+          console.log(err);
+        }
+    };
+
+  return (
+    <>
+      <div className="centered">
+        <p>
+          Rank your top 5 CS Projects{" "}
+          <button className="button" onClick={handleSave}>
+            Save
+          </button>
+        </p>
+        <br />
+        <Preference projects={CSProjects} onRankChange={handleRankChange} />
+      </div>
+    </>
+  );
 }
 
-function Question4({studentId}) { // Project Preference: CS Project
-    
-    return (
-        <>
-            <div class="centered"> 
-                <p>Rank your top 5 UTD Design Projects</p><br></br>
-                <Preference
-                projects={UDProjects}/>
-            </div>
-        </>
-    )
+
+function Question4({ studentId }) {
+    const [rankings, setRankings] = useState(Array(5).fill(null));
+
+    const handleRankChange = (index, value) => {
+        const updatedRankings = [...rankings];
+        updatedRankings[index] = value;
+        setRankings(updatedRankings);
+    };
+
+    const handleSave = async () => {
+        try {
+        console.log(rankings)
+        const res = await axios.post("http://localhost:8800/api/quiz/q3-4", {
+            studentId: studentId,
+            rankings: rankings,
+            projType:"utdprojects"
+        });
+        console.log(res);
+    } catch (err) {
+          console.log(err);
+        }
+    };
+
+  return (
+    <>
+      <div className="centered">
+        <p>
+          Rank your top 5 UTD Projects{" "}
+          <button className="button" onClick={handleSave}>
+            Save
+          </button>
+        </p>
+        <br />
+        <Preference projects={UTDProjects} onRankChange={handleRankChange} />
+      </div>
+    </>
+  );
 }
+
 
 function Question5({studentId}) { // About Me
 
@@ -240,6 +296,8 @@ function Question6({studentId}) { // About Me
     const handleSumbit = async (e) => {
         e.preventDefault()
         try {
+            console.log(studentId)
+            console.log(bio)
             const res = await axios.post("http://localhost:8800/api/quiz/q6", {studentId: studentId, bio:bio})
             console.log(res)
         } catch (err) {
@@ -265,7 +323,7 @@ export default Quiz_Handler;
 // load projects
 
 //UTD Design Projects
-const UDProjects = [ // single student profiles
+const UTDProjects = [ // single student profiles
   {
     number:1,
     company:"Amandus",
@@ -296,25 +354,25 @@ const UDProjects = [ // single student profiles
 //UTD Design Projects
 const CSProjects = [ // single student profiles
   {
-    number:1,
+    number:22,
     company:"Amandus",
     title:"VR Game for Lupus Patients - with AHT Team"
   },
  
   {
-    number: 2,
+    number: 23,
     company: "Athlete Reserve",
     title:	"Athlete Reserve App - Phase 2"
   },
 
 {
-    number: 3,
+    number: 24,
     company: "CataBoom Technologies",
     title:	"AI assisted data exploration of complex data"
 },
 
 {
-    number: 4,
+    number: 25,
     company:"Ellison Fluid Calipers",
     title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
 },

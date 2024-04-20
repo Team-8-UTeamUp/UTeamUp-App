@@ -1,3 +1,4 @@
+
 import express from "express"
 import {db} from "../db.js"
 //import bcrypt from "bcryptjs";
@@ -26,56 +27,82 @@ router.get("/", (req, res) => {
 // Question 1 - Skills
 router.post('/quiz/q1', (req, res) => {
     //TODO: Check if studentId exists in DB before adding new
-    const q = "INSERT INTO SKILLS(`studentId`, `skill`) VALUES (?)"
     const values = [
         req.body.studentId,
         req.body.skills
     ]
+    let skillPairs = [];
 
-    db.query(q,[values], (err,data) => {
+    for (let i = 0; i < values[1].length; i++) {
+        skillPairs += `('${values[0]}', '${values[1][i]}'), `;
+    }
+
+    // Remove the trailing comma and space
+    skillPairs = skillPairs.slice(0, -2);
+    // delete existing values and insert new values
+    const d = `delete from skills where studentId = '${values[0]}'`
+    db.query(d,[], (err,data) => {
         if (err) return res.json(err);
-        return res.status(200).json("Question 1 updated for " + studentId)
+        const q = `INSERT INTO SKILLS(studentId, skill)
+                   VALUES ${skillPairs}`
+        db.query(q, [], (err, data) => {
+            if (err) return res.json(err);
+            return res.status(200).json("Question 1 updated for " + studentId)
+        })
     })
 })
 
 // Question 2 - Languages
 router.post('/quiz/q2', (req, res) => {
-    const q = "INSERT INTO LANGUAGES(`studentId`, `languages`) VALUES (?)"
     const values = [
         req.body.studentId,
         req.body.languages
     ]
-    db.query(q,[values], (err,data) => {
+    let langPairs = [];
+
+    for (let i = 0; i < values[1].length; i++) {
+        langPairs += `('${values[0]}', '${values[1][i]}'), `;
+    }
+
+    // Remove the trailing comma and space
+    langPairs = langPairs.slice(0, -2);
+    const d = `delete from languages where studentId = '${values[0]}'`
+    db.query(d,[], (err,data) => {
         if (err) return res.json(err);
-        return res.status(200).json("Question 2 updated for " + studentId)
+        const q = `INSERT INTO languages(studentId, languages)
+                   VALUES ${langPairs}`
+        db.query(q, [], (err, data) => {
+            if (err) return res.json(err);
+            return res.status(200).json("Question 1 updated for " + studentId)
+        })
     })
 })
 
 // Question 3 - Top 5 CS Projects
-router.post('/quiz/q3', (req, res) => {
-    if(req.body.csProjects.length !== 5) {
+router.post('/quiz/q3-4', (req, res) => {
+    const {studentId, rankings, projType} = req.body
+    if(rankings.length !== 5) {
         return res.status(400).json("Please provide exactly 5 CS Projects");
     }
-    const q = "INSERT INTO PROJECTPREFERENCE(`studentId`, `projectNum`, `projRank`) VALUES ?";
-    const values = req.body.csProjects.map((project, index) => [req.body.studentId, project, index + 1]);
-    db.query(q, [values], (err, data) => {
+
+    const d = `delete from projectpreference p where studentId = '${studentId}'  and p.projectNum in (select projectNum from ${projType})`
+    let finalRank = []
+    rankings.map((rank, index) =>  finalRank += `('${studentId}',${rank},${index + 1}),`);
+
+    // Remove the trailing comma and space
+    finalRank = finalRank.slice(0, -1);
+    db.query(d,[], (err,data) => {
         if (err) return res.json(err);
-        return res.status(200).json("Question 3 updated for " + req.body.studentId);
-    });
+        const q = `INSERT INTO PROJECTPREFERENCE(studentId, projectNum, projRank) VALUES ${finalRank}`;
+
+        db.query(q, [], (err, data) => {
+            if (err) return res.json(err);
+            return res.status(200).json("Question 3 updated for " + studentId)
+        })
+    })
+
 });
 
-// Question 4 - Top 5 UTDesign Projects
-router.post('/quiz/q4', (req, res) => {
-    if(req.body.utdProjects.length !== 5) {
-        return res.status(400).json("Please provide exactly 5 UTDesign Projects");
-    }
-    const q = "INSERT INTO PROJECTPREFERENCE(`studentId`, `projectNum`, `projRank`) VALUES ?";
-    const values = req.body.utdProjects.map((project, index) => [req.body.studentId, project, index + 1]);
-    db.query(q, [values], (err, data) => {
-        if (err) return res.json(err);
-        return res.status(200).json("Question 4 updated for " + req.body.studentId);
-    });
-});
 
 // Question 5 - Preferred Team Size
 router.post('/quiz/q5', (req, res) => {
@@ -97,14 +124,14 @@ router.post('/quiz/q6', (req, res) => {
         req.body.studentId,
         req.body.bio
     ]
-    db.query(q,[values.bio,values.studentId], (err,data) => {
+    db.query(q,[values[1],values[0]], (err,data) => {
         if (err) return res.json(err);
         return res.status(200).json("Question 6 updated for " + studentId)
     })
 })
 router.get('/utdprojects', (req, res) => {
     const q = `SELECT * from utdprojects order by projectNum asc`
-    db.query(q, [studentId], (err, data) => {
+    db.query(q, [], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         data.forEach(item => {
@@ -120,7 +147,7 @@ router.get('/utdprojects', (req, res) => {
 
 router.get('/csprojects', (req, res) => {
     const q = `SELECT * from csprojects order by projectNum asc`
-    db.query(q, [studentId], (err, data) => {
+    db.query(q, [], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         data.forEach(item => {
