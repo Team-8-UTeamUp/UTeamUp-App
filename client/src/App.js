@@ -6,7 +6,7 @@ import InvitationsPage from './components/InvitationsPage.js';
 import RequestsPage from './components/RequestsPage.js';
 import FAQPage from './components/FAQPage.js';
 import ProfilePage from './components/ProfilePage.js'
-import LoginPage from './components/LoginPage.js';
+import LoginPage from './components/AdminLogin.js';
 
 import {
   createBrowserRouter,
