@@ -8,7 +8,7 @@ function NavBar() {
     const navigations = {
         0: {
             Name: "Home",
-            Link: "/"
+            Link: "/homepage"
         },
         1: {
             Name: "Profile",

@@ -26,7 +26,7 @@ function NewUser() {
         e.preventDefault();
         try {
             await axios.post("http://localhost:8800/api/register", inputs);
-            navigate("/homepage");
+            navigate("/quiz");
         } catch (err) {
             console.log(err);
             // Check if err.response exists and has a data property

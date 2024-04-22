@@ -165,6 +165,9 @@ router.get('/csprojects', (req, res) => {
 
     });
 })
+
+// Check if quiz is populated
+
 // Profile page
 router.get('/student_profile', (req, res) => {
     const q = `select * from studentProfile where studentId =?;`
@@ -182,6 +185,9 @@ router.get('/student_profile', (req, res) => {
         return res.status(200).json(temp)
     });
 })
+
+
+
 
 // My Group profile
 router.get('/group_profile', (req, res) => {
@@ -345,8 +351,9 @@ router.post('/register', async (req, res) => {
         }
 
         await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?, ?, ?, ?)', [req.body.username, req.body.firstName, req.body.lastName, req.body.password]);
-
+        await db.query('INSERT INTO student(`studentId`, `email`, `groupId`, `prefGroupSize`, `bio`) VALUES (?, CONCAT(?, "@utdallas.edu"), ?, ?, ?)', [req.body.username, req.body.username, null, null, null]);
         res.json({ msg: 'User registered successfully' });
+
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ msg: 'Duplicate entry. User already exists' });

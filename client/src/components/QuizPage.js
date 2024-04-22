@@ -2,13 +2,14 @@ import React, {useState} from 'react'
 import Header from './Header.js'
 import axios from "axios"
 import Preference from "./Project_Preferences/Preference.js"
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function Quiz_Handler() {
-
+    const navigate = useNavigate();
     
 
-    const studentId = "AAE297154"
+    const studentId = "ABD123456"
 
     const [showq1, setShow1] = useState(true);
     const [showq2, setShow2] = useState(false);
@@ -40,6 +41,9 @@ function Quiz_Handler() {
             }  else if (currQuestion === 4) {
                 setShow5(false)
                 setShow6(true)
+            }
+            else {
+                navigate("/homepage");
             }
         }
     }
