@@ -8,7 +8,7 @@ import {PythonShell} from "python-shell";
 
 //const studentId = "AAT229473"
 // const studentId = 'ABG222946'
-const studentId = "AAE297154"
+const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
     pyPath = '../Database/.venv/bin/python';
@@ -183,6 +183,12 @@ router.get('/group_profile', (req, res) => {
     const q =`select * from groupProfile where groupId in (select groupId from student where studentId= ?)`
     db.query(q, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
+
+         // Check if data is empty
+         if (data.length === 0) {
+            return res.status(200).json(null); // Return null if data is empty
+        }
+
         let temp = {
             groupName: data[0]['groupName'],
             studentNames:data[0]['members'].replace(/"/g, '').split(','),

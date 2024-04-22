@@ -4,6 +4,7 @@ import Student from './StudentView/Student';
 import NavBar from './NavBar';
 import FilterBar from './FilterBar';
 import Group from './GroupView/Group'
+import MyGroup from './GroupView/MyGroup';
 import axios from "axios"
 
 
@@ -11,10 +12,30 @@ import axios from "axios"
 function Home_Page () {
   const [StudentProfiles, setStudents] = useState([])
   const [GroupProfiles, setGroups] = useState([])
+  const [MyGroupProfile, setMyGroup] = useState([])
   const [isLoading, setLoading] = useState(true);
   const [groupLoading, setGLoading] = useState(true);
+  const [myGroupLoading, setMyGroupLoading] = useState(true);
+  const [hasGroup, setHasGroup] = useState(false);
 
   React.useEffect(() => {
+
+    const fetchMyGroup = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8800/api/group_profile`);
+        if (res.data === null) {
+          setMyGroup([]);
+        } else {
+          setMyGroup(res.data);
+          setHasGroup(true);
+        }
+
+        setMyGroupLoading(false)
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     const fetchData = async () => {
       try {
         const res = await axios.get(`http://localhost:8800/api/student_info/`);
@@ -37,19 +58,20 @@ function Home_Page () {
 
     fetchData();
     fetchGroup();
+    fetchMyGroup();
   }, []);
 
-  if (isLoading && groupLoading) {
+  if (isLoading && groupLoading  && myGroupLoading) {
     return <Home_Page_Render isLoading={true}/>;
   }
 
   return (
-    <Home_Page_Render StudentProfiles={StudentProfiles} GroupProfiles={GroupProfiles} isLoading={false}/>
+    <Home_Page_Render StudentProfiles={StudentProfiles} GroupProfiles={GroupProfiles} MyGroupProfile={MyGroupProfile} isLoading={false} hasGroup={hasGroup}/>
   )
 }
 
 
-function Home_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
+function Home_Page_Render({StudentProfiles, GroupProfiles, MyGroupProfile, isLoading, hasGroup}) {
   if (isLoading) {
     return (
       <>
@@ -60,8 +82,11 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
           <div class="column right">
             <h2>Home</h2>
             <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
-              <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={()=> showView("sprofbutton")}>Student Profiles</button>
-              <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={()=> showView("gprofbutton")}>Group Profiles</button>
+              <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} >Student Profiles</button>
+              <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} >My Group Profile</button>
+              
+              
+             
             </div>
           </div>
         </div>
@@ -75,7 +100,23 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
 
 
   const StudentView = <Student Profiles={StudentProfiles} Page={"student"}/>;
-  const GroupView = <Group Profiles={GroupProfiles}/>;
+  const GroupView = hasGroup? (
+  
+    <MyGroup
+      groupName={MyGroupProfile.groupName}
+      studentNames={MyGroupProfile.studentNames}
+      skillset={MyGroupProfile.skills}
+      languages={MyGroupProfile.codingLanguages}
+      preferences={MyGroupProfile.preferences}
+      currGroupSz={MyGroupProfile.currentGroupSize}
+      prefGroupSz={MyGroupProfile.preferedGroupSize}
+      bios={MyGroupProfile.bio}
+      emails={MyGroupProfile.emails}
+      />
+    
+  ) : (
+    <Group Profiles={GroupProfiles} />
+  );
 
   const [CurrentView, setCurrentView] =  useState(null);
 
@@ -117,7 +158,11 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
               <h2>Home</h2>
               <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
                   <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Profiles</button>
-                  <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Group Profiles</button>
+                  {hasGroup ? ( // If user is in a group, change tab to "My Group Profile"
+                    <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={()=> showView("gprofbutton")}>My Group Profile</button>
+                  ):(
+                    <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={()=> showView("gprofbutton")}>Group Profiles</button>
+                  )}
               </div>
           </div>
       </div>
