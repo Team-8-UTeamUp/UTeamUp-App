@@ -207,13 +207,27 @@ router.get('/group_profile', (req, res) => {
             emails:data[0]['emails'].replace(/"/g, '').split(','),
             skills: data[0]['skills'].replace(/"/g, '').split(','),
             codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
-            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')],
+            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
             bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
 
                                 }
         return res.status(200).json(temp)
+    });
+})
+
+// wip changes name and size, needs proj ranks
+router.post('/edit_group', (req, res) => {
+    const{groupId, newName, newSize, newUTD, newCS } = req.body
+    let q = `update formedGroups set groupName='${newName}' where groupId = ${groupId}`
+    if (newSize >=4 && newSize <=6){
+        q = `update formedGroups set groupName='${newName}',  groupSizePref =${newSize} where groupId = ${groupId}`
+    }
+    db.query(q, [studentId], (err, data) => {
+        if (err) return res.status(500).send(err);
+        return res.status(200).send(`name and size updated for group ${groupId}`)
+
     });
 })
 //STUDENTS PAGE

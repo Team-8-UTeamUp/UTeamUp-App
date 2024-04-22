@@ -219,6 +219,8 @@ SELECT gi.groupId,
        gi.totalMembers,
        pp.UTDProjects,
        pp.CSProjects,
+       pp.UTDNums,
+       pp.CSNums,
        t.languages,
        t.skills,
        t.groupName,
@@ -226,7 +228,7 @@ SELECT gi.groupId,
 FROM (
          SELECT groupId,
                 GROUP_CONCAT('"',firstName, ' ', lastName,'"') AS members,
-                GROUP_CONCAT('["', bio, '"]') AS bios,
+                GROUP_CONCAT('"', bio, '"') AS bios,
                 COUNT(firstName) AS totalMembers,
                 GROUP_CONCAT('"',email,'"') as emails
          FROM groupinfo 
@@ -243,7 +245,17 @@ JOIN (
                              CASE
                                  WHEN p.projType = 'CSProject' THEN p.title
                                  ELSE NULL
-                                 END ORDER BY gp.projRank SEPARATOR '",') AS CSProjects
+                                 END ORDER BY gp.projRank SEPARATOR '",') AS CSProjects,
+				group_concat( 
+								CASE
+                                 WHEN p.projType = 'UTDProject' THEN p.projectNum
+                                 ELSE NULL
+                                 END ORDER BY gp.projRank SEPARATOR ',') AS UTDNums,
+				group_concat(
+								CASE
+                                 WHEN p.projType = 'CSProject' THEN p.projectNum
+                                 ELSE NULL
+                                 END ORDER BY gp.projRank SEPARATOR ',') AS CSNums
          FROM grouppreference AS gp
                   JOIN project AS p ON p.projectNum = gp.projectNum
          GROUP BY gp.groupId
