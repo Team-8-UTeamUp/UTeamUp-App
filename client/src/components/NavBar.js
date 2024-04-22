@@ -33,6 +33,10 @@ function NavBar() {
         6: {
             Name: "Admin",
             Link: "/login"
+        },
+        7: {
+            Name:"Log Out",
+            Link:"/"
         }
     }
 

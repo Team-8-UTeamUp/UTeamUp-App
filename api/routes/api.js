@@ -129,6 +129,9 @@ router.post('/quiz/q6', (req, res) => {
         return res.status(200).json("Question 6 updated for " + studentId)
     })
 })
+
+
+// Get projects lists
 router.get('/utdprojects', (req, res) => {
     const q = `SELECT * from utdprojects order by projectNum asc`
     db.query(q, [], (err, data) => {
@@ -145,6 +148,8 @@ router.get('/utdprojects', (req, res) => {
     });
 })
 
+
+// View cs projects
 router.get('/csprojects', (req, res) => {
     const q = `SELECT * from csprojects order by projectNum asc`
     db.query(q, [], (err, data) => {
@@ -349,14 +354,14 @@ router.post('/register', async (req, res) => {
 
 //student login
 router.post('/login', (req, res) => {
-    const { userId, password } = req.body;
+    //const { userId, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
 
-    db.query(q, [userId], (err, data) => {
+    db.query(q, [req.body.username], (err, data) => {
         if (err) return res.status(500).json(err);
         if (data.length === 0) return res.status(404).json("User not found!");
 
-        if (password !== data[0].password) {
+        if (req.body.password !== data[0].password) {
             return res.status(400).json('Invalid credentials');
         }
 

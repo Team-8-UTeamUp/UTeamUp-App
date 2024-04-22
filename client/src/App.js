@@ -7,6 +7,7 @@ import RequestsPage from './components/RequestsPage.js';
 import FAQPage from './components/FAQPage.js';
 import ProfilePage from './components/ProfilePage.js'
 import LoginPage from './components/AdminLogin.js';
+import Website_Login from './components/Login_Page/Website_Login.js';
 
 import {
   createBrowserRouter,
@@ -16,6 +17,10 @@ import {
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <div><Website_Login/></div>,
+  },
+  {
+    path: "/homepage",
     element: <div><HomePage/></div>,
   },
   {
