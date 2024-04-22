@@ -329,21 +329,31 @@ router.post('/admin/login', (req, res) => {
 
 //Student registration
 router.post('/register', async (req, res) => {
-    const { firstName, lastName, userId, password } = req.body;
+    //const { firstName, lastName, userId, password } = req.body;
+    console.log("Request body:", req.body); // Log the request bod
 
-    const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
-    if (!userIdFormat.test(userId)) {
-        return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+    try {
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        if (!userIdFormat.test(req.body.username)) {
+            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+        }
+
+        const existingUser = await db.query('SELECT * FROM user WHERE userId = ?', [req.body.username]);
+        console.log('SQL Query:', existingUser, ', Parameters:', [req.body.username]);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ msg: 'User already exists' });
+        }
+
+        await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?, ?, ?, ?)', [req.body.username, req.body.firstName, req.body.lastName, req.body.password]);
+
+        res.json({ msg: 'User registered successfully' });
+    } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ msg: 'Duplicate entry. User already exists' });
+        }
+        console.error(err);
+        res.status(500).json({ msg: 'Internal server error' });
     }
-
-    const existingUser = await db.query('SELECT * FROM user WHERE userId = ?', [userId]);
-    if (existingUser.length > 0) {
-        return res.status(400).json({ msg: 'User already exists' });
-    }
-
-    await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?)', [[userId, firstName, lastName, password]]);
-
-    res.json({ msg: 'User registered successfully' });
 });
 /*{
     "userId" : "ABC123456",

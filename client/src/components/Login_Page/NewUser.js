@@ -5,6 +5,8 @@ import axios from "axios"
 
 function NewUser() {
     const [inputs, setInputs] = useState({
+        firstName:"",
+        lastName:"",
         username: "",
         password: "pass",
     });
@@ -23,11 +25,16 @@ function NewUser() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:8800/api/admin/login", inputs);
-            navigate("/admin");
+            await axios.post("http://localhost:8800/api/register", inputs);
+            navigate("/homepage");
         } catch (err) {
-            console.log(err)
-            setError(err.response.data);
+            console.log(err);
+            // Check if err.response exists and has a data property
+            if (err.response?.data) {
+                setError(err.response.data);
+            } else {
+                setError("An error occurred, please try again later.");
+            }
         }
     }
 
@@ -41,26 +48,26 @@ function NewUser() {
               </label>
             <input type="text"
                    id="firstName"
-                   name="First Name"
+                   name="firstName"
                    class="logininput"
                    onChange={onChange}
                    placeholder="Enter your First Name" required>
             </input>
-            <label for="LastName" class="loginlabel">
+            <label for="lastName" class="loginlabel">
                   Last Name:
               </label>
             <input type="text"
-                   id="firstName"
-                   name="First Name"
+                   id="lastName"
+                   name="lastName"
                    class="logininput"
                    onChange={onChange}
-                   placeholder="Enter your First Name" required>
+                   placeholder="Enter your Last Name" required>
             </input>
-            <label for="ID" class="loginlabel">
+            <label for="username" class="loginlabel">
                   Username:
               </label>
             <input type="text"
-                   id="ID"
+                   id="username"
                    name="username"
                    class="logininput"
                    onChange={onChange}
