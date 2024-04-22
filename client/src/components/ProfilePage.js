@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import NavBar from './NavBar';
 import Student_Enlarge from './StudentView/Student_Enlarge';
 import axios from "axios"
+import Website_Login from './Login_Page/Website_Login';
 
 function Profile_Page() {
     const [Profile, setSProfile] = useState([])
@@ -79,3 +80,5 @@ function Profile_Page_Render({Profile, isLoading}) {
 }
 
 export default Profile_Page;
+
+

@@ -5,11 +5,11 @@ const app = express();
 app.use(bodyParser.json());
 
 //local host login
-const mysql = require('mysql2');  //you may need to change to 'mysql'
+const mysql = require('mysql');  //you may need to change to 'mysql'
 const connection = mysql.createConnection({
-  host: 'lapogtop',
-  user: 'new_user',
-  password: 'password',
+  host: '127.0.0.1',
+  user: 'root',
+  password: 'pleasework123',
   database: 'uteamup',
   port: "3306"
 });
