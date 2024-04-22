@@ -15,10 +15,11 @@ code {
 
 header{
     display: flex;
+    background-color: white;
     justify-content: center;
     align-items: center;
     border-bottom: solid gray;
-    max-height: 10vh;
+    height: 10vh;
     top: 0;
     left: 0;
     width: 100%;
@@ -26,6 +27,7 @@ header{
 
 footer{
   display: flex;
+  background-color: white;
   justify-content: space-between;
   border-top: solid gray;
   max-height: 10vh;

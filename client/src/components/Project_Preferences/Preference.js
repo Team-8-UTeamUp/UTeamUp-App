@@ -11,15 +11,15 @@ function Preference({ projects = [], onRankChange }) {
         <thead>
           <tr>
             {labels.map((label) => (
-              <th key={label}>{label}</th>
+              <th key={label} style={{padding:"10px"}}>{label}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {projects.map((project) => (
-            <tr key={project.number}>
-              <td>{project.number}</td>
-              <td>{project.title}</td>
+            <tr key={project.projectNum}>
+              <td style={{padding:"10px"}}>{project.projectNum}</td>
+              <td style={{padding:"10px"}}>{project.projName}</td>
             </tr>
           ))}
         </tbody>

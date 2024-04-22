@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import React, {useState} from 'react'
 import Header from './Header.js'
 import axios from "axios"
 import Preference from "./Project_Preferences/Preference.js"
@@ -173,27 +173,63 @@ function Question2({studentId}) { // Languages
 
 
 function Question3({ studentId }) {
-    const [rankings, setRankings] = useState(Array(5).fill(null));
+    const [CSProjects, setCSProjects] = useState([]);
+    const[projLoading, setProjLoading] = useState(true);
 
-    const handleRankChange = (index, value) => {
-        const updatedRankings = [...rankings];
-        updatedRankings[index] = value;
-        setRankings(updatedRankings);
-    };
+    
+    React.useEffect(() => {
+        const FetchProjects =  async () => {
+            try {
+              const res = await axios.get(`http://localhost:8800/api/csprojects`);
+                setCSProjects(res.data);
+                setProjLoading(false);
+              
+            } catch (err) {
+              console.log(err);
+            }
+          }
+          FetchProjects();
+    }, []);
 
-    const handleSave = async () => {
-        try {
-        console.log(rankings)
-        const res = await axios.post("http://localhost:8800/api/quiz/q3-4", {
-            studentId: studentId,
-            rankings: rankings,
-            projType:"csprojects"
-        });
-        console.log(res);
-    } catch (err) {
-          console.log(err);
-        }
-    };
+    if (projLoading) {
+        return <Question3_Render projLoading={true}/>;
+      }
+
+      return (
+        <Question3_Render CSProjects={CSProjects} projLoading={false} studentId={studentId}/>
+      )
+    }
+
+function Question3_Render({CSProjects, projLoading, studentId}) {
+if (projLoading) {
+    return(
+        <>
+         <h2>Loading...</h2>
+        </>
+    )
+}
+
+const [rankings, setRankings] = useState(Array(5).fill(null));
+
+const handleRankChange = (index, value) => {
+    const updatedRankings = [...rankings];
+    updatedRankings[index] = value;
+    setRankings(updatedRankings);
+};
+
+const handleSave = async () => {
+    try {
+    console.log(rankings)
+    const res = await axios.post("http://localhost:8800/api/quiz/q3-4", {
+        studentId: studentId,
+        rankings: rankings,
+        projType:"csprojects"
+    });
+    console.log(res);
+} catch (err) {
+      console.log(err);
+    }
+};
 
   return (
     <>
@@ -213,6 +249,42 @@ function Question3({ studentId }) {
 
 
 function Question4({ studentId }) {
+    const [UTDProjects, setUTDProjects] = useState([]);
+    const[projLoading, setProjLoading] = useState(true);
+
+    
+    React.useEffect(() => {
+        const FetchProjects =  async () => {
+            try {
+              const res = await axios.get(`http://localhost:8800/api/utdprojects`);
+                setUTDProjects(res.data);
+                setProjLoading(false);
+              
+            } catch (err) {
+              console.log(err);
+            }
+          }
+          FetchProjects();
+    }, []);
+
+    if (projLoading) {
+        return <Question4_Render projLoading={true}/>;
+      }
+
+      return (
+        <Question4_Render UTDProjects={UTDProjects} projLoading={false} studentId={studentId}/>
+      )
+    }
+
+function Question4_Render({UTDProjects, projLoading, studentId}) {
+if (projLoading) {
+    return(
+        <>
+         <h2>Loading...</h2>
+        </>
+    )
+}
+
     const [rankings, setRankings] = useState(Array(5).fill(null));
 
     const handleRankChange = (index, value) => {
@@ -234,6 +306,7 @@ function Question4({ studentId }) {
           console.log(err);
         }
     };
+
 
   return (
     <>
@@ -318,65 +391,5 @@ function Question6({studentId}) { // About Me
 }
 
 export default Quiz_Handler;
-
-
-// load projects
-
-//UTD Design Projects
-const UTDProjects = [ // single student profiles
-  {
-    number:1,
-    company:"Amandus",
-    title:"VR Game for Lupus Patients - with AHT Team"
-  },
- 
-  {
-    number: 2,
-    company: "Athlete Reserve",
-    title:	"Athlete Reserve App - Phase 2"
-  },
-
-{
-    number: 3,
-    company: "CataBoom Technologies",
-    title:	"AI assisted data exploration of complex data"
-},
-
-{
-    number: 4,
-    company:"Ellison Fluid Calipers",
-    title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
-},
-
-]
-
-
-//UTD Design Projects
-const CSProjects = [ // single student profiles
-  {
-    number:22,
-    company:"Amandus",
-    title:"VR Game for Lupus Patients - with AHT Team"
-  },
- 
-  {
-    number: 23,
-    company: "Athlete Reserve",
-    title:	"Athlete Reserve App - Phase 2"
-  },
-
-{
-    number: 24,
-    company: "CataBoom Technologies",
-    title:	"AI assisted data exploration of complex data"
-},
-
-{
-    number: 25,
-    company:"Ellison Fluid Calipers",
-    title: "Full-stack Development of Ellison Fluid Caliper’s Calculation Webapp",
-},
-
-]
 
 
