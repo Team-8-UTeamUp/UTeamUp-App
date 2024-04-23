@@ -10,6 +10,7 @@ from io import StringIO
 
 """ Main functions to call"""
 
+
 def sortRemainingStudents( studentJson, groupJson,membersJson, min, max,gD):
     # add sql call, change later to read json
 
@@ -23,7 +24,7 @@ def sortRemainingStudents( studentJson, groupJson,membersJson, min, max,gD):
     #indvStudents = studentData
     existGroups = {}
     ## X is only being used since there are 450+ students in database currently
-    x = pd.DataFrame(studentData.values[0:40], index=studentData.index[:40], columns=studentData.columns)
+    x = pd.DataFrame(studentData.values, index=studentData.index, columns=studentData.columns)
     indvStudents = x
     avg = math.floor((min + max) / 2)
     if gD:

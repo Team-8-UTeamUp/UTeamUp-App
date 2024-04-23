@@ -441,7 +441,7 @@ router.post('/admin/login', (req, res) => {
         return res.status(200).json("Logged in!");
     });
 });
-
+/*
 //Student registration
 router.post('/register', async (req, res) => {
     //const { firstName, lastName, userId, password } = req.body;
@@ -470,13 +470,39 @@ router.post('/register', async (req, res) => {
         console.error(err);
         res.status(500).json({ msg: 'Internal server error' });
     }
-});
+});*/
 /*{
     "userId" : "ABC123456",
     "firstName": "first",
     "lastName": "last",
     "password": "pass"
 }*/
+router.post('/register', (req, res) => {
+    const { userId, firstName, lastName, password } = req.body;
+    const q = "SELECT * FROM user WHERE userId = ?";
+
+    db.query(q, [userId], (err, data) => {
+        if (err) return res.status(500).json(err);
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        if (!userIdFormat.test(userId)) {
+            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+        }
+        if (data.length > 0) return res.status(409).json("User already exists!");
+
+        const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
+        db.query(insertUserQuery, [userId, firstName, lastName, password], (insertErr, insertData) => {
+            if (insertErr) return res.status(500).json(insertErr);
+
+            const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
+                db.query(insertStudentQuery, [userId, userId], (insertStudentErr, insertStudentData) => {
+                if (insertStudentErr) return res.status(500).json(insertStudentErr);
+                return res.status(201).json("User registered successfully and added to students table!");
+            });
+        });
+    });
+});
+
+
 
 //student login
 router.post('/login', (req, res) => {
@@ -695,11 +721,20 @@ router.post('/teamUp', (req, res) => {
     if (!tableName) {
         return res.status(400).json("Invalid receiverType");
     }
-    const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
-    const values = [senderId, receiverId];
-    db.query(q, [values], (err, data) => {
-        if (err) return res.status(500).send(err);
-        return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+
+    const checkQuery = `SELECT * FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+    db.query(checkQuery, [senderId, receiverId], (checkErr, checkData) => {
+        if (checkErr) return res.status(500).send(checkErr);
+        if (checkData.length > 0) {
+            return res.status(409).json("Invitation already exists");
+        }
+
+        const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
+        const values = [senderId, receiverId];
+        db.query(q, [values], (err, data) => {
+            if (err) return res.status(500).send(err);
+            return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+        });
     });
 });
 
@@ -880,7 +915,8 @@ router.post('/remaining_students', (req, res) => {
             params['min'] = data[0].varValue;
             params['max'] = data[1].varValue
 
-            const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ? order by g.groupId asc;"
+
+            const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ?  and g.groupId in (select groupId from formedgroups where groupCompleted=False )order by g.groupId asc;\n"
 
             db.query(g, [params['min']], (err, data) => {
                 if (err) return res.status(500).send(err);
@@ -932,7 +968,7 @@ router.post('/remaining_students', (req, res) => {
                             const groupLeader = `'${members[0]}'`
 
                             // create team
-                            const c = `insert into formedGroups(groupSizePref, groupLeader) values ((select prefGroupSize from student where studentId = ${groupLeader}), ${groupLeader})`
+                            const c = `insert into formedGroups(groupSizePref, groupLeader,groupCompleted) values ((select prefGroupSize from student where studentId = ${groupLeader}), ${groupLeader},True)`
 
                             db.query(c, [], (err, data) => {
                                 if (err) return res.status(500).send(err);
