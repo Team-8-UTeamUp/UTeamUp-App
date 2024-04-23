@@ -7,8 +7,8 @@ const router = express.Router()
 import {PythonShell} from "python-shell";
 
 //const studentId = "AAT229473"
-// const studentId = 'ABG222946'
-const studentId = "JBL269228"
+const studentId = 'ABG222946'
+// const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
     pyPath = '../Database/.venv/bin/python';
@@ -207,7 +207,7 @@ router.get('/group_profile', (req, res) => {
             emails:data[0]['emails'].replace(/"/g, '').split(','),
             skills: data[0]['skills'].replace(/"/g, '').split(','),
             codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
-            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')], //[data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
             bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
@@ -235,7 +235,9 @@ router.post('/edit_group', (req, res) => {
 router.get('/student_info', (req, res) => {
     const groupCheck = `SELECT groupId from student where studentId =?`
     db.query(groupCheck, [studentId], (err, data) => {
-        if (err) return res.status(500).send(err);
+        console.log(data);
+        console.log(err);
+        if (err) return res.status(501).send(err);
         let params = {
                 'studentId': studentId,
         }
@@ -259,12 +261,12 @@ router.get('/student_info', (req, res) => {
         const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
         db.query(p, [], (err, data) => {
 
-            if (err) return res.status(500).send(err);
+            if (err) return res.status(502).send(err);
             params[firstSql] = data;
 
 
             db.query(s, args, (err, data) => {
-                if (err) return res.status(500).send(err);
+                if (err) return res.status(503).send(err);
                 //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
                 params[secondSql] = data
                 const stringifieidData = JSON.stringify(params)
@@ -286,7 +288,7 @@ router.get('/student_info', (req, res) => {
 
                     const profileQuery = `select * from studentProfile where studentId in ?`
                     db.query(profileQuery, [[match]], (err, data) => {
-                        if (err) return res.status(500).send(err);
+                        if (err) return res.status(504).send(err);
                         let studentData = data;
                         let studentIndex = 0;
                         let orderedList = [];
@@ -838,5 +840,21 @@ router.post('/remaining_students', (req, res) => {
     });
 })
 
+//admin tables page
+router.get('/admin/group_table', (req, res) => {
+    const q = `SELECT * from csprojects order by projectNum asc`
+    db.query(q, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let formattedData = [];
+        data.forEach(item => {
+            formattedData.push({
+                projectNum: item.projectNum,
+                projName: item.title,
+            });
+        });
+        return res.status(200).json(formattedData)
+
+    });
+})
 
 export default router;
