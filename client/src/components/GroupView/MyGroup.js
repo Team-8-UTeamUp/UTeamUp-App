@@ -246,7 +246,7 @@ return(
                 {!isEditMode ? (
                     <div style={{display:"flex", flexDirection:"column", marginTop:"50px"}}>
                          <button class="teamupbutton" style={{marginBottom:"10px", color:"black", backgroundColor:"lightgray"}} onClick={toggleEditMode} id="editbutton" >Edit Profile</button>
-                         <button class="teamupbutton"  style={{marginBottom:"10px", color:"white", backgroundColor:"black"}}>Close Group</button>
+                         <button class="teamupbutton"  style={{marginBottom:"10px", color:"white", backgroundColor:"black"} } onClick={closeGroup}>Close Group</button>
                          </div>
                     ) : (
                         <div style={{display:"flex", flexDirection:"column", marginTop:"50px"}}>
@@ -254,11 +254,10 @@ return(
                             <button  class="teamupbutton" style={{color:"black", backgroundColor:"lightgray"}} onClick={saveEdits} id="savebutton">Save</button>
                             <button class="teamupbutton" style={{color:"black", backgroundColor:"lightgray"}} onClick={cancelEdits} id="cancelbutton">Cancel</button>
                         </div>
-                        <button class="teamupbutton" style={{margintop:"0px", color:"white", backgroundColor:"black"}}>Close Group</button>
+                        <button class="teamupbutton" style={{margintop:"0px", color:"white", backgroundColor:"black"}} onClick={closeGroup} >Close Group</button>
                         </div>
                 )}  
 
-                <button onClick={closeGroup}>Close Group</button>
                 
             </div>
             
