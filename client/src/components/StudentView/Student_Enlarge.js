@@ -33,7 +33,7 @@ const Student_Enlarge = ({
             const paylaod = {
                 debug: true, 
                 receiverId: e.target.name, 
-                receiverType: Page === "student" ? "student" : "group"
+                receiverType: Page === "student" ? "ss" : "sg"
             }
 
             const res = await axios.post(`http://localhost:8800/api/teamUp/`, paylaod);
@@ -63,7 +63,7 @@ const Student_Enlarge = ({
             const paylaod = {
                 debug: true, 
                 senderId: e.target.name, 
-                receiverType: Page === "student" ? "student" : "group"
+                receiverType: Page === "student" ? "ss" : "sg"
             }
 
             const res = await axios.post(`http://localhost:8800/api/denyInvite/`, paylaod);
@@ -85,6 +85,38 @@ const Student_Enlarge = ({
              setTimeout(() => {
                  setMessage(null);
              }, 2000);
+        }
+    }
+
+    const unsendClick = async (e) => {
+        e.preventDefault()
+        try {
+            const paylaod = {
+                debug: true, 
+                receiverId: e.target.name, 
+                receiverType: Page === "student" ? "ss" : "sg"
+            }
+
+            const res = await axios.post(`http://localhost:8800/api/unsend/`, paylaod);
+            console.log(res)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const acceptClick = async (e) => {
+        e.preventDefault()
+        try {
+            const paylaod = {
+                debug: true, 
+                receiverId: e.target.name, 
+                receiverType: Page === "student" ? "student" : "group"
+            }
+
+            const res = await axios.post(`http://localhost:8800/api/accept/`, paylaod);
+            console.log(res)
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -135,7 +167,7 @@ const Student_Enlarge = ({
                         class="teamupbutton"
                         name={id}
                         style={{ backgroundColor: unsend ? "gray" : "#FC8E28" }}
-                        onClick={teamUpClick}>
+                        onClick={ button2 ? acceptClick : (unsend ? unsendClick : teamUpClick)}>
                         {button2 ? "Accept" : (unsend ? "Unsend" : "Team Up")}
                     </button> }
                 </div>
