@@ -330,8 +330,6 @@ router.post('/close_group', (req, res) => {
 router.get('/student_info', (req, res) => {
     const groupCheck = `SELECT groupId from student where studentId =?`
     db.query(groupCheck, [studentId], (err, data) => {
-        console.log(data);
-        console.log(err);
         if (err) return res.status(501).send(err);
         let params = {
                 'studentId': studentId,
@@ -745,9 +743,6 @@ router.post('/unsend', (req, res) => {
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
-        console.log(data)
-        console.log(err)
-        console.log(receiverType)
         if (err) return res.status(500).send(err);
         return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been unsent");
     });
@@ -1002,8 +997,6 @@ router.get('/admin/group_info', (req, res) => {
         db.query(query, [], (err, data) => {
             if (err) return res.status(501).send(err);
 
-            // console.log(data)
-
             let formattedGroupData2 = [];
             data.forEach(item => {
                 formattedGroupData2.push({
@@ -1014,8 +1007,6 @@ router.get('/admin/group_info', (req, res) => {
             });
 
             let payload = {groups: formattedGroupData, students: formattedGroupData2}
-
-            // console.log(payloada)
 
             return res.status(200).json(payload)
         });
