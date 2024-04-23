@@ -477,34 +477,25 @@ router.post('/register', async (req, res) => {
     "lastName": "last",
     "password": "pass"
 }*/
-router.post('/register', async (req, res) => {
+router.post('/register', (req, res) => {
     const { userId, firstName, lastName, password } = req.body;
+    const q = "SELECT * FROM user WHERE userId = ?";
 
-    try {
-        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
-        if (!userIdFormat.test(userId)) {
-            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
-        }
+    db.query(q, [userId], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data.length > 0) return res.status(409).json("User already exists!");
 
-        const q = "SELECT * FROM user WHERE userId = ?";
-        const data = await db.query(q, [userId]);
+        const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
+        db.query(insertUserQuery, [userId, firstName, lastName, password], (insertErr, insertData) => {
+            if (insertErr) return res.status(500).json(insertErr);
 
-        if (data.length > 0) {
-            return res.status(409).json("User already exists");
-        }
-
-        const insertQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
-        await db.query(insertQuery, [userId, firstName, lastName, password]);
-        res.status(201).json("User registered successfully!");
-
-    } catch (err) {
-        console.error(err);
-        if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({ msg: 'Duplicate entry. User already exists' });
-        } else {
-            res.status(500).json({ msg: 'Internal server error' });
-        }
-    }
+            const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
+                db.query(insertStudentQuery, [userId, userId], (insertStudentErr, insertStudentData) => {
+                if (insertStudentErr) return res.status(500).json(insertStudentErr);
+                return res.status(201).json("User registered successfully and added to students table!");
+            });
+        });
+    });
 });
 
 
