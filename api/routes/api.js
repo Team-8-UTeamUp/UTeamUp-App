@@ -441,7 +441,7 @@ router.post('/admin/login', (req, res) => {
         return res.status(200).json("Logged in!");
     });
 });
-
+/*
 //Student registration
 router.post('/register', async (req, res) => {
     //const { firstName, lastName, userId, password } = req.body;
@@ -470,13 +470,44 @@ router.post('/register', async (req, res) => {
         console.error(err);
         res.status(500).json({ msg: 'Internal server error' });
     }
-});
+});*/
 /*{
     "userId" : "ABC123456",
     "firstName": "first",
     "lastName": "last",
     "password": "pass"
 }*/
+router.post('/register', async (req, res) => {
+    const { userId, firstName, lastName, password } = req.body;
+
+    try {
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        if (!userIdFormat.test(userId)) {
+            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+        }
+
+        const q = "SELECT * FROM user WHERE userId = ?";
+        const data = await db.query(q, [userId]);
+
+        if (data.length > 0) {
+            return res.status(409).json("User already exists");
+        }
+
+        const insertQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
+        await db.query(insertQuery, [userId, firstName, lastName, password]);
+        res.status(201).json("User registered successfully!");
+
+    } catch (err) {
+        console.error(err);
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ msg: 'Duplicate entry. User already exists' });
+        } else {
+            res.status(500).json({ msg: 'Internal server error' });
+        }
+    }
+});
+
+
 
 //student login
 router.post('/login', (req, res) => {
@@ -695,11 +726,20 @@ router.post('/teamUp', (req, res) => {
     if (!tableName) {
         return res.status(400).json("Invalid receiverType");
     }
-    const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
-    const values = [senderId, receiverId];
-    db.query(q, [values], (err, data) => {
-        if (err) return res.status(500).send(err);
-        return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+
+    const checkQuery = `SELECT * FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+    db.query(checkQuery, [senderId, receiverId], (checkErr, checkData) => {
+        if (checkErr) return res.status(500).send(checkErr);
+        if (checkData.length > 0) {
+            return res.status(409).json("Invitation already exists");
+        }
+
+        const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
+        const values = [senderId, receiverId];
+        db.query(q, [values], (err, data) => {
+            if (err) return res.status(500).send(err);
+            return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+        });
     });
 });
 
