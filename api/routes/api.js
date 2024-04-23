@@ -6,8 +6,9 @@ import {db} from "../db.js"
 const router = express.Router()
 import {PythonShell} from "python-shell";
 
-//const studentId = "AAE297154"
-const studentId = 'AHR277028'
+// const studentId = 'ABG222946'
+const studentId = "AAE297154"
+// const studentId = 'AHR277028'
 //const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
@@ -207,7 +208,7 @@ router.get('/group_profile', (req, res) => {
             emails:data[0]['emails'].replace(/"/g, '').split(','),
             skills: data[0]['skills'].replace(/"/g, '').split(','),
             codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
-            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')], //[data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
             bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
@@ -329,7 +330,7 @@ router.post('/close_group', (req, res) => {
 router.get('/student_info', (req, res) => {
     const groupCheck = `SELECT groupId from student where studentId =?`
     db.query(groupCheck, [studentId], (err, data) => {
-        if (err) return res.status(500).send(err);
+        if (err) return res.status(501).send(err);
         let params = {
                 'studentId': studentId,
         }
@@ -353,12 +354,12 @@ router.get('/student_info', (req, res) => {
         const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
         db.query(p, [], (err, data) => {
 
-            if (err) return res.status(500).send(err);
+            if (err) return res.status(502).send(err);
             params[firstSql] = data;
 
 
             db.query(s, args, (err, data) => {
-                if (err) return res.status(500).send(err);
+                if (err) return res.status(503).send(err);
                 //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
                 params[secondSql] = data
                 const stringifieidData = JSON.stringify(params)
@@ -380,7 +381,7 @@ router.get('/student_info', (req, res) => {
 
                     const profileQuery = `select * from studentProfile where studentId in ?`
                     db.query(profileQuery, [[match]], (err, data) => {
-                        if (err) return res.status(500).send(err);
+                        if (err) return res.status(504).send(err);
                         let studentData = data;
                         let studentIndex = 0;
                         let orderedList = [];
@@ -440,7 +441,7 @@ router.post('/admin/login', (req, res) => {
         return res.status(200).json("Logged in!");
     });
 });
-
+/*
 //Student registration
 router.post('/register', async (req, res) => {
     //const { firstName, lastName, userId, password } = req.body;
@@ -469,13 +470,44 @@ router.post('/register', async (req, res) => {
         console.error(err);
         res.status(500).json({ msg: 'Internal server error' });
     }
-});
+});*/
 /*{
     "userId" : "ABC123456",
     "firstName": "first",
     "lastName": "last",
     "password": "pass"
 }*/
+router.post('/register', async (req, res) => {
+    const { userId, firstName, lastName, password } = req.body;
+
+    try {
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        if (!userIdFormat.test(userId)) {
+            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+        }
+
+        const q = "SELECT * FROM user WHERE userId = ?";
+        const data = await db.query(q, [userId]);
+
+        if (data.length > 0) {
+            return res.status(409).json("User already exists");
+        }
+
+        const insertQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
+        await db.query(insertQuery, [userId, firstName, lastName, password]);
+        res.status(201).json("User registered successfully!");
+
+    } catch (err) {
+        console.error(err);
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ msg: 'Duplicate entry. User already exists' });
+        } else {
+            res.status(500).json({ msg: 'Internal server error' });
+        }
+    }
+});
+
+
 
 //student login
 router.post('/login', (req, res) => {
@@ -608,6 +640,7 @@ router.get('/requests/group_info', (req, res) => {
         let groupIndex = 0
         data.forEach(item => {
             formattedData.push({
+                id: item.groupId,
                 groupName: item.groupName,
                 studentNames:item.members.replace(/"/g, '').split(','),
                 id: item.groupId,
@@ -628,8 +661,8 @@ router.get('/requests/group_info', (req, res) => {
 })
 
 router.get('/invites/student_info', (req, res) => {
-    const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId ="AHR277028") UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = "AHR277028")))`
-    db.query(invites, [studentId], (err, data) => {
+    const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId =?) UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = ?)))`
+    db.query(invites, [studentId, studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -682,7 +715,8 @@ router.get('/invites/group_info', (req, res) => {
 })
 
 router.post('/teamUp', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -692,17 +726,27 @@ router.post('/teamUp', (req, res) => {
     if (!tableName) {
         return res.status(400).json("Invalid receiverType");
     }
-    const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
-    const values = [senderId, receiverId];
-    db.query(q, [values], (err, data) => {
-        if (err) return res.status(500).send(err);
-        return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+
+    const checkQuery = `SELECT * FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+    db.query(checkQuery, [senderId, receiverId], (checkErr, checkData) => {
+        if (checkErr) return res.status(500).send(checkErr);
+        if (checkData.length > 0) {
+            return res.status(409).json("Invitation already exists");
+        }
+
+        const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
+        const values = [senderId, receiverId];
+        db.query(q, [values], (err, data) => {
+            if (err) return res.status(500).send(err);
+            return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+        });
     });
 });
 
 //rejecting invitations
 router.post('/denyInvite', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    receiverId = debug ? studentId : receiverId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -716,7 +760,6 @@ router.post('/denyInvite', (req, res) => {
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
         if (err) {
-            console.log(err)
             return res.status(500).send(err);
         } 
         console.log(data)
@@ -726,11 +769,12 @@ router.post('/denyInvite', (req, res) => {
 
 // Unsend an invitation
 router.post('/unsend', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     const tableMap = {
-        'studentToStudent': 'studentrequeststudent',
-        'studentToGroup': 'studentrequestgroup',
-        'groupToStudent': 'grouprequeststudent'
+        'ss': 'studentrequeststudent',
+        'sg': 'studentrequestgroup',
+        'gs': 'grouprequeststudent'
     };
     let tableName = tableMap[receiverType];
     if (!tableName) {
@@ -753,7 +797,8 @@ router.post('/unsend', (req, res) => {
 
 // complete
 router.post('/accept', (req, res) => {
-    let { senderId, receiverId, receiverType } = req.body;
+    let { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     const check = `select groupId from student where studentId = '${receiverId}'`
     let groupId = 0;
     db.query(check, [], (err, data) => {
@@ -805,8 +850,10 @@ router.post('/accept', (req, res) => {
             return res.status(200).send("member added")
 
         } else {
-            const c = `insert into formedGroups(groupSizePref, groupLeader)
-                       values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}')`
+            let rand = (Math.random() + 1).toString(36).substring(7);
+
+            const c = `insert into formedGroups(groupSizePref, groupLeader, groupName, groupCompleted)
+                       values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}', 'Team-${rand}', 0)`
 
             db.query(c, [], (err, data) => {
                 if (err) return res.status(500).send(err);
@@ -855,6 +902,10 @@ router.post('/accept', (req, res) => {
 
 
 router.post('/remaining_students', (req, res) => {
+    var {debug} = req.body;
+
+    if (debug) return res.status(200).send("debug mode on")
+
     const s = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
     db.query(s, [], (err, data) => {
         let params = {
@@ -962,5 +1013,45 @@ router.post('/remaining_students', (req, res) => {
     });
 })
 
+//admin tables page
+router.get('/admin/group_info', (req, res) => {
+    const q = 'SELECT g.groupId, g.groupName as groupName, group_concat(firstName, " ", lastName) as members, count(*) as totalMembers, f.groupCompleted as groupStatus FROM groupinfo as g, formedgroups as f where f.groupId=g.groupId group by g.groupId;'
+
+    db.query(q, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+
+        let formattedGroupData = [];
+        data.forEach(item => {
+            formattedGroupData.push({
+                groupId: item.groupId,
+                groupName: item.groupName,
+                groupMembers: item.members,
+                membersCount: item.totalMembers,
+                status: item.groupStatus,
+                formed: item.formed,
+                index: item.index
+
+            });
+        });
+
+        var query = `select * from individualstudents`
+        db.query(query, [], (err, data) => {
+            if (err) return res.status(501).send(err);
+
+            let formattedGroupData2 = [];
+            data.forEach(item => {
+                formattedGroupData2.push({
+                    studentId: item.studentId,
+                    firstName: item.firstName,
+                    lastName: item.lastName
+                });
+            });
+
+            let payload = {groups: formattedGroupData, students: formattedGroupData2}
+
+            return res.status(200).json(payload)
+        });
+    });
+})
 
 export default router;

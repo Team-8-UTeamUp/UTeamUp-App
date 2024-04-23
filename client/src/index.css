@@ -160,6 +160,31 @@ header .link{
   text-align: center;
 }
 
+.admin_body button{
+  display: inline-block;
+  margin-left: 5px;
+  padding: 5px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #FC8E28;
+  border: none;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.admin_body button:hover {
+  transform: scale(1.1);
+  background-color: #157636;
+}
+
+.admin_body button:active {
+  background-color: #157636;
+}
+
 table{
   margin-left: auto;
   margin-right: auto;
