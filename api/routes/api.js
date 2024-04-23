@@ -6,15 +6,10 @@ import {db} from "../db.js"
 const router = express.Router()
 import {PythonShell} from "python-shell";
 
-<<<<<<< HEAD
-//const studentId = "AAT229473"
-const studentId = 'ABG222946'
-// const studentId = "JBL269228"
-=======
+// const studentId = 'ABG222946'
 const studentId = "AAE297154"
 // const studentId = 'AHR277028'
 //const studentId = "JBL269228"
->>>>>>> 307f00040ea3879fb82be1895a1e9485d384f0d9
 var pyPath = process.platform;
 if (pyPath == "darwin") {
     pyPath = '../Database/.venv/bin/python';
@@ -872,6 +867,10 @@ router.post('/accept', (req, res) => {
 
 
 router.post('/remaining_students', (req, res) => {
+    var {debug} = req.body;
+
+    if (debug) return res.status(200).send("debug mode on")
+
     const s = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
     db.query(s, [], (err, data) => {
         let params = {
@@ -979,19 +978,47 @@ router.post('/remaining_students', (req, res) => {
 })
 
 //admin tables page
-router.get('/admin/group_table', (req, res) => {
-    const q = `SELECT * from csprojects order by projectNum asc`
+router.get('/admin/group_info', (req, res) => {
+    const q = 'SELECT g.groupId, g.groupName as groupName, group_concat(firstName, " ", lastName) as members, count(*) as totalMembers, f.groupCompleted as groupStatus FROM groupinfo as g, formedgroups as f where f.groupId=g.groupId group by g.groupId;'
+
     db.query(q, [], (err, data) => {
         if (err) return res.status(500).send(err);
-        let formattedData = [];
+
+        let formattedGroupData = [];
         data.forEach(item => {
-            formattedData.push({
-                projectNum: item.projectNum,
-                projName: item.title,
+            formattedGroupData.push({
+                groupId: item.groupId,
+                groupName: item.groupName,
+                groupMembers: item.members,
+                membersCount: item.totalMembers,
+                status: item.groupStatus,
+                formed: item.formed,
+                index: item.index
+
             });
         });
-        return res.status(200).json(formattedData)
 
+        var query = `select * from individualstudents`
+        db.query(query, [], (err, data) => {
+            if (err) return res.status(501).send(err);
+
+            // console.log(data)
+
+            let formattedGroupData2 = [];
+            data.forEach(item => {
+                formattedGroupData2.push({
+                    studentId: item.studentId,
+                    firstName: item.firstName,
+                    lastName: item.lastName
+                });
+            });
+
+            let payload = {groups: formattedGroupData, students: formattedGroupData2}
+
+            // console.log(payloada)
+
+            return res.status(200).json(payload)
+        });
     });
 })
 
