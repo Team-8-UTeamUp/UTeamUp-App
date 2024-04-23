@@ -93,19 +93,7 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
 
     const rejectButton= true
     const StudentView = <Student button2={rejectButton} Profiles={StudentProfiles} Page={"student"} />;
-    const GroupView = GroupProfiles.map(group=> (
-      <MyGroup
-        groupName={group.groupName}
-        studentNames={group.studentNames}
-        skillset={group.skills}
-        languages={group.codingLanguages}
-        preferences={group.preferences}
-        currGroupSz={group.currentGroupSize}
-        prefGroupSz={group.preferedGroupSize}
-        bios={group.bio}
-        emails={group.emails}
-      />
-    ))
+    const GroupView = <Group button2={rejectButton} Profiles={GroupProfiles} />
 
     /*<Group button1={acceptButton} button2={rejectButton} Profiles={GroupProfiles}/>;*/
     const [CurrentView, setCurrentView] =  useState(null);

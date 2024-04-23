@@ -39,7 +39,7 @@ const Group_Enlarge = ({
             const paylaod = {
                 debug: true, 
                 senderId: e.target.name, 
-                receiverType: "sg"
+                receiverType: "gs"
             }
 
             const res = await axios.post(`http://localhost:8800/api/denyInvite/`, paylaod);
@@ -145,7 +145,7 @@ const Group_Enlarge = ({
                         {button2 ? "Accept" : (unsend ? "Unsend" : "Team Up")}
                     </button>
                 </div>
-                {button2 && <div>{button2}</div>}
+                {button2 && <div><button class="teamupbutton" name={id} style={{backgroundColor: "red"}} onClick={rejectClick}>Reject</button></div>}
             </div>
             <h2 style={{ marginBottom: "20px" }}>Project Preferences</h2>
             <div
