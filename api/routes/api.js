@@ -911,7 +911,8 @@ router.post('/remaining_students', (req, res) => {
             params['min'] = data[0].varValue;
             params['max'] = data[1].varValue
 
-            const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ? order by g.groupId asc;"
+
+            const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ?  and g.groupId in (select groupId from formedgroups where groupCompleted=False )order by g.groupId asc;\n"
 
             db.query(g, [params['min']], (err, data) => {
                 if (err) return res.status(500).send(err);
@@ -963,7 +964,7 @@ router.post('/remaining_students', (req, res) => {
                             const groupLeader = `'${members[0]}'`
 
                             // create team
-                            const c = `insert into formedGroups(groupSizePref, groupLeader) values ((select prefGroupSize from student where studentId = ${groupLeader}), ${groupLeader})`
+                            const c = `insert into formedGroups(groupSizePref, groupLeader,groupCompleted) values ((select prefGroupSize from student where studentId = ${groupLeader}), ${groupLeader},True)`
 
                             db.query(c, [], (err, data) => {
                                 if (err) return res.status(500).send(err);
