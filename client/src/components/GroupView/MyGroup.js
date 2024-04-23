@@ -110,10 +110,9 @@ const MyGroup= ({groupName, studentNames, skillset, languages, preferences, curr
 
 
 return(
-    
-    <div style={{display:"flex", flexDirection:"row", justifyContent:"center"}}>
+    <div class="fullscreen">
         
-        <div class="expanded" style={{ margin: "0px 60px 0px 60px"}}>   
+        <div class="expanded" style={{ margin: "0px 40px 0px 40px"}}>   
                 {isEditMode ? (
                         <input
                             type="text"
@@ -142,9 +141,9 @@ return(
                         <div class="langbubble"> {language} </div>
                     ))}
                 </div>
-                <div style={{display: "flex", flexDirection: "row", gap:"15px"}}>
+                <div style={{display: "flex", flexDirection: "row", gap:"50px"}}>
                 </div>
-                <h2 style={{marginBottom: "20px"}}>Project Preferences</h2>
+                <h1 style={{margintop:"40px", marginBottom: "20px"}}>Project Preferences</h1>
                 <div style={{display: "flex", flexDirection: "row", gap: "30px", justifyContent: "center"}}>
                     <div class="preferences">
                         <div class="toggle">
@@ -211,28 +210,32 @@ return(
                         <div style={{textAlign: "center", fontSize:"12px", fontWeight:"bold", marginBottom: "20px"}}>Currrent Size/Prefered</div>  
                     </div> 
                 </div>
-                <h2 style={{marginBottom: "20px"}}>About Us</h2>
+                <h1 style={{margintop:"20px", marginBottom: "20px"}}>About Us</h1>
                 <div className='bio-list'>
                     {bios.map((bio, index) => (
                         <div>
-                            <h3> {studentNames[index]}</h3> 
+                            <h2> {studentNames[index]}</h2> 
                             <div key={index} style={{marginBottom: "20px"}}>{bio}</div>
                         </div>
                     ))}
                 </div> 
 
                 {!isEditMode ? (
-                        <button onClick={toggleEditMode} id="editbutton">Edit Profile</button>
+                    <div style={{display:"flex", flexDirection:"column", marginTop:"50px"}}>
+                         <button class="teamupbutton" style={{marginBottom:"10px", color:"black", backgroundColor:"lightgray"}} onClick={toggleEditMode} id="editbutton" >Edit Profile</button>
+                         <button class="teamupbutton"  style={{marginBottom:"10px", color:"white", backgroundColor:"black"}}>Close Group</button>
+                         </div>
                     ) : (
+                        <div style={{display:"flex", flexDirection:"column", marginTop:"50px"}}>
                         <div style={{display:"flex", flexDirection:"row", gap:"10px"}}>
-                            <button onClick={saveEdits} id="savebutton">Save</button>
-                            <button onClick={cancelEdits} id="cancelbutton">Cancel</button>
+                            <button  class="teamupbutton" style={{color:"black", backgroundColor:"lightgray"}} onClick={saveEdits} id="savebutton">Save</button>
+                            <button class="teamupbutton" style={{color:"black", backgroundColor:"lightgray"}} onClick={cancelEdits} id="cancelbutton">Cancel</button>
+                        </div>
+                        <button class="teamupbutton" style={{margintop:"0px", color:"white", backgroundColor:"black"}}>Close Group</button>
                         </div>
                 )}  
-
-                <button>Close Group</button>
-                
             </div>
+            
 
             <div class="emails" style={{marginTop:"30px", border:"1px solid gray", borderRadius:"10px", width:"300px", height:"fit-content", display:"flex", flexDirection:"column", alignItems:"center", backgroundColor:"white", gap:"10px"}}>
             <div class="emailsHeadder" style={{backgroundColor:"lightgray", width:"inherit", height:"fit-content", paddingTop:"10px", paddingBottom:"10px", color:"black", textAlign:"center", borderRadius:"10px 10px 0px 0px"}}>Contact Information</div>

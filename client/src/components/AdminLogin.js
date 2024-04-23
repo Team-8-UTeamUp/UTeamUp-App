@@ -36,7 +36,7 @@ function LoginPage() {
     <header class="header">
         <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
             <h2 id="page_title" >Login</h2>
-            <Link className="link" to="/"><p>Return to Home</p></Link>
+            <Link className="link" to="/homepage"><p>Return to Home</p></Link>
         </header>
     <div class="login_body">
         <h3>Enter your login credentials</h3>
