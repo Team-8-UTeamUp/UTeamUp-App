@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
+import axios from "axios";
 
-const MyGroup= ({groupName, studentNames, skillset, languages, preferences, currGroupSz, prefGroupSz, bios, emails}) => {
+const MyGroup= ({groupId,groupName, studentNames, skillset, languages, preferences, currGroupSz, prefGroupSz, bios, emails}) => {
 
 
         // States to manage editable fields
@@ -70,13 +71,22 @@ const MyGroup= ({groupName, studentNames, skillset, languages, preferences, curr
         setIsEditMode(!isEditMode); // Toggle the edit mode
     };
 
-    function saveEdits()
-    {
-        
+    const saveEdits = async (e) => {
+        e.preventDefault()
         setPrevGroupName(editableGroupName);
         setPrevPrefGroupSz(editablePrefGroupSz);
         setprevUTDPrefrences(editableUTDesignPreferences);
         setprevCSPreferences(editableCSProjectPreferences);
+        try {
+            console.log(editableUTDesignPreferences)
+            const res = await axios.post("http://localhost:8800/api/edit_group", {"groupId":groupId,"newName":editableGroupName,"newSize":editablePrefGroupSz,"newUTD":editableUTDesignPreferences,"newCS":editableCSProjectPreferences})
+            console.log(res)
+
+        } catch (err) {
+            console.log(err)
+        }
+
+
         setIsEditMode(false); // Exit edit mode
         
     }
@@ -90,7 +100,20 @@ const MyGroup= ({groupName, studentNames, skillset, languages, preferences, curr
         setCSProjectPreferences(prevCSPreferences);
         setIsEditMode(false); // Exit edit mode
     }
+    const closeGroup = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("http://localhost:8800/api/close_group", {"groupId":groupId})
+            console.log(res)
 
+        } catch (err) {
+            console.log(err)
+        }
+
+
+        setIsEditMode(false); // Exit edit mode
+
+    }
     // bulk email button function
         const bulkClick = () => {
         // Join all email addresses with commas
@@ -230,7 +253,7 @@ return(
                         </div>
                 )}  
 
-                <button>Close Group</button>
+                <button onClick={closeGroup}>Close Group</button>
                 
             </div>
 

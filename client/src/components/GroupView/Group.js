@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import Group_Tile from "./Group_Tile";
 import Group_Enlarge from './Group_Enlarge';
 
-function Group({button1, button2, Profiles})
+function Group({button2, Profiles, Page, unsend})
 {
     // in-depth look at profile 
     const expandedProfiles = Profiles.map(group=> (
         <Group_Enlarge
         //name, skillset, languages, preferences, groupSz, bio
+            id={group.id}
             groupName={group.groupName}
             studentNames={group.studentNames}
             skillset={group.skills}
@@ -16,7 +17,8 @@ function Group({button1, button2, Profiles})
             currGroupSz={group.currentGroupSize}
             prefGroupSz={group.preferedGroupSize}
             bios={group.bio}
-            button1={button1}
+            Page={Page}
+            unsend={unsend}
             button2={button2 ? button2 : null} 
         />
       ));

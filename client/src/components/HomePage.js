@@ -103,6 +103,7 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, MyGroupProfile, isLoa
   const GroupView = hasGroup? (
   
     <MyGroup
+      groupId = {MyGroupProfile.id}
       groupName={MyGroupProfile.groupName}
       studentNames={MyGroupProfile.studentNames}
       skillset={MyGroupProfile.skills}
