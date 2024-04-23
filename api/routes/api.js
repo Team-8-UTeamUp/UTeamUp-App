@@ -6,8 +6,8 @@ import {db} from "../db.js"
 const router = express.Router()
 import {PythonShell} from "python-shell";
 
-//const studentId = "AAE297154"
-const studentId = 'AHR277028'
+const studentId = "AAE297154"
+// const studentId = 'AHR277028'
 //const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
@@ -207,7 +207,7 @@ router.get('/group_profile', (req, res) => {
             emails:data[0]['emails'].replace(/"/g, '').split(','),
             skills: data[0]['skills'].replace(/"/g, '').split(','),
             codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
-            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
+            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')], //[data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
             bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
@@ -608,6 +608,7 @@ router.get('/requests/group_info', (req, res) => {
         let groupIndex = 0
         data.forEach(item => {
             formattedData.push({
+                id: item.groupId,
                 groupName: item.groupName,
                 studentNames:item.members.replace(/"/g, '').split(','),
                 id: item.groupId,
@@ -628,8 +629,8 @@ router.get('/requests/group_info', (req, res) => {
 })
 
 router.get('/invites/student_info', (req, res) => {
-    const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId ="AHR277028") UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = "AHR277028")))`
-    db.query(invites, [studentId], (err, data) => {
+    const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId =?) UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = ?)))`
+    db.query(invites, [studentId, studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -682,7 +683,8 @@ router.get('/invites/group_info', (req, res) => {
 })
 
 router.post('/teamUp', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -702,7 +704,8 @@ router.post('/teamUp', (req, res) => {
 
 //rejecting invitations
 router.post('/denyInvite', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    receiverId = debug ? studentId : receiverId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -716,7 +719,6 @@ router.post('/denyInvite', (req, res) => {
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
         if (err) {
-            console.log(err)
             return res.status(500).send(err);
         } 
         console.log(data)
@@ -726,11 +728,12 @@ router.post('/denyInvite', (req, res) => {
 
 // Unsend an invitation
 router.post('/unsend', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    var { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     const tableMap = {
-        'studentToStudent': 'studentrequeststudent',
-        'studentToGroup': 'studentrequestgroup',
-        'groupToStudent': 'grouprequeststudent'
+        'ss': 'studentrequeststudent',
+        'sg': 'studentrequestgroup',
+        'gs': 'grouprequeststudent'
     };
     let tableName = tableMap[receiverType];
     if (!tableName) {
@@ -739,6 +742,9 @@ router.post('/unsend', (req, res) => {
     const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
     const values = [senderId, receiverId];
     db.query(q, values, (err, data) => {
+        console.log(data)
+        console.log(err)
+        console.log(receiverType)
         if (err) return res.status(500).send(err);
         return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been unsent");
     });
@@ -753,7 +759,8 @@ router.post('/unsend', (req, res) => {
 
 // complete
 router.post('/accept', (req, res) => {
-    let { senderId, receiverId, receiverType } = req.body;
+    let { senderId, receiverId, receiverType, debug } = req.body;
+    senderId = debug ? studentId : senderId;
     const check = `select groupId from student where studentId = '${receiverId}'`
     let groupId = 0;
     db.query(check, [], (err, data) => {
@@ -805,8 +812,10 @@ router.post('/accept', (req, res) => {
             return res.status(200).send("member added")
 
         } else {
-            const c = `insert into formedGroups(groupSizePref, groupLeader)
-                       values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}')`
+            let rand = (Math.random() + 1).toString(36).substring(7);
+
+            const c = `insert into formedGroups(groupSizePref, groupLeader, groupName, groupCompleted)
+                       values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}', 'Team-${rand}', 0)`
 
             db.query(c, [], (err, data) => {
                 if (err) return res.status(500).send(err);
