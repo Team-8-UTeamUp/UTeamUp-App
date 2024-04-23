@@ -869,6 +869,7 @@ router.post('/remaining_students', (req, res) => {
             params['min'] = data[0].varValue;
             params['max'] = data[1].varValue
 
+
             const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ?  and g.groupId in (select groupId from formedgroups where groupCompleted=False )order by g.groupId asc;\n"
 
             db.query(g, [params['min']], (err, data) => {

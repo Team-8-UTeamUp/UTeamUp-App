@@ -10,6 +10,7 @@ from io import StringIO
 
 """ Main functions to call"""
 
+
 def sortRemainingStudents( studentJson, groupJson,membersJson, min, max,gD):
     # add sql call, change later to read json
 
