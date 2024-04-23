@@ -6,9 +6,9 @@ import {db} from "../db.js"
 const router = express.Router()
 import {PythonShell} from "python-shell";
 
-//const studentId = "AAT229473"
-// const studentId = 'ABG222946'
-const studentId = "JBL269228"
+//const studentId = "AAE297154"
+const studentId = 'AHR277028'
+//const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
     pyPath = '../Database/.venv/bin/python';
@@ -220,16 +220,110 @@ router.get('/group_profile', (req, res) => {
 // wip changes name and size, needs proj ranks
 router.post('/edit_group', (req, res) => {
     const{groupId, newName, newSize, newUTD, newCS } = req.body
+
     let q = `update formedGroups set groupName='${newName}' where groupId = ${groupId}`
     if (newSize >=4 && newSize <=6){
         q = `update formedGroups set groupName='${newName}',  groupSizePref =${newSize} where groupId = ${groupId}`
     }
+
     db.query(q, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
-        return res.status(200).send(`name and size updated for group ${groupId}`)
-
     });
+
+
+
+
+    // check that the list has unique project numbers
+    let UTD = newUTD.map(str => parseInt(str))
+    let isUniqueUTD = (new Set(UTD)).size === newUTD.length;
+    if (isUniqueUTD){
+        let finalRank = []
+        UTD.map((rank, index) =>  finalRank += `(${groupId},${rank},${index + 1}),`);
+
+        // Remove the trailing comma and space
+        finalRank = finalRank.slice(0, -1);
+        let UTDP =[]
+        const v = `select projectNum from utdprojects`
+        db.query(v,[],(err,data)=>{
+            if (err) return res.json(err);
+            UTDP = data.map(project => project.projectNum);
+            let isValidUTD = UTD.every(rank => UTDP.includes(rank));
+            if (isValidUTD) {
+                const d = `delete from grouppreference p where groupId = ${groupId}  and p.projectNum in (select projectNum from utdprojects)`
+                db.query(d, [], (err, data) => {
+                    if (err) return res.json(err);
+                    const q = `INSERT INTO grouppreference(groupId, projectNum, projRank)
+                               VALUES ${finalRank}`;
+                    db.query(q, [], (err, data) => {
+                        if (err) return res.json(err);
+
+                    })
+                })
+            }
+        })
+
+
+    }
+
+    let CS = newCS.map(str => parseInt(str))
+    let isUniqueCS = (new Set(CS)).size === newCS.length;
+    if (isUniqueCS){
+        const d = `delete from grouppreference p where groupId = ${groupId}  and p.projectNum in (select projectNum from csprojects)`
+        let finalRank = []
+
+        CS.map((rank, index) =>  finalRank += `(${groupId},${rank},${index + 1}),`);
+
+        // Remove the trailing comma and space
+        finalRank = finalRank.slice(0, -1);
+        let CSP = []
+        const v = `select projectNum from csprojects`
+
+         db.query(v,[],(err,data)=>{
+            if (err) return res.json(err);
+            CSP = data.map(project => project.projectNum);
+            let isValidUTD = CS.every(rank => CSP.includes(rank));
+            if (isValidUTD) {
+                const d = `delete from grouppreference p where groupId = ${groupId}  and p.projectNum in (select projectNum from csprojects)`
+                db.query(d, [], (err, data) => {
+                    if (err) return res.json(err);
+                    const q = `INSERT INTO grouppreference(groupId, projectNum, projRank)
+                               VALUES ${finalRank}`;
+                    db.query(q, [], (err, data) => {
+                        if (err) return res.json(err);
+
+                    })
+                })
+            }
+        })
+    }
+
+
+    return res.status(200).send(`profile updated for group ${groupId}`)
+
+
 })
+
+router.post('/close_group', (req, res) => {
+    const {groupId} = req.body
+    let q = `update formedGroups
+             set groupClosed=True
+             where groupId = ${groupId}`
+    // set group to closed
+    db.query(q, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+    });
+    // delete all requests to and from group
+    const sg = `delete from studentrequestgroup where receiverId=${groupId}`
+    const gs = `delete from grouprequeststudent where senderId=${groupId}`
+    db.query(sg, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+    });
+    db.query(gs, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+    });
+    return res.status(200).send(`Group ${groupId} closed`)
+})
+
 //STUDENTS PAGE
 //get student info
 router.get('/student_info', (req, res) => {
@@ -534,7 +628,7 @@ router.get('/requests/group_info', (req, res) => {
 })
 
 router.get('/invites/student_info', (req, res) => {
-    const invites =`select * from studentProfile where studentId in (select senderId from studentrequeststudent where receiverId =?);`
+    const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId ="AHR277028") UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = "AHR277028")))`
     db.query(invites, [studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
@@ -659,75 +753,104 @@ router.post('/unsend', (req, res) => {
 
 // complete
 router.post('/accept', (req, res) => {
-    const { senderId, receiverId, receiverType } = req.body;
+    let { senderId, receiverId, receiverType } = req.body;
+    const check = `select groupId from student where studentId = '${receiverId}'`
+    let groupId = 0;
+    db.query(check, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        let temp1;
+        let temp2
+        if(data.length >= 1 && data[0]["groupId"] !=0){
 
-    if (receiverType === "group"){
-        const q = `update student set groupId=${senderId} where studentId = '${receiverId}'`
+            groupId = data[0]["groupId"];
+            receiverType = "addStudent";
+            temp1 = senderId;
+            temp2 = receiverId;
+            senderId = groupId;
+            receiverId = temp1;
 
-        db.query(q, [], (err, data) => {
-            if (err) return res.status(500).send(err);
-        });
-
-        const rSS = `delete from studentrequeststudent where senderId ='${receiverId}' OR receiverId= '${receiverId}' `
-        db.query(rSS, [], (err, data) => {
+        }
+        if (receiverType === "group" || receiverType==="addStudent") {
+            const q = `update student
+                       set groupId=${senderId}
+                       where studentId = '${receiverId}'`
+            db.query(q, [], (err, data) => {
                 if (err) return res.status(500).send(err);
             });
-        const rSG = `delete from studentrequestgroup where senderId ='${receiverId}'`
-        db.query(rSG, [], (err, data) => {
-                if (err) return res.status(500).send(err);
-            });
-        const rGS = `delete from grouprequeststudent where receiverId ='${receiverId}'`
-        db.query(rGS, [], (err, data) => {
-                if (err) return res.status(500).send(err);
-            });
+            if(receiverType==="addStudent"){
+                senderId =temp1
+                receiverId=temp2
+            }
 
-        return res.status(200).send("member added")
-
-    }
-    else {
-        const c = `insert into formedGroups(groupSizePref, groupLeader)
-                   values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}')`
-
-        db.query(c, [], (err, data) => {
-            if (err) return res.status(500).send(err);
-            const m = `update student set groupId = (select groupId from formedGroups where groupLeader = '${senderId}') where studentId in ('${senderId}', '${receiverId}')`
-
-            db.query(m, [], (err, data) => {
-                if (err) return res.status(500).send(err);
-            });
-            const p = `insert into grouppreference(groupId, projectNum, projRank)
-                       SELECT s.groupId, pp.projectNum, pp.projRank
-                       FROM projectpreference pp
-                                JOIN (SELECT groupId FROM student WHERE studentId = '${senderId}') s
-                       WHERE pp.studentId = '${senderId}';`
-            db.query(p, [], (err, data) => {
-                if (err) return res.status(500).send(err);
-            });
             const rSS = `delete
-                     from studentrequeststudent
-                     where senderId in ('${senderId}', '${receiverId}')
-                        OR receiverId in ('${senderId}', '${receiverId}') `
+                         from studentrequeststudent
+                         where senderId = '${receiverId}'
+                            OR receiverId = '${receiverId}' `
             db.query(rSS, [], (err, data) => {
                 if (err) return res.status(500).send(err);
             });
             const rSG = `delete
                          from studentrequestgroup
-                         where senderId in ('${senderId}', '${receiverId}')`
+                         where senderId = '${receiverId}'`
             db.query(rSG, [], (err, data) => {
                 if (err) return res.status(500).send(err);
             });
             const rGS = `delete
                          from grouprequeststudent
-                         where receiverId in ('${senderId}', '${receiverId}')`
+                         where receiverId = '${receiverId}'`
             db.query(rGS, [], (err, data) => {
                 if (err) return res.status(500).send(err);
             });
 
-            return res.status(200).send("group created")
+            return res.status(200).send("member added")
 
-        });
+        } else {
+            const c = `insert into formedGroups(groupSizePref, groupLeader)
+                       values ((select prefGroupSize from student where studentId = '${senderId}'), '${senderId}')`
 
-    }
+            db.query(c, [], (err, data) => {
+                if (err) return res.status(500).send(err);
+                const m = `update student
+                           set groupId = (select groupId from formedGroups where groupLeader = '${senderId}')
+                           where studentId in ('${senderId}', '${receiverId}')`
+
+                db.query(m, [], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                });
+                const p = `insert into grouppreference(groupId, projectNum, projRank)
+                           SELECT s.groupId, pp.projectNum, pp.projRank
+                           FROM projectpreference pp
+                                    JOIN (SELECT groupId FROM student WHERE studentId = '${senderId}') s
+                           WHERE pp.studentId = '${senderId}';`
+                db.query(p, [], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                });
+                const rSS = `delete
+                             from studentrequeststudent
+                             where senderId in ('${senderId}', '${receiverId}')
+                                OR receiverId in ('${senderId}', '${receiverId}') `
+                db.query(rSS, [], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                });
+                const rSG = `delete
+                             from studentrequestgroup
+                             where senderId in ('${senderId}', '${receiverId}')`
+                db.query(rSG, [], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                });
+                const rGS = `delete
+                             from grouprequeststudent
+                             where receiverId in ('${senderId}', '${receiverId}')`
+                db.query(rGS, [], (err, data) => {
+                    if (err) return res.status(500).send(err);
+                });
+
+                return res.status(200).send("group created")
+
+            });
+
+        }
+    });
 });
 
 

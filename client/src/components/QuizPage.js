@@ -9,7 +9,7 @@ function Quiz_Handler() {
     const navigate = useNavigate();
     
 
-    const studentId = "ABD123456"
+    const studentId = 'AHR277028'
 
     const [showq1, setShow1] = useState(true);
     const [showq2, setShow2] = useState(false);
