@@ -307,7 +307,7 @@ router.post('/edit_group', (req, res) => {
 router.post('/close_group', (req, res) => {
     const {groupId} = req.body
     let q = `update formedGroups
-             set groupClosed=True
+             set groupCompleted=True
              where groupId = ${groupId}`
     // set group to closed
     db.query(q, [], (err, data) => {
@@ -316,6 +316,7 @@ router.post('/close_group', (req, res) => {
     // delete all requests to and from group
     const sg = `delete from studentrequestgroup where receiverId=${groupId}`
     const gs = `delete from grouprequeststudent where senderId=${groupId}`
+
     db.query(sg, [], (err, data) => {
         if (err) return res.status(500).send(err);
     });
@@ -638,7 +639,6 @@ router.get('/requests/group_info', (req, res) => {
                 id: item.groupId,
                 groupName: item.groupName,
                 studentNames:item.members.replace(/"/g, '').split(','),
-                id: item.groupId,
                 index: groupIndex,
                 skills: item.skills.replace(/"/g, '').split(','),
                 codingLanguages: item.languages.replace(/"/g, '').split(','),
@@ -717,23 +717,36 @@ router.post('/teamUp', (req, res) => {
         'sg': 'studentrequestgroup',
         'gs': 'grouprequeststudent'
     };
-    let tableName = tableMap[receiverType];
-    if (!tableName) {
-        return res.status(400).json("Invalid receiverType");
-    }
-
-    const checkQuery = `SELECT * FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
-    db.query(checkQuery, [senderId, receiverId], (checkErr, checkData) => {
-        if (checkErr) return res.status(500).send(checkErr);
-        if (checkData.length > 0) {
-            return res.status(409).json("Invitation already exists");
+    const check = `select groupId from student where studentId = '${senderId}'`
+    let groupId = 0;
+    db.query(check, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        if (receiverType === "ss" && data.length >= 1 && data[0]["groupId"] != 0) {
+            receiverType = "gs";
+            senderId = data[0]["groupId"]
+        }
+        let tableName = tableMap[receiverType];
+        if (!tableName) {
+            return res.status(400).json("Invalid receiverType");
         }
 
-        const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`) VALUES (?)`;
-        const values = [senderId, receiverId];
-        db.query(q, [values], (err, data) => {
-            if (err) return res.status(500).send(err);
-            return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+        const checkQuery = `SELECT *
+                            FROM ${tableName}
+                            WHERE senderId = ?
+                              AND receiverId = ?`;
+        db.query(checkQuery, [senderId, receiverId], (checkErr, checkData) => {
+            if (checkErr) return res.status(500).send(checkErr);
+            if (checkData.length > 0) {
+                return res.status(409).json("Invitation already exists");
+            }
+
+            const q = `INSERT INTO ${tableName}(\`senderId\`, \`receiverId\`)
+                       VALUES (?)`;
+            const values = [senderId, receiverId];
+            db.query(q, [values], (err, data) => {
+                if (err) return res.status(500).send(err);
+                return res.status(200).json("Invitation sent from " + senderId + " to " + receiverId);
+            });
         });
     });
 });
@@ -747,18 +760,30 @@ router.post('/denyInvite', (req, res) => {
         'sg': 'studentrequestgroup',
         'gs': 'grouprequeststudent'
     };
-    let tableName = tableMap[receiverType];
-    if (!tableName) {
-        return res.status(400).json("Invalid receiverType");
-    }
-    const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
-    const values = [senderId, receiverId];
-    db.query(q, values, (err, data) => {
-        if (err) {
-            return res.status(500).send(err);
-        } 
-        console.log(data)
-        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
+    const check = `select groupId from student where studentId = '${receiverId}'`
+    let groupId = 0;
+    db.query(check, [], (err, data) => {
+        if (err) return res.status(500).send(err);
+        if (receiverType === "ss" && data.length >= 1 && data[0]["groupId"] != 0) {
+            receiverType = "sg";
+            receiverId = data[0]["groupId"]
+        }
+        let tableName = tableMap[receiverType];
+        if (!tableName) {
+            return res.status(400).json("Invalid receiverType");
+        }
+        const q = `DELETE
+                   FROM ${tableName}
+                   WHERE senderId = ?
+                     AND receiverId = ?`;
+        const values = [senderId, receiverId];
+        db.query(q, values, (err, data) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            console.log(data)
+            return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
+        });
     });
 });
 
@@ -771,15 +796,25 @@ router.post('/unsend', (req, res) => {
         'sg': 'studentrequestgroup',
         'gs': 'grouprequeststudent'
     };
-    let tableName = tableMap[receiverType];
-    if (!tableName) {
-        return res.status(400).json("Invalid receiverType");
-    }
-    const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
-    const values = [senderId, receiverId];
-    db.query(q, values, (err, data) => {
+    const check = `select groupId from student where studentId = '${senderId}'`
+    let groupId = 0;
+    db.query(check, [], (err, data) => {
         if (err) return res.status(500).send(err);
-        return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been unsent");
+        if(receiverType==="ss" && data.length >= 1 && data[0]["groupId"] !=0) {
+            receiverType = "gs";
+            senderId = data[0]["groupId"]
+        }
+
+        let tableName = tableMap[receiverType];
+        if (!tableName) {
+            return res.status(400).json("Invalid receiverType");
+        }
+        const q = `DELETE FROM ${tableName} WHERE senderId = ? AND receiverId = ?`;
+        const values = [senderId, receiverId];
+        db.query(q, values, (err, data) => {
+            if (err) return res.status(500).send(err);
+            return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been unsent");
+        });
     });
 });
 
@@ -793,7 +828,7 @@ router.post('/unsend', (req, res) => {
 // complete
 router.post('/accept', (req, res) => {
     let { senderId, receiverId, receiverType, debug } = req.body;
-    senderId = debug ? studentId : senderId;
+    receiverId = debug ? studentId : receiverId;
     const check = `select groupId from student where studentId = '${receiverId}'`
     let groupId = 0;
     db.query(check, [], (err, data) => {
@@ -801,7 +836,6 @@ router.post('/accept', (req, res) => {
         let temp1;
         let temp2
         if(data.length >= 1 && data[0]["groupId"] !=0){
-
             groupId = data[0]["groupId"];
             receiverType = "addStudent";
             temp1 = senderId;
@@ -810,6 +844,7 @@ router.post('/accept', (req, res) => {
             receiverId = temp1;
 
         }
+
         if (receiverType === "group" || receiverType==="addStudent") {
             const q = `update student
                        set groupId=${senderId}
@@ -817,10 +852,6 @@ router.post('/accept', (req, res) => {
             db.query(q, [], (err, data) => {
                 if (err) return res.status(500).send(err);
             });
-            if(receiverType==="addStudent"){
-                senderId =temp1
-                receiverId=temp2
-            }
 
             const rSS = `delete
                          from studentrequeststudent
@@ -899,7 +930,7 @@ router.post('/accept', (req, res) => {
 router.post('/remaining_students', (req, res) => {
     var {debug} = req.body;
 
-    if (debug) return res.status(200).send("debug mode on")
+    //if (debug) return res.status(200).send("debug mode on")
 
     const s = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p, individualstudents as s where  s.studentId=p.studentId;"
     db.query(s, [], (err, data) => {
