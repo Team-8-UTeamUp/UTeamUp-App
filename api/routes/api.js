@@ -482,7 +482,7 @@ router.post('/register', (req, res) => {
     const { userId, firstName, lastName, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
 
-    db.query(q, [userId], (err, data) => {
+    db.query(q, [req.body.username], (err, data) => {
         if (err) return res.status(500).json(err);
         const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
         if (!userIdFormat.test(userId)) {

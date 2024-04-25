@@ -79,9 +79,10 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, MyGroupProfile, isLoa
           <div class="column left">
             <NavBar />
           </div>
+
           <div class="column right">
-            <h2>Home</h2>
-            <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
+            <h2 style={{marginBottom:"5px"}}> Home</h2>
+            <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"0px"}}>
               <button className="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} >Student Profiles</button>
               <button className="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} >My Group Profile</button>
               

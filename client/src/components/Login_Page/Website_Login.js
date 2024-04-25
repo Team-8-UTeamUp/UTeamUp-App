@@ -15,13 +15,13 @@ function Website_Login()
             </header>
 
             <div style={{display:"flex", flexDirection:"row"}}>
-                    <div class="split3" style={{backgroundColor:"#FC8E28"}}>
-                        <h2 style={{paddingTop: "10%", paddingBottom: "5%", color:"white"}}>Welcome Back! Your team is waiting for you...</h2>
+                    <div class="split3" style={{backgroundColor:"#E59400"}}>
+                        <h1 style={{paddingTop: "10%", paddingBottom: "5%", color:"white"}}>Welcome Back! Your team is waiting for you...</h1>
                         <ReturningUser/>
                         </div>
                     
-                    <div class="split3" style={{backgroundColor:"green"}}>
-                        <h2 style={{paddingTop: "10%", paddingBottom: "5%", color:"white"}}>New to UTeamUp? Lets get started..</h2>
+                    <div class="split3" style={{backgroundColor:" #356B5E"}}>
+                        <h1 style={{paddingTop: "10%", paddingBottom: "5%", color:"white"}}>New to UTeamUp? Lets get started..</h1>
                      <NewUser/>
                     </div>
                    
