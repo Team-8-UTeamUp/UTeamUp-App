@@ -32,6 +32,8 @@ function NewUser() {
             await axios.post("http://localhost:8800/api/register", inputs);
             setNU(true)
             setStudent(inputs.username)
+            localStorage.setItem("studentId", inputs.username); // Store studentId in local storage
+            console.log("ID FIRST STORED: ", localStorage.getItem("studentId"))
             navigate("/quiz");
         } catch (err) {
             console.log(err);

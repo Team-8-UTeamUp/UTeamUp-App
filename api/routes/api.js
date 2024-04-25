@@ -48,7 +48,7 @@ router.post('/quiz/q1', (req, res) => {
                    VALUES ${skillPairs}`
         db.query(q, [], (err, data) => {
             if (err) return res.json(err);
-            return res.status(200).json("Question 1 updated for " + studentId)
+            return res.status(200).json("Question 1 updated for " + values[0])
         })
     })
 })
@@ -74,7 +74,7 @@ router.post('/quiz/q2', (req, res) => {
                    VALUES ${langPairs}`
         db.query(q, [], (err, data) => {
             if (err) return res.json(err);
-            return res.status(200).json("Question 1 updated for " + studentId)
+            return res.status(200).json("Question 1 updated for " + values[0])
         })
     })
 })
@@ -82,6 +82,7 @@ router.post('/quiz/q2', (req, res) => {
 // Question 3 - Top 5 CS Projects
 router.post('/quiz/q3-4', (req, res) => {
     const {studentId, rankings, projType} = req.body
+    console.log("Prefpage StudentID: ", studentId);
     if(rankings.length !== 5) {
         return res.status(400).json("Please provide exactly 5 CS Projects");
     }
@@ -127,7 +128,7 @@ router.post('/quiz/q6', (req, res) => {
     ]
     db.query(q,[values[1],values[0]], (err,data) => {
         if (err) return res.json(err);
-        return res.status(200).json("Question 6 updated for " + studentId)
+        return res.status(200).json("Question 6 updated for " + values[0])
     })
 })
 
