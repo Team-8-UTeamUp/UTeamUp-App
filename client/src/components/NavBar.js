@@ -1,9 +1,11 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom';
+import { AuthContext } from './Login_Page/AuthContext';
 
 function NavBar() {
     const location = useLocation();
     const [url, setUrl] = useState(null);
+    const { studentId, setStudent } = useContext(AuthContext); // clear netid after log out
 
     const navigations = {
         0: {
@@ -51,6 +53,12 @@ function NavBar() {
                 {
                     Object.keys(navigations).map(id => {
                         let navLink = navigations[id]
+
+                        if(navLink === 7)
+                        {
+                            setStudent(" ")
+                            localStorage.setItem("studentId", " "); // Store studentId in local storage
+                        }
 
                         return (
                             <Link className={"link " + (url === navLink.Link ? "active" : "inactive")} id="link" to={navLink.Link}>

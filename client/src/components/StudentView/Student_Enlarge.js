@@ -81,7 +81,7 @@ const Student_Enlarge = ({
                 setMessage(null);
             }, 2000);
 
-            //window.location.reload();
+            window.location.reload();
 
         } catch (err) {
             console.log(err);
@@ -115,7 +115,7 @@ const Student_Enlarge = ({
                 setMessage(null);
             }, 2000);
 
-            //window.location.reload();
+            window.location.reload();
         } catch (err) {
             console.log(err);
              // show fail message
@@ -147,7 +147,7 @@ const Student_Enlarge = ({
                   setMessage(null);
               }, 2000);
 
-            //window.location.reload();
+            window.location.reload();
         } catch (err) {
             console.log(err);
             // show fail message

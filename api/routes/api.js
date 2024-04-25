@@ -171,8 +171,9 @@ router.get('/csprojects', (req, res) => {
 
 // Profile page
 router.get('/student_profile', (req, res) => {
+    console.log("StudentId:", req.query.studentId);
     const q = `select * from studentProfile where studentId =?;`
-
+    console.log("StudentId:", req.query.studentId);
     db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let temp = {
@@ -193,6 +194,7 @@ router.get('/student_profile', (req, res) => {
 
 // My Group profile
 router.get('/group_profile', (req, res) => {
+    console.log("StudentId:", req.query.studentId);
     const q =`select * from groupProfile where groupId in (select groupId from student where studentId= ?)`
     db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -221,6 +223,7 @@ router.get('/group_profile', (req, res) => {
 
 // wip changes name and size, needs proj ranks
 router.post('/edit_group', (req, res) => {
+    console.log("StudentId:", req.query.studentId);
     const{groupId, newName, newSize, newUTD, newCS, studentId } = req.body
 
     let q = `update formedGroups set groupName='${newName}' where groupId = ${groupId}`
@@ -306,6 +309,7 @@ router.post('/edit_group', (req, res) => {
 })
 
 router.post('/close_group', (req, res) => {
+    console.log("StudentId:", req.query.studentId);
     const {groupId} = req.body
     let q = `update formedGroups
              set groupCompleted=True
@@ -330,6 +334,7 @@ router.post('/close_group', (req, res) => {
 //STUDENTS PAGE
 //get student info
 router.get('/student_info', (req, res) => {
+    console.log("StudentId:", req.query.studentId);
     const groupCheck = `SELECT groupId from student where studentId =?`
     db.query(groupCheck, [req.query.studentId], (err, data) => {
         if (err) return res.status(501).send(err);
@@ -439,6 +444,7 @@ router.get('/student_info', (req, res) => {
 //login page
 //for admin
 router.post('/admin/login', (req, res) => {
+    console.log("Login StudentId:", req.query.studentId);
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
@@ -486,6 +492,7 @@ router.post('/register', async (req, res) => {
 }*/
 router.post('/register', (req, res) => {
    // const { userId, firstName, lastName, password } = req.body;
+   console.log("Register StudentId:", req.query.studentId);
     const q = "SELECT * FROM user WHERE userId = ?";
     db.query(q, [req.body.username], (err, data) => {
         if (err) return res.status(500).json(err);
@@ -627,6 +634,7 @@ router.get('/group_info', (req, res) => {
 router.get('/requests/student_info', (req, res) => {
     const requests = `SELECT * FROM studentProfile WHERE studentId IN ((SELECT receiverId FROM studentrequeststudent WHERE senderId = ?) UNION(SELECT receiverId FROM grouprequeststudent WHERE senderId IN (SELECT groupId FROM student WHERE studentId = ?)))`
     db.query(requests, [req.query.studentId,req.query.studentId], (err, data) => {
+        console.log("StudentId:", req.query.studentId);
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -680,6 +688,7 @@ router.get('/requests/group_info', (req, res) => {
 router.get('/invites/student_info', (req, res) => {
     const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId =?) UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = ?)))`
     db.query(invites, [req.query.studentId, req.query.studentId], (err, data) => {
+        console.log("StudentId:", req.query.studentId);
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -812,6 +821,7 @@ router.post('/denyInvite', (req, res) => {
 // Unsend an invitation
 router.post('/unsend', (req, res) => {
     var { senderId, receiverId, receiverType, debug } = req.body;
+    console.log("StudentId:", senderId);
     senderId = debug ? studentId : senderId;
     const tableMap = {
         'ss': 'studentrequeststudent',

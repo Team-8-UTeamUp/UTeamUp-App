@@ -73,6 +73,8 @@ const Group_Enlarge = ({
             setTimeout(() => {
                 setMessage(null);
             }, 2000);
+
+            window.location.reload(); // Reload page
             
         } catch (err) {
             console.log(err);
@@ -105,6 +107,8 @@ const Group_Enlarge = ({
                 setMessage(null);
             }, 2000);
 
+            window.location.reload(); // Reload page
+
         } catch (err) {
             console.log(err);
              // show fail message
@@ -135,6 +139,8 @@ const Group_Enlarge = ({
             setTimeout(() => {
                 setMessage(null);
             }, 2000);
+
+            window.location.reload(); // Reload page
 
         } catch (err) {
             console.log(err);

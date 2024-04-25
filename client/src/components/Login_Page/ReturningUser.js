@@ -30,6 +30,8 @@ function ReturningUser() {
             await axios.post("http://localhost:8800/api/login", inputs);
             setRU(true)
             setStudent(inputs.username)
+            localStorage.setItem("studentId", inputs.username); // Store studentId in local storage
+            console.log("ID FIRST STORED: ", localStorage.getItem("studentId"))
             navigate("/homepage");
         } catch (err) {
             console.log(err)
