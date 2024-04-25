@@ -484,19 +484,36 @@ router.post('/register', (req, res) => {
 
     db.query(q, [userId], (err, data) => {
         if (err) return res.status(500).json(err);
-        /*const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
         if (!userIdFormat.test(userId)) {
             return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
-        }*/
+        }
         if (data.length > 0) return res.status(409).json("User already exists!");
 
         const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
         db.query(insertUserQuery, [userId, firstName, lastName, password], (insertErr, insertData) => {
-            if (insertErr) return res.status(500).json(insertErr);
-
+            if (insertErr) {
+                if (insertErr.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ msg: 'Duplicate entry. This user ID is already registered.' });
+                }
+                if (insertErr.code === 'ER_BAD_NULL_ERROR') {
+                    return res.status(400).json({ msg: 'Invalid input. Please ensure all fields are filled out.' });
+                }
+                return res.status(500).json(insertErr);
+            }
             const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
                 db.query(insertStudentQuery, [userId, userId], (insertStudentErr, insertStudentData) => {
-                if (insertStudentErr) return res.status(500).json(insertStudentErr);
+                    if (insertStudentErr) {
+                        // Check for duplicate entry error
+                        if (insertStudentErr.code === 'ER_DUP_ENTRY') {
+                            return res.status(409).json({ msg: 'Duplicate entry. This student ID is already registered.' });
+                        }
+                        // Check for inserting null into a non-nullable column error
+                        if (insertStudentErr.code === 'ER_BAD_NULL_ERROR') {
+                            return res.status(400).json({ msg: 'Invalid input. Please ensure all fields are filled out.' });
+                        }
+                        return res.status(500).json(insertStudentErr);
+                    }
                 return res.status(201).json("User registered successfully and added to students table!");
             });
         });
