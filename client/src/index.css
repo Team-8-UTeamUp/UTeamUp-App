@@ -615,7 +615,7 @@ control{ /*doesnt work*/
   text-align: "left";
  padding-top: 10px;
  max-width: 900px;
- max-height: 700px;
+ max-height: 90vh;
  background-color: white;
  overflow: auto;
 
