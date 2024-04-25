@@ -115,7 +115,7 @@ const Group_Enlarge = ({
         try {
             const paylaod = {
                 debug: true, 
-                receiverId: e.target.name, 
+                senderId: e.target.name,
                 receiverType: "group"
             }
 

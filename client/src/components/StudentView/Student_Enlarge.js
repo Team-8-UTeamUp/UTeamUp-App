@@ -66,7 +66,6 @@ const Student_Enlarge = ({
                 senderId: e.target.name, 
                 receiverType: Page === "student" ? "ss" : "sg"
             }
-
             const res = await axios.post(`http://localhost:8800/api/denyInvite/`, paylaod);
             console.log(res)
 
@@ -127,7 +126,7 @@ const Student_Enlarge = ({
         try {
             const paylaod = {
                 debug: true, 
-                receiverId: e.target.name, 
+                senderId: e.target.name,
                 receiverType: Page === "student" ? "student" : "group"
             }
 

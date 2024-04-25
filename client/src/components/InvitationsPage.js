@@ -72,23 +72,7 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
         </>
       )
     }
-    const studentId = "AAE297154";
-    const [params, setParams] = useState({
-        senderId: "VDW219689", // Initialize senderId as empty string
-        receiverId: studentId,
-        receiverType: "student" // Default value
-    });
-    const handleAccept = async (e) => {
-        e.preventDefault()
-        try {
-            const res = await axios.post("http://localhost:8800/api/accept", {senderId: params['senderId'], receiverId: params['receiverId'], receiverType:params['receiverType']})
-            console.log(res)
-            // refresh page automatically
-            location.href=location.href
-        } catch (err) {
-            console.log(err)
-        }
-    }
+
 
 
     const rejectButton= true
@@ -113,18 +97,9 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
          selected.classList.add('pageswitchselect');
          if (uid === "sprofbutton") {
              setCurrentView(StudentView);
-             setParams(prevParams => {
-                 console.log("changed to student");
-                 return { ...prevParams, receiverType: "student" }; // Return the updated state
-             });
-             console.log(params)
          } else {
              setCurrentView(GroupView);
-             setParams(prevParams => {
-                 console.log("changed to group");
-                 return { ...prevParams, receiverType: "group" }; // Return the updated state
-             });
-              console.log(params);
+
          }
      }
 
