@@ -209,7 +209,7 @@ router.get('/group_profile', (req, res) => {
             emails:data[0]['emails'].replace(/"/g, '').split(','),
             skills: data[0]['skills'].replace(/"/g, '').split(','),
             codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
-            preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')], //[data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
+            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
             bio: data[0]['bios'].replace(/"/g, '').split(',')
