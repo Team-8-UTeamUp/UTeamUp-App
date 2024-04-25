@@ -39,6 +39,7 @@ function Profile_Page_Render({Profile, isLoading}) {
                     </div>
                     <div class="column right">
                         <h2>My Profile</h2>
+                        <p style={{color:"gray", fontStyle:"italic", marginTop:"10px"}}>To edit your profile, please visit the quiz page.</p>
                     </div>
                 </div>
                 <div class="screen">
@@ -68,10 +69,11 @@ function Profile_Page_Render({Profile, isLoading}) {
             </div>
             <div class="column right">
                 <h2>My Profile</h2>
+                <p style={{color:"gray", fontStyle:"italic", marginTop:"10px"}}>To edit your profile, please visit the quiz page.</p>
             </div>
         </div>
         <div class="screen">
-            <div style={{display:"flex", justifyContent: "center", alignItems: "center"}}>
+            <div style={{display:"flex", justifyContent: "center", alignItems: "center", paddingTop:"40px"}}>
                 {MyProfile}
             </div>
         </div>

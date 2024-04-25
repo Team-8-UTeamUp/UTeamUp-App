@@ -1,3 +1,9 @@
+:root {
+  --team-up-teal: #5CCFB4;
+  --green-machine: #356B5E;
+  --in-action-orange: #FC8E28;
+  --default-border: lightgray;
+}
 body,html {
   margin: 0;
   height:100%;
@@ -18,7 +24,7 @@ header{
     background-color: white;
     justify-content: center;
     align-items: center;
-    border-bottom: solid gray;
+    border-bottom: 2px solid lightgray;
     height: 10vh;
     top: 0;
     left: 0;
@@ -213,20 +219,25 @@ control{ /*doesnt work*/
 /* Create two unequal columns that floats next to each other */
 .column {
   box-sizing: border-box;
-  border: 1px solid black;
   float: left;
-  padding: 10px;
+  padding-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  background-color: white;
 }
+
 
 .left {
   width: 15%;
   height: 100vh;
+  position:fixed;
+  z-index: 2;
   top: 0;
   left: 0;
   overflow-x: hidden;
   padding-top: 20px;
   padding-right: 5px;
-  border-right: 1px solid black;
+  border-right: 2px solid lightgray;
 }
 
 .logo{
@@ -252,23 +263,36 @@ control{ /*doesnt work*/
 }
 
 .sidenav a:hover {
-  color: orange;
+  color: black;
+  background-color: rgb(242, 240, 240);
+  border-radius: 5px;
 }
 
 .sidenav a:active {
-  background-color: #157636;
+  background-color: rgb(222, 222, 222);
+  border-radius: 5px;
 }
 
 .sidenav .active {
-  color: #FC8E28
+  background-color: rgb(242, 240, 240);
+  color: black;
+  font: bold;
+  border-radius: 5px;
 }
 
 .right {
   width: 85%;
+  height: 100px;
+  top:0;
+  left:15%;
   text-align: center;
   padding-left: 5px;
-  border-left: 1px solid black;
+  border-bottom: 2px solid rgb(243, 240, 240);
+  position:fixed;
+  z-index: 2;
 }
+
+
 
 .filerbar
 {
@@ -312,13 +336,14 @@ control{ /*doesnt work*/
 }
 
 .split2 {  /*Student enlarged*/
-  height:auto;
+  height: 90vh;
   width: 60%;
   position: relative;
   top: 0;
   z-index: 1;
   overflow-x: hidden;
   padding-top: 20px;
+  overflow-y: auto;
 }
 
 .screenleft {
@@ -326,12 +351,10 @@ control{ /*doesnt work*/
 
   left: 0;
   background-color: white;
-  border: 1px solid gray;
-  border-left: 0px;
-  border-bottom: 0px;
+  border-top: 1px solid lightgray;
 
   /* height: 100%; */
-  height: 85vh;
+  min-height: 85vh;
   /* max-height: 85vh; */
 }
 
@@ -340,9 +363,22 @@ control{ /*doesnt work*/
 
   right: 0;
   background-color: white;
-  border:1px solid gray;
-  border-right: 0px;
-  border-bottom: 0px;
+  border-left:1px solid lightgray;
+  border-top:1px solid lightgray;
+  padding-bottom: 40px;
+  max-height: 100vh;
+  overflow-y:auto;
+}
+
+.fullscreen
+{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  max-height: 82vh;
+  position: relative;
+  border-top: 1px solid lightgray;
+  overflow: auto;
 }
 
 .textcentered {
@@ -376,7 +412,7 @@ control{ /*doesnt work*/
    left:125px;
    font-weight: bold;
    font-size: 24px;
-   color:#157636;
+   color:var(--green-machine);;
    text-align: left;
 }
 
@@ -393,7 +429,7 @@ control{ /*doesnt work*/
     position: relative;
     left:125px;
     font-size: 11px;
-    color:#157636
+    color:var(--green-machine);
 }
 
 .tile .skillbubble
@@ -407,14 +443,26 @@ control{ /*doesnt work*/
     padding: 0px 5px 0px 5px;
     position: relative;
     left:125px;
-   
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
   }
+
+  .ellipsis {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 20px;
+}
 
   .skills-container
   {
     display: flex;
     flex-direction: row;
     margin-bottom: 2px;
+    max-width: 300px;
+    
     
   }
 
@@ -430,13 +478,16 @@ control{ /*doesnt work*/
     padding: 0px 5px 0px 5px;
     position: relative;
     left:125px;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
   }
 
   .languages-container
   {
     display: flex;
     flex-direction: row;
-    
+    max-width: 300px;
   }
 
 .tile .photo
@@ -493,6 +544,7 @@ control{ /*doesnt work*/
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  max-height: fit-content;
   
 }
 
@@ -527,7 +579,7 @@ control{ /*doesnt work*/
   position: absolute;
   border: 1px solid lightgray;
   background-color: white;
-  min-width: 230px;
+  min-width: 228.5px;
   text-align: left;
   z-index: 1;
   font-size: 11px;
@@ -538,11 +590,16 @@ control{ /*doesnt work*/
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dropdown:hover .dropdown-content {display: block;}
 
-.dropdown:hover .dropbtn {background-color: lightgray;}
+.dropdown:hover .dropbtn {
+  background-color: rgb(231, 229, 229);
+  border-radius: 5px 5px 0px 0px;
+}
 
 .dropdown-container{
   position: relative;
@@ -557,14 +614,25 @@ control{ /*doesnt work*/
 {
   text-align: "left";
  padding-top: 10px;
- max-width: 800px;
+ max-width: 900px;
+ background-color: white;
 
  
  
+.skills-container
+{
+  max-width: 800px;
+  overflow-x: auto;
+}
 
-   .skillbubble
-  {
-    border-radius: 20px;
+.languages-container
+{
+  max-width: 800px;
+  overflow-x: auto;
+}
+   
+    .skillbubble
+  {border-radius: 20px;
     background-color: rgb(186, 236, 208);
     height: fit-content;
     font-size: 15px;
@@ -572,6 +640,7 @@ control{ /*doesnt work*/
     margin-right: 3px;
     padding: 5px 10px 5px 10px;
     margin-bottom: 5px;
+    white-space: nowrap;
    
   }
   .langbubble
@@ -584,6 +653,7 @@ control{ /*doesnt work*/
     margin-right: 3px;
     padding: 5px 10px 5px 10px;
     margin-bottom: 30px;
+    white-space: nowrap;
    
   }
 
@@ -629,13 +699,14 @@ control{ /*doesnt work*/
   {
     border-radius: 10px;
     border: 1px solid lightgray;
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 110px;
     text-align:center;
-    padding-top: 30px;
-    margin-top:0px;
     font-size:48px;
     color:#157636;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
@@ -651,6 +722,7 @@ control{ /*doesnt work*/
     padding: 2px 20px 2px 20px;
     margin-bottom:40px;
     border: 0px;
+    z-index: 1;
   }
 
   .teamupbutton:hover
@@ -658,20 +730,44 @@ control{ /*doesnt work*/
     opacity: 0.8;
   }
 
+  .teamupbutton:active
+  {
+    opacity: 1;
+  }
+
+  .popup
+  {
+    background-color: black;
+    color:white;
+    opacity: .7;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    height:fit-content;
+    width: 100%;
+    font-size: small;
+    z-index: 2;
+    position: absolute;
+    left:0;
+    top:0;
+    font-style: italic;
+    display: flex;
+    justify-content: center;
+    
+  }
+
 
 .screen
 {
   box-sizing: border-box;
-  position: relative;
+  position:fixed;
   display:flex;
   flex-direction:column;
-  left: 0;
-  top: 0;
+  left: 15%;
+  top: 100px;
   background-color: white;
   width:85%; 
-  /* height: calc(100vh - 20px); */
+  min-height: 90vh;
   border: 0px solid blue;
-  overflow:auto;
 }
 
 .screen2
@@ -752,22 +848,23 @@ control{ /*doesnt work*/
   font-size: 16px;
   color:black;
   background-color: transparent;
-  border-bottom: 1px solid black;
+  border-bottom: 0px;
   border-top: 0px;
   border-left: 0px;
   border-right: 0px;
+  z-index: 2;
 }
 
 .pageswitchbutton:hover
 {
-  color:#157636;
-  border-bottom: 1px solid green;
+  color:var(--green-machine);
+  border-bottom: 3px solid var(--green-machine);
 }
 
 .pageswitchselect
 {
-  color:#157636;
-  border-bottom: 1px solid green;
+  color:var(--green-machine);
+  border-bottom: 3px solid var(--green-machine);
 }
 
 /*login page css*/
@@ -841,7 +938,7 @@ body {
 /* Website login page*/
 .split3 { 
   width: 50%;
-  position: relative;
+  position:relative;
   z-index: 1;
   overflow-x: hidden;
   height:90vh;

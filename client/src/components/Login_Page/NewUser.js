@@ -29,62 +29,66 @@ function NewUser() {
             navigate("/quiz");
         } catch (err) {
             console.log(err);
-            // Check if err.response exists and has a data property
+            // Check if err.response exists and has a property
             if (err.response?.data) {
-                setError(err.response.data);
+                const errorString = Object.keys(err.response.data)
+                    .map(key => `${key}: ${err.response.data[key]}`)
+                    .join(', ');
+                setError(errorString);
             } else {
                 setError("An error occurred, please try again later.");
             }
         }
     }
+    
 
     return (
     <>
-    <div class="login_body">
+    <div className="login_body">
         <h3>Create your account</h3>
         <form action="">
-            <label for="firstName" class="loginlabel">
+            <label for="firstName" className="loginlabel">
                   First Name:
               </label>
             <input type="text"
                    id="firstName"
                    name="firstName"
-                   class="logininput"
+                   className="logininput"
                    onChange={onChange}
                    placeholder="Enter your First Name" required>
             </input>
-            <label for="lastName" class="loginlabel">
+            <label for="lastName" className="loginlabel">
                   Last Name:
               </label>
             <input type="text"
                    id="lastName"
                    name="lastName"
-                   class="logininput"
+                   className="logininput"
                    onChange={onChange}
                    placeholder="Enter your Last Name" required>
             </input>
-            <label for="username" class="loginlabel">
+            <label for="username" className="loginlabel">
                   Username:
               </label>
             <input type="text"
                    id="username"
                    name="username"
-                   class="logininput"
+                   className="logininput"
                    onChange={onChange}
                    placeholder="Create your Username" required>
             </input>
-            <label for="password" class="loginlabel">
+            <label for="password" className="loginlabel">
                   Password:
               </label>
             <input type="password" 
                    id="password"
                    name="password"
-                   class="logininput"
+                   className="logininput"
                    onChange={onChange}
                    placeholder="Create your Password" required>
             </input>
-            <div class="wrap">
-                <button type="submit" class="loginbutton"
+            <div className="wrap">
+                <button type="submit" className="loginbutton"
                         onClick={handleSubmit}>
                     Submit
                 </button>

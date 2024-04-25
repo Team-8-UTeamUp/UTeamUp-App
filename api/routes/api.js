@@ -482,12 +482,12 @@ router.post('/register', (req, res) => {
     const { userId, firstName, lastName, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
 
-    db.query(q, [userId], (err, data) => {
+    db.query(q, [req.body.username], (err, data) => {
         if (err) return res.status(500).json(err);
-        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        /*const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
         if (!userIdFormat.test(userId)) {
             return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
-        }
+        }*/
         if (data.length > 0) return res.status(409).json("User already exists!");
 
         const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
