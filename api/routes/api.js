@@ -7,8 +7,8 @@ const router = express.Router()
 import {PythonShell} from "python-shell";
 
 // const studentId = 'ABG222946'
-const studentId = "AAE297154"
-// const studentId = 'AHR277028'
+//const studentId = "AAE297154"
+const studentId = 'AHR277028'
 //const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
@@ -211,7 +211,7 @@ router.get('/group_profile', (req, res) => {
             preferences: [data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')], //[data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
-            bio: JSON.parse(`[${data[0]['bios'].replace(/\s+/g, '')}]`)
+            bio: data[0]['bios'].replace(/"/g, '').split(',')
 
                                 }
         return res.status(200).json(temp)
@@ -481,8 +481,7 @@ router.post('/register', async (req, res) => {
 router.post('/register', (req, res) => {
    // const { userId, firstName, lastName, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
-
-    db.query(q, [req.body.username], (err, data) => {
+    db.query(q, [username], (err, data) => {
         if (err) return res.status(500).json(err);
         const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
         if (!userIdFormat.test(req.body.username)) {
