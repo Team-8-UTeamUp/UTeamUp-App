@@ -8,7 +8,7 @@ function Header() {
             <h2 id="page_title" >Quiz</h2>
             {/* <p id="top_right">Save and Close</p> */}
             {/* <button>Save and Close</button> */}
-            <Link className="link" to="/homepage"><p>Return to Home</p></Link>
+            <Link className="link" to="/"><p>Return to Login</p></Link>
         </header>
     )
 }

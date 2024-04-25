@@ -64,7 +64,7 @@ function Home_Page () {
     fetchMyGroup();
   }, []);
 
-  if (isLoading && groupLoading  && myGroupLoading) {
+  if (isLoading || groupLoading || myGroupLoading) {
     return <Home_Page_Render isLoading={true}/>;
   }
 
@@ -103,8 +103,8 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, MyGroupProfile, isLoa
   }
 
 
-  const StudentView = <Student Profiles={StudentProfiles} Page={"student"}/>;
-  const GroupView = hasGroup? (
+  // const StudentView = <Student Profiles={StudentProfiles} Page={"student"}/>;
+  const GroupView = hasGroup ? (
   
     <MyGroup
       groupId = {MyGroupProfile.id}
@@ -137,7 +137,7 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, MyGroupProfile, isLoa
     if (selected) {
       selected.classList.add('pageswitchselect');
       if(uid == "sprofbutton")
-        setCurrentView(StudentView);
+        setCurrentView(<Student Profiles={StudentProfiles} Page={"student"}/>);
       else
         setCurrentView(GroupView);
     }
@@ -149,7 +149,8 @@ function Home_Page_Render({StudentProfiles, GroupProfiles, MyGroupProfile, isLoa
     const initialView = document.getElementById('sprofbutton');
     if (initialView ) {
       initialView.classList.add("pageswitchselect");
-      setCurrentView(StudentView); // Set the current view to student 
+      console.log(StudentProfiles)
+      setCurrentView(<Student Profiles={StudentProfiles} Page={"student"}/>); // Set the current view to student 
     }
   }, []); // Empty dependency array ensures this effect runs only once
 

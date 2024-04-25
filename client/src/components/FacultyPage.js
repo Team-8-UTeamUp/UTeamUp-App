@@ -25,10 +25,10 @@ function Faculty_Page() {
         return <Faculty_Page_Render isLoading={true}/>
     }
 
-    return <Faculty_Page_Render madeGroups={groups.groups} students={groups.students}/>
+    return <Faculty_Page_Render madeGroups={groups.groups} students={groups.students} projects={groups.projects}/>
 }
 
-function Faculty_Page_Render({isLoading, madeGroups, students}) {
+function Faculty_Page_Render({isLoading, madeGroups, students, projects}) {
     // const GroupProfiles = Profiles.map(group => (
     //     <Group_Table
     //     //group id, name, members (firstName,lastName), # of members, groupStatus, and (formedgroup?)
@@ -48,13 +48,42 @@ function Faculty_Page_Render({isLoading, madeGroups, students}) {
                 <img class="logo" src={require('../assets/logoTeam.png')} title="" alt=""></img>
                     <h2 id="page_title" >Faculty</h2>
                     {/* import header and get the button click to faculty page as a js function to change the title  */}
-                    <Link className="link" to="/"><p>Return to Home</p></Link>
+                    <Link className="link" to="/"><p>Return to Login</p></Link>
                 </header>
                 <div class="admin_body">
                     <h2>Loading...</h2>
                 </div>
             </>
         )
+    }
+
+    const [inputs, setInputs] = useState({
+        ProjectNum: "",
+        Title: "",
+        ProjectType: ""
+    });
+
+    const onChange = (e) => {
+        setInputs((previous) => ({ 
+            ...previous, 
+            [e.target.name]: e.target.value
+        }));
+    };
+
+    const handleSumbit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("http://localhost:8800/api/admin/add_project", inputs)
+            setInputs({
+                ProjectNum: "",
+                Title: "",
+                ProjectType: ""
+            })
+            console.log(res)
+            window.location.reload()
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     const leftoversClick = async (e) => {
@@ -68,6 +97,7 @@ function Faculty_Page_Render({isLoading, madeGroups, students}) {
         } catch (err) {
             console.log(err);
         }
+        window.location.reload();
     }
 
     return (
@@ -83,12 +113,10 @@ function Faculty_Page_Render({isLoading, madeGroups, students}) {
                     />
                     <h2 id="page_title">Faculty</h2>
                     <Link className="link" to="/">
-                        <p>Return to Home</p>
+                        <p>Return to Login</p>
                     </Link>
                 </header>
                 <div className="admin_body">
-                    {" "}
-                    {/* className instead of class */}
                     <h2>Groups</h2>
                     <div>
                         <table id="Groups" style={{ width: "90%" }}>
@@ -116,6 +144,35 @@ function Faculty_Page_Render({isLoading, madeGroups, students}) {
                             </tbody>
                         </table>
                     </div>
+                    <h2>Add a Project</h2>
+                    <form nmae="addProject" style={{ display: "block", textAlign: "center" }} >
+                        <label for="ProjectNum">Project Num:</label><br></br>
+                        <input type="text" id="ProjectNum" name="ProjectNum" onChange={onChange}/><br></br>
+                        <label for="Title">Title:</label><br></br>
+                        <input type="text" id="Title" name="Title" onChange={onChange}/><br></br>
+                        <label for="ProjectType">Project Type:</label><br></br>
+                        <input type="text" id="ProjectType" name="ProjectType" onChange={onChange}/><br></br>
+                        <button class="button" onClick={handleSumbit}>Save</button><br></br><br></br>
+                    </form>
+                    <h2>Projects</h2>
+                    <table id="Students" style={{ width: "90%" }}>
+                        <thead>
+                            <tr>
+                                <th style={{ width: "33%" }}>Project Number</th>
+                                <th style={{ width: "33%" }}>Title</th>
+                                <th style={{ width: "33%" }}>Project Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {projects.map((group) => (
+                                <tr>
+                                    <td>{group.projectNum}</td>
+                                    <td>{group.title}</td>
+                                    <td>{group.projType}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                     <h2>Students</h2>
                         <table id="Students" style={{ width: "90%" }}>
                             <thead>

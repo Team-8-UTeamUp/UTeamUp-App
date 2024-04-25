@@ -172,7 +172,7 @@ router.get('/csprojects', (req, res) => {
 // Profile page
 router.get('/student_profile', (req, res) => {
     const q = `select * from studentProfile where studentId =?;`
-    console.log(req.query.studentId)
+
     db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let temp = {
@@ -338,7 +338,12 @@ router.get('/student_info', (req, res) => {
         }
         let s;
         let args = []
-        const groupId = data[0]['groupId']
+        var groupId
+        try {
+            groupId = data[0]['groupId']
+        } catch (e) {
+            return res.status(502).send([]);
+        }
         let firstSql = "projData"
         let secondSql='skillData'
         if (groupId == 0){
@@ -817,10 +822,10 @@ router.post('/unsend', (req, res) => {
     let groupId = 0;
     db.query(check, [], (err, data) => {
         if (err) return res.status(500).send(err);
-        if(receiverType==="ss" && data.length >= 1 && data[0]["groupId"] !=0) {
-            receiverType = "gs";
-            senderId = data[0]["groupId"]
-        }
+        // if(receiverType==="ss" && data.length >= 1 && data[0]["groupId"] !=0) {
+        //     receiverType = "gs";
+        //     senderId = data[0]["groupId"]
+        // }
 
         let tableName = tableMap[receiverType];
         if (!tableName) {
@@ -1090,11 +1095,35 @@ router.get('/admin/group_info', (req, res) => {
                 });
             });
 
-            let payload = {groups: formattedGroupData, students: formattedGroupData2}
+            const q = 'SELECT * from project'
+            db.query(q, [], (err, data) => {
+                if (err) return res.status(500).send(err);
 
-            return res.status(200).json(payload)
+                let formattedGroupData3 = [];
+                data.forEach(item => {
+                    formattedGroupData3.push({
+                        projectNum: item.projectNum,
+                        title: item.title,
+                        projType: item.projType
+                    });
+                });
+
+                let payload = {groups: formattedGroupData, students: formattedGroupData2, projects: formattedGroupData3}
+
+                return res.status(200).json(payload)
+            });
         });
     });
+})
+
+//posting add a project
+router.post('/admin/add_project', (req, res) => {
+    const d = `INSERT INTO project (projectNum, title, projType) VALUES ('${req.body.ProjectNum}', '${req.body.Title}', '${req.body.ProjectType}');`
+    db.query(d,[], (err,data) => {
+        if (err) return res.status(500).json(err);
+        return res.status(200).json("Added new project:" + req.body.Title)
+    })
+
 })
 
 export default router;
