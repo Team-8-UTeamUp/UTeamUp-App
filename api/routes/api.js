@@ -479,7 +479,7 @@ router.post('/register', async (req, res) => {
     "password": "pass"
 }*/
 router.post('/register', (req, res) => {
-    const { userId, firstName, lastName, password } = req.body;
+   // const { userId, firstName, lastName, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
