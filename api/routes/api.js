@@ -479,23 +479,22 @@ router.post('/register', async (req, res) => {
     "password": "pass"
 }*/
 router.post('/register', (req, res) => {
-    const { userId, firstName, lastName, password } = req.body;
+    const { username, firstName, lastName, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
-
-    db.query(q, [req.body.username], (err, data) => {
+    db.query(q, [username], (err, data) => {
         if (err) return res.status(500).json(err);
         /*const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
         if (!userIdFormat.test(userId)) {
             return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
         }*/
-        if (data.length > 0) return res.status(409).json("User already exists!");
+        if (data.length > 0) return res.status(404).json("User already exists!");
 
         const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
-        db.query(insertUserQuery, [userId, firstName, lastName, password], (insertErr, insertData) => {
+        db.query(insertUserQuery, [username, firstName, lastName, password], (insertErr, insertData) => {
             if (insertErr) return res.status(500).json(insertErr);
 
-            const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
-                db.query(insertStudentQuery, [userId, userId], (insertStudentErr, insertStudentData) => {
+            const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";
+                db.query(insertStudentQuery, [username, username], (insertStudentErr, insertStudentData) => {
                 if (insertStudentErr) return res.status(500).json(insertStudentErr);
                 return res.status(201).json("User registered successfully and added to students table!");
             });
