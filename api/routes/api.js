@@ -48,7 +48,7 @@ router.post('/quiz/q1', (req, res) => {
                    VALUES ${skillPairs}`
         db.query(q, [], (err, data) => {
             if (err) return res.json(err);
-            return res.status(200).json("Question 1 updated for " + studentId)
+            return res.status(200).json("Question 1 updated for " + values[0])
         })
     })
 })
@@ -74,7 +74,7 @@ router.post('/quiz/q2', (req, res) => {
                    VALUES ${langPairs}`
         db.query(q, [], (err, data) => {
             if (err) return res.json(err);
-            return res.status(200).json("Question 1 updated for " + studentId)
+            return res.status(200).json("Question 1 updated for " + values[0])
         })
     })
 })
@@ -127,7 +127,7 @@ router.post('/quiz/q6', (req, res) => {
     ]
     db.query(q,[values[1],values[0]], (err,data) => {
         if (err) return res.json(err);
-        return res.status(200).json("Question 6 updated for " + studentId)
+        return res.status(200).json("Question 6 updated for " + values[0])
     })
 })
 
@@ -742,7 +742,7 @@ router.get('/invites/group_info', (req, res) => {
 
 router.post('/teamUp', (req, res) => {
     var { senderId, receiverId, receiverType, debug } = req.body;
-    senderId = debug ? studentId : senderId;
+    //senderId = debug ? studentId : senderId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -785,7 +785,7 @@ router.post('/teamUp', (req, res) => {
 //rejecting invitations
 router.post('/denyInvite', (req, res) => {
     var { senderId, receiverId, receiverType, debug } = req.body;
-    receiverId = debug ? studentId : receiverId;
+    //receiverId = debug ? studentId : receiverId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -822,7 +822,7 @@ router.post('/denyInvite', (req, res) => {
 router.post('/unsend', (req, res) => {
     var { senderId, receiverId, receiverType, debug } = req.body;
     console.log("StudentId:", senderId);
-    senderId = debug ? studentId : senderId;
+    //senderId = debug ? studentId : senderId;
     const tableMap = {
         'ss': 'studentrequeststudent',
         'sg': 'studentrequestgroup',
@@ -832,10 +832,10 @@ router.post('/unsend', (req, res) => {
     let groupId = 0;
     db.query(check, [], (err, data) => {
         if (err) return res.status(500).send(err);
-        // if(receiverType==="ss" && data.length >= 1 && data[0]["groupId"] !=0) {
-        //     receiverType = "gs";
-        //     senderId = data[0]["groupId"]
-        // }
+        if(receiverType==="ss" && data.length >= 1 && data[0]["groupId"] !=0) {
+             receiverType = "gs";
+             senderId = data[0]["groupId"]
+        }
 
         let tableName = tableMap[receiverType];
         if (!tableName) {
@@ -860,7 +860,7 @@ router.post('/unsend', (req, res) => {
 // complete
 router.post('/accept', (req, res) => {
     let { senderId, receiverId, receiverType, debug } = req.body;
-    receiverId = debug ? studentId : receiverId;
+    //receiverId = debug ? studentId : receiverId;
     const check = `select groupId from student where studentId = '${receiverId}'`
     let groupId = 0;
     db.query(check, [], (err, data) => {
