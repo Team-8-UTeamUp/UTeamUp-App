@@ -5,17 +5,21 @@ import NavBar from './NavBar';
 import FilterBar from './FilterBar';
 import Group from './GroupView/Group';
 import axios from "axios"
+import { AuthContext } from './Login_Page/AuthContext';
+
 
 function Requests_Page() {
   const [StudentProfiles, setStudents] = useState([])
   const [GroupProfiles, setGroups] = useState([])
   const [isLoading, setLoading] = useState(true);
   const [groupLoading, setGLoading] = useState(true);
+  const { studentId, setStudent } = React.useContext(AuthContext);
+
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/requests/student_info`);
+        const res = await axios.get(`http://localhost:8800/api/requests/student_info?studentId=${studentId}`);
         setStudents(res.data);
         setLoading(false)
       } catch (err) {
@@ -25,7 +29,7 @@ function Requests_Page() {
 
     const fetchGroup = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/requests/group_info`);
+        const res = await axios.get(`http://localhost:8800/api/requests/group_info?studentId=${studentId}`);
         setGroups(res.data);
         setGLoading(false)
       } catch (err) {

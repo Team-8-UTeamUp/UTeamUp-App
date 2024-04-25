@@ -3,13 +3,12 @@ import Header from './Header.js'
 import axios from "axios"
 import Preference from "./Project_Preferences/Preference.js"
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from './Login_Page/AuthContext';
 
 
 function Quiz_Handler() {
     const navigate = useNavigate();
-    
-
-    const studentId = 'AHR277028'
+    const { studentId, setStudent } = React.useContext(AuthContext);
 
     const [showq1, setShow1] = useState(true);
     const [showq2, setShow2] = useState(false);

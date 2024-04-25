@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { useContext } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios"
+import { AuthContext } from './AuthContext';
 
 function NewUser() {
+    const { studentId, setStudent } = useContext(AuthContext);
+
     const [inputs, setInputs] = useState({
         firstName:"",
         lastName:"",
@@ -11,6 +14,7 @@ function NewUser() {
         password: "pass",
     });
 
+    const [isNewUser, setNU] = useState(false);
     const [err, setError] = useState(null);
 
     const navigate = useNavigate();
@@ -26,6 +30,8 @@ function NewUser() {
         e.preventDefault();
         try {
             await axios.post("http://localhost:8800/api/register", inputs);
+            setNU(true)
+            setStudent(inputs.username)
             navigate("/quiz");
         } catch (err) {
             console.log(err);

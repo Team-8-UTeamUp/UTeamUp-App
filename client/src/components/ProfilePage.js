@@ -3,15 +3,17 @@ import NavBar from './NavBar';
 import Student_Enlarge from './StudentView/Student_Enlarge';
 import axios from "axios"
 import Website_Login from './Login_Page/Website_Login';
+import { AuthContext } from './Login_Page/AuthContext';
 
 function Profile_Page() {
     const [Profile, setSProfile] = useState([])
     const [isLoading, setLoading] = useState(true);
+    const { studentId, setStudent } = React.useContext(AuthContext);
 
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await axios.get(`http://localhost:8800/api/student_profile`);
+                const res = await axios.get(`http://localhost:8800/api/student_profile?studentId=${studentId}`);
                 setSProfile(res.data);
                 setLoading(false)
             } catch (err) {

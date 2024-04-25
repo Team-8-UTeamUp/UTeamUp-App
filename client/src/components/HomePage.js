@@ -6,6 +6,7 @@ import FilterBar from './FilterBar';
 import Group from './GroupView/Group'
 import MyGroup from './GroupView/MyGroup';
 import axios from "axios"
+import { AuthContext } from './Login_Page/AuthContext';
 
 
 
@@ -18,11 +19,13 @@ function Home_Page () {
   const [myGroupLoading, setMyGroupLoading] = useState(true);
   const [hasGroup, setHasGroup] = useState(false);
 
+  const { studentId, setStudent } = React.useContext(AuthContext);
+
   React.useEffect(() => {
 
     const fetchMyGroup = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/group_profile`);
+        const res = await axios.get(`http://localhost:8800/api/group_profile?studentId=${studentId}`);
         if (res.data === null) {
           setMyGroup([]);
         } else {
@@ -38,7 +41,7 @@ function Home_Page () {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/student_info/`);
+        const res = await axios.get(`http://localhost:8800/api/student_info?studentId=${studentId}`);
         setStudents(res.data);
         setLoading(false)
       } catch (err) {
@@ -48,7 +51,7 @@ function Home_Page () {
 
     const fetchGroup = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/group_info/`);
+        const res = await axios.get(`http://localhost:8800/api/group_info?studentId=${studentId}`);
         setGroups(res.data);
         setGLoading(false)
       } catch (err) {

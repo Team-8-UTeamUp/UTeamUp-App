@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios"
+import { AuthContext } from '../Login_Page/AuthContext';
 
 const Student_Enlarge = ({
     id,
@@ -18,6 +19,8 @@ const Student_Enlarge = ({
     const [preferencesRow, setPreferencesRow] = useState(preferences[0] || []);
     // Set message
     const [message, setMessage] = useState(null);
+    const { studentId, setStudent } = React.useContext(AuthContext);
+
 
     React.useEffect(() => {
         const firstButton = document.querySelector(".togglebutton");
@@ -31,8 +34,9 @@ const Student_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 receiverId: e.target.name, 
+                senderId: studentId,
                 receiverType: Page === "student" ? "ss" : "sg"
             }
 
@@ -62,8 +66,9 @@ const Student_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 senderId: e.target.name, 
+                receiverId: studentId,
                 receiverType: Page === "student" ? "ss" : "sg"
             }
             const res = await axios.post(`http://localhost:8800/api/denyInvite/`, paylaod);
@@ -94,8 +99,9 @@ const Student_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 receiverId: e.target.name, 
+                senderId: studentId,
                 receiverType: Page === "student" ? "ss" : "sg"
             }
 
@@ -125,8 +131,9 @@ const Student_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 senderId: e.target.name,
+                receiverId: studentId,
                 receiverType: Page === "student" ? "student" : "group"
             }
 

@@ -6,18 +6,19 @@ import FilterBar from './FilterBar';
 import Group from './GroupView/Group';
 import MyGroup from './GroupView/MyGroup'
 import axios from "axios"
-import {containerClasses} from "@mui/material";
+import { AuthContext } from './Login_Page/AuthContext';
 
 function Invitations_Page() {
   const [StudentProfiles, setStudents] = useState([])
   const [GroupProfiles, setGroups] = useState([])
   const [isLoading, setLoading] = useState(true);
   const [groupLoading, setGLoading] = useState(true);
+  const { studentId, setStudent } = React.useContext(AuthContext);
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/invites/student_info`);
+        const res = await axios.get(`http://localhost:8800/api/invites/student_info?studentId=${studentId}`);
         setStudents(res.data);
         setLoading(false)
       } catch (err) {
@@ -27,7 +28,7 @@ function Invitations_Page() {
 
     const fetchGroup = async () => {
       try {
-        const res = await axios.get(`http://localhost:8800/api/invites/group_info`);
+        const res = await axios.get(`http://localhost:8800/api/invites/group_info?studentId=${studentId}`);
         setGroups(res.data);
         setGLoading(false)
       } catch (err) {

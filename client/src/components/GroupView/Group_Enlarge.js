@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios"
+import { AuthContext } from '../Login_Page/AuthContext';
 
 const Group_Enlarge = ({
     id,
@@ -18,13 +19,16 @@ const Group_Enlarge = ({
     const [preferencesRow, setPreferencesRow] = useState(preferences[0] || []);
     // Set message
     const [message, setMessage] = useState(null);
+    const { studentId, setStudent } = React.useContext(AuthContext);
+    
 
     const teamUpClick = async (e) => {
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 receiverId: e.target.name, 
+                senderId: studentId,
                 receiverType: "sg"
             }
 
@@ -55,8 +59,9 @@ const Group_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 senderId: e.target.name, 
+                receiverId: studentId,
                 receiverType: "gs"
             }
 
@@ -84,8 +89,9 @@ const Group_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 receiverId: e.target.name, 
+                senderId: studentId,
                 receiverType: "sg"
             }
 
@@ -114,8 +120,9 @@ const Group_Enlarge = ({
         e.preventDefault()
         try {
             const paylaod = {
-                debug: true, 
+                debug: false, 
                 senderId: e.target.name,
+                receiverId: studentId,
                 receiverType: "group"
             }
 

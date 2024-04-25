@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { useContext } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios"
+import { AuthContext } from './AuthContext';
 
 function ReturningUser() {
+    const { studentId, setStudent } = useContext(AuthContext);
+
     const [inputs, setInputs] = useState({
         username: "",
         password: "pass",
     });
 
+    const [isRetUser, setRU] = useState(false);
     const [err, setError] = useState(null);
 
     const navigate = useNavigate();
@@ -24,6 +28,8 @@ function ReturningUser() {
         e.preventDefault();
         try {
             await axios.post("http://localhost:8800/api/login", inputs);
+            setRU(true)
+            setStudent(inputs.username)
             navigate("/homepage");
         } catch (err) {
             console.log(err)

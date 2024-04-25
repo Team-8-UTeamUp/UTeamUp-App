@@ -8,7 +8,7 @@ import {PythonShell} from "python-shell";
 
 // const studentId = 'ABG222946'
 //const studentId = "AAE297154"
-const studentId = 'AHR277028'
+// const studentId = 'AHR277028'
 //const studentId = "JBL269228"
 var pyPath = process.platform;
 if (pyPath == "darwin") {
@@ -172,7 +172,8 @@ router.get('/csprojects', (req, res) => {
 // Profile page
 router.get('/student_profile', (req, res) => {
     const q = `select * from studentProfile where studentId =?;`
-    db.query(q, [studentId], (err, data) => {
+    console.log(req.query.studentId)
+    db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let temp = {
             name: data[0]['name'],
@@ -193,7 +194,7 @@ router.get('/student_profile', (req, res) => {
 // My Group profile
 router.get('/group_profile', (req, res) => {
     const q =`select * from groupProfile where groupId in (select groupId from student where studentId= ?)`
-    db.query(q, [studentId], (err, data) => {
+    db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
 
          // Check if data is empty
@@ -220,7 +221,7 @@ router.get('/group_profile', (req, res) => {
 
 // wip changes name and size, needs proj ranks
 router.post('/edit_group', (req, res) => {
-    const{groupId, newName, newSize, newUTD, newCS } = req.body
+    const{groupId, newName, newSize, newUTD, newCS, studentId } = req.body
 
     let q = `update formedGroups set groupName='${newName}' where groupId = ${groupId}`
     if (newSize >=4 && newSize <=6){
@@ -330,10 +331,10 @@ router.post('/close_group', (req, res) => {
 //get student info
 router.get('/student_info', (req, res) => {
     const groupCheck = `SELECT groupId from student where studentId =?`
-    db.query(groupCheck, [studentId], (err, data) => {
+    db.query(groupCheck, [req.query.studentId], (err, data) => {
         if (err) return res.status(501).send(err);
         let params = {
-                'studentId': studentId,
+                'studentId': req.query.studentId,
         }
         let s;
         let args = []
@@ -541,10 +542,10 @@ router.post('/login', (req, res) => {
 
 router.get('/group_info', (req, res) => {
     const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId=?;"
-    db.query(p, [studentId], (err, data) => {
+    db.query(p, [req.query.studentId], (err, data) => {
         let params = {
             //'studentId':req.body.studentId,   //once connected use this version
-            'studentId': studentId,
+            'studentId': req.query.studentId,
             'algType': 's2g'
         }
         if (err) return res.status(500).send(err);
@@ -620,7 +621,7 @@ router.get('/group_info', (req, res) => {
 
 router.get('/requests/student_info', (req, res) => {
     const requests = `SELECT * FROM studentProfile WHERE studentId IN ((SELECT receiverId FROM studentrequeststudent WHERE senderId = ?) UNION(SELECT receiverId FROM grouprequeststudent WHERE senderId IN (SELECT groupId FROM student WHERE studentId = ?)))`
-    db.query(requests, [studentId,studentId], (err, data) => {
+    db.query(requests, [req.query.studentId,req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -646,7 +647,7 @@ router.get('/requests/student_info', (req, res) => {
 
 router.get('/requests/group_info', (req, res) => {
     const requests = `select * from groupProfile where groupId in (select receiverId from studentrequestgroup where senderId = ?);`
-    db.query(requests, [studentId], (err, data) => {
+    db.query(requests, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let groupIndex = 0
@@ -673,7 +674,7 @@ router.get('/requests/group_info', (req, res) => {
 
 router.get('/invites/student_info', (req, res) => {
     const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId =?) UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = ?)))`
-    db.query(invites, [studentId, studentId], (err, data) => {
+    db.query(invites, [req.query.studentId, req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -699,7 +700,7 @@ router.get('/invites/student_info', (req, res) => {
 
 router.get('/invites/group_info', (req, res) => {
     const invites = `select * from groupProfile where groupId in (select senderId from grouprequeststudent where receiverid = ?);`
-    db.query(invites, [studentId], (err, data) => {
+    db.query(invites, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let groupIndex = 0
