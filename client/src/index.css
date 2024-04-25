@@ -539,12 +539,12 @@ control{ /*doesnt work*/
 
 .tilecentered{
   padding-top: 10px;
-  padding-bottom: 0;
+  padding-bottom: 5px;
   align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  max-height: fit-content;
+  
   
 }
 
@@ -615,7 +615,9 @@ control{ /*doesnt work*/
   text-align: "left";
  padding-top: 10px;
  max-width: 900px;
+ max-height: 700px;
  background-color: white;
+ overflow: auto;
 
  
  
@@ -946,3 +948,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////*/
+

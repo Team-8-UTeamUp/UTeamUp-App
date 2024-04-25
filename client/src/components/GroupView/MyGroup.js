@@ -216,19 +216,21 @@ return(
                             )}
                         </div>
                     </div>
-                    <div style={{display: "flex", flexDirection:"column", gap:"5px", justifyContent:"center", alignItems: "center", width:"200px"}}>
-                        <div class="sizetile" style ={{display:"flex", flexDirection:"row"}}>
+                    <div style={{display: "flex", flexDirection:"column", justifyContent:"center", alignItems: "center", width:"200px"}}>
+                        <div class="sizetile">
+                            <div style={{display:"flex", justifyContent:"center"}}>
                             {currGroupSz}/
                             {isEditMode ? (
                                 <input
                                     type="number"
                                     value={editablePrefGroupSz}
                                     onChange={(e) => setEditablePrefGroupSz(e.target.value)}
-                                    style={{fontSize: "50px", color:"#157636", width:"45px"}}
+                                    style={{fontSize: "50px", color:"#157636", width:"40px", height:"60px"}}
                                 />
                             ) : (
                                 <div>{editablePrefGroupSz}</div>
                             )}
+                            </div>
                         </div>
                         <div style={{textAlign: "center", fontSize:"12px", fontWeight:"bold", marginBottom: "20px"}}>Currrent Size/Preferred</div>  
                     </div> 
