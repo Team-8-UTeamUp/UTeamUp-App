@@ -216,7 +216,7 @@ return(
                             )}
                         </div>
                     </div>
-                    <div style={{display: "flex", flexDirection:"column", gap:"5px"}}>
+                    <div style={{display: "flex", flexDirection:"column", gap:"5px", justifyContent:"center", alignItems: "center", width:"200px"}}>
                         <div class="sizetile" style ={{display:"flex", flexDirection:"row"}}>
                             {currGroupSz}/
                             {isEditMode ? (
@@ -230,7 +230,7 @@ return(
                                 <div>{editablePrefGroupSz}</div>
                             )}
                         </div>
-                        <div style={{textAlign: "center", fontSize:"12px", fontWeight:"bold", marginBottom: "20px"}}>Currrent Size/Prefered</div>  
+                        <div style={{textAlign: "center", fontSize:"12px", fontWeight:"bold", marginBottom: "20px"}}>Currrent Size/Preferred</div>  
                     </div> 
                 </div>
                 <h1 style={{margintop:"20px", marginBottom: "20px"}}>About Us</h1>

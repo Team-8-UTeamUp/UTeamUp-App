@@ -16,6 +16,8 @@ const Group_Enlarge = ({
     unsend
 }) => {
     const [preferencesRow, setPreferencesRow] = useState(preferences[0] || []);
+    // Set message
+    const [message, setMessage] = useState(null);
 
     const teamUpClick = async (e) => {
         e.preventDefault()
@@ -28,8 +30,24 @@ const Group_Enlarge = ({
 
             const res = await axios.post(`http://localhost:8800/api/teamUp/`, paylaod);
             console.log(res)
+
+            //show success message
+            setMessage('Your invitation has been sent!');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
+
         } catch (err) {
             console.log(err);
+
+            console.log(err);
+            // show fail message
+            setMessage('Invite already sent!');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
         }
     }
 
@@ -44,8 +62,21 @@ const Group_Enlarge = ({
 
             const res = await axios.post(`http://localhost:8800/api/denyInvite/`, paylaod);
             console.log(res)
+            //show success message
+            setMessage('Invitation rejected.');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
+            
         } catch (err) {
             console.log(err);
+             // show fail message
+             setMessage('Please try again!');
+             // clear message
+             setTimeout(() => {
+                 setMessage(null);
+             }, 2000);
         }
     }
 
@@ -60,8 +91,22 @@ const Group_Enlarge = ({
 
             const res = await axios.post(`http://localhost:8800/api/unsend/`, paylaod);
             console.log(res)
+
+            //show success message
+            setMessage('Your invitation has been unsent.');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
+
         } catch (err) {
             console.log(err);
+             // show fail message
+             setMessage('Please try again!');
+             // clear message
+             setTimeout(() => {
+                 setMessage(null);
+             }, 2000);
         }
     }
 
@@ -76,8 +121,22 @@ const Group_Enlarge = ({
 
             const res = await axios.post(`http://localhost:8800/api/accept/`, paylaod);
             console.log(res)
+
+            //show success message
+            setMessage('You have accepted an invitation!');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
+
         } catch (err) {
             console.log(err);
+             // show fail message
+             setMessage('Please try again!');
+             // clear message
+             setTimeout(() => {
+                 setMessage(null);
+             }, 2000);
         }
     }
 
@@ -145,7 +204,15 @@ const Group_Enlarge = ({
                         {button2 ? "Accept" : (unsend ? "Unsend" : "Team Up")}
                     </button>
                 </div>
-                {button2 && <div><button class="teamupbutton" name={id} style={{backgroundColor: "red"}} onClick={rejectClick}>Reject</button></div>}
+                {message && <div className="popup">{message}</div>}
+                {button2 && 
+                <button 
+                    style={{backgroundColor:"red"}}
+                    class="teamupbutton"
+                    name={id}
+                    onClick={rejectClick}>
+                    Reject
+                </button>}
             </div>
             <h2 style={{ marginBottom: "20px" }}>Project Preferences</h2>
             <div
@@ -190,6 +257,7 @@ const Group_Enlarge = ({
                         gap: "5px",
                     }}
                 >
+                <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems: "center", width:"200px"}}>
                     <div class="sizetile">
                         {currGroupSz}/{prefGroupSz}
                     </div>
@@ -199,10 +267,12 @@ const Group_Enlarge = ({
                             fontSize: "12px",
                             fontWeight: "bold",
                             marginBottom: "20px",
+                            textWrap:"nowrap"
                         }}
                     >
-                        Currrent Size/Prefered
+                        Currrent Size/Preferred
                     </div>
+                </div>
                 </div>
             </div>
             <h2 style={{ marginBottom: "20px" }}>About Us</h2>

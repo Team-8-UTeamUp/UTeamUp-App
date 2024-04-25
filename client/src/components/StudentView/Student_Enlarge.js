@@ -46,10 +46,11 @@ const Student_Enlarge = ({
                 setMessage(null);
             }, 2000);
 
+
         } catch (err) {
             console.log(err);
             // show fail message
-            setMessage('Please try again!');
+            setMessage('Invite already sent!');
             // clear message
             setTimeout(() => {
                 setMessage(null);
@@ -70,11 +71,13 @@ const Student_Enlarge = ({
             console.log(res)
 
             //show success message
-            setMessage('Invitation rejected');
+            setMessage('Invitation rejected.');
             // clear message
             setTimeout(() => {
                 setMessage(null);
             }, 2000);
+
+            //window.location.reload();
 
         } catch (err) {
             console.log(err);
@@ -99,8 +102,23 @@ const Student_Enlarge = ({
 
             const res = await axios.post(`http://localhost:8800/api/unsend/`, paylaod);
             console.log(res)
+
+            //show success message
+            setMessage('Your invitation has been unsent.');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
+
+            //window.location.reload();
         } catch (err) {
             console.log(err);
+             // show fail message
+             setMessage('Please try again!');
+             // clear message
+             setTimeout(() => {
+                 setMessage(null);
+             }, 2000);
         }
     }
 
@@ -115,8 +133,23 @@ const Student_Enlarge = ({
 
             const res = await axios.post(`http://localhost:8800/api/accept/`, paylaod);
             console.log(res)
+
+              //show success message
+              setMessage('You have accepted an invitation!');
+              // clear message
+              setTimeout(() => {
+                  setMessage(null);
+              }, 2000);
+
+            //window.location.reload();
         } catch (err) {
             console.log(err);
+            // show fail message
+            setMessage('Please try again!');
+            // clear message
+            setTimeout(() => {
+                setMessage(null);
+            }, 2000);
         }
     }
 
@@ -141,6 +174,7 @@ const Student_Enlarge = ({
 
     return (
         <div class="expanded" style={{ margin: "0px 0px 0px 60px" }}>
+            
             <h2
                 style={{
                     fontSize: "64px",
@@ -171,10 +205,9 @@ const Student_Enlarge = ({
                         {button2 ? "Accept" : (unsend ? "Unsend" : "Team Up")}
                     </button> }
                 </div>
-                {message && <div className="popup">{message}</div>}
                 {button2 && <div><button class="teamupbutton" name={id} style={{backgroundColor: "red"}} onClick={rejectClick}>Reject</button></div>}
             </div>
-            <h2 style={{ marginBottom: "20px" }}>Project Preferences:</h2>
+            <h2 style={{ marginBottom: "20px" }}>Project Preferences</h2>
             <div
                 style={{
                     display: "flex",
@@ -217,21 +250,24 @@ const Student_Enlarge = ({
                         gap: "5px",
                     }}
                 >
-                    <div class="sizetile">{groupSz}</div>
-                    <div
-                        style={{
-                            textAlign: "center",
-                            fontSize: "12px",
-                            fontWeight: "bold",
-                            marginBottom: "20px",
-                        }}
-                    >
-                        Prefered Group Size
+                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems: "center", width:"200px"}}>
+                        <div class="sizetile">{groupSz}</div>
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "12px",
+                                fontWeight: "bold",
+                                marginBottom: "20px",
+                            }}
+                        >
+                            Preferred Group Size
+                        </div>
                     </div>
                 </div>
             </div>
             <h2 style={{ marginBottom: "20px" }}>About Me</h2>
             <div style={{ marginBottom: "40px" }}>{bio}</div>
+            {message && <div className="popup">{message}</div>}
         </div>
     );
 };

@@ -60,7 +60,7 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
                   <h2>Invitations Recieved</h2>
                   <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
                       <button class="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Invitations</button>
-                      <button class="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Student Group Invitations</button>
+                      <button class="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Group Invitations</button>
                   </div>
               </div>
           </div>
@@ -93,7 +93,8 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
 
     const rejectButton= true
     const StudentView = <Student button2={rejectButton} Profiles={StudentProfiles} Page={"student"} />;
-    const GroupView = <Group button2={rejectButton} Profiles={GroupProfiles} />
+    const GroupView = <Group Profiles={GroupProfiles} button2={rejectButton}/>
+
 
     /*<Group button1={acceptButton} button2={rejectButton} Profiles={GroupProfiles}/>;*/
     const [CurrentView, setCurrentView] =  useState(null);
@@ -149,7 +150,7 @@ function Invitations_Page_Render({StudentProfiles, GroupProfiles, isLoading}) {
             <h2>Invitations Recieved</h2>
             <div style={{display: "flex", flexDirection: "row", gap:"200px", justifyContent:"center", marginTop:"20px"}}>
                 <button class="pageswitchbutton" id="sprofbutton" style={{margin:"0px"}} onClick={() => showView("sprofbutton")}>Student Invitations</button>
-                <button class="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Student Group Invitations</button>
+                <button class="pageswitchbutton" id="gprofbutton" style={{margin:"0px"}} onClick={() => showView("gprofbutton")} >Group Invitations</button>
             </div>
         </div>
     </div>

@@ -699,13 +699,14 @@ control{ /*doesnt work*/
   {
     border-radius: 10px;
     border: 1px solid lightgray;
-    height: 100px;
-    width: 100px;
+    height: 150px;
+    width: 110px;
     text-align:center;
-    padding-top: 30px;
-    margin-top:0px;
     font-size:48px;
     color:#157636;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 
@@ -721,6 +722,7 @@ control{ /*doesnt work*/
     padding: 2px 20px 2px 20px;
     margin-bottom:40px;
     border: 0px;
+    z-index: 1;
   }
 
   .teamupbutton:hover
@@ -738,11 +740,19 @@ control{ /*doesnt work*/
     background-color: black;
     color:white;
     opacity: .7;
-    border-radius: 10px;
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     height:fit-content;
-    width: fit-content;
+    width: 100%;
     font-size: small;
+    z-index: 2;
+    position: absolute;
+    left:0;
+    top:0;
+    font-style: italic;
+    display: flex;
+    justify-content: center;
+    
   }
 
 
