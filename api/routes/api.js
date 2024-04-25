@@ -485,13 +485,13 @@ router.post('/register', (req, res) => {
     db.query(q, [req.body.username], (err, data) => {
         if (err) return res.status(500).json(err);
         const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
-        if (!userIdFormat.test(userId)) {
+        if (!userIdFormat.test(req.body.username)) {
             return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
         }
         if (data.length > 0) return res.status(409).json("User already exists!");
 
         const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
-        db.query(insertUserQuery, [userId, firstName, lastName, password], (insertErr, insertData) => {
+        db.query(insertUserQuery, [req.body.username, req.body.firstName, req.body.lastName, req.body.password], (insertErr, insertData) => {
             if (insertErr) {
                 if (insertErr.code === 'ER_DUP_ENTRY') {
                     return res.status(409).json({ msg: 'Duplicate entry. This user ID is already registered.' });
@@ -502,7 +502,7 @@ router.post('/register', (req, res) => {
                 return res.status(500).json(insertErr);
             }
             const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
-                db.query(insertStudentQuery, [userId, userId], (insertStudentErr, insertStudentData) => {
+                db.query(insertStudentQuery, [req.body.username, req.body.username], (insertStudentErr, insertStudentData) => {
                     if (insertStudentErr) {
                         // Check for duplicate entry error
                         if (insertStudentErr.code === 'ER_DUP_ENTRY') {
