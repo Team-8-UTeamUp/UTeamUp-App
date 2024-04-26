@@ -56,7 +56,6 @@ def sortRemainingStudents( studentJson, groupJson,membersJson, min, max,gD):
 
 def studentToStudentsMatches(studentId, projectData, skillData):
     """ Show a specific student a list of other students that match their preferences"""
-
     # get all students that aren't in a group
     df = pd.DataFrame.from_dict(projectData)
 
@@ -66,9 +65,9 @@ def studentToStudentsMatches(studentId, projectData, skillData):
     indvStudentDF = pd.DataFrame(indvStudentDF.loc[~(indvStudentDF == 0).all(axis=1)])
     allStudentDF = allStudentDF.drop([studentId])
 
-    # ensure there are other students to compare too
     if allStudentDF.shape[0] == 0:
         return []
+
     # get the list of matches
     projMatches = ProjMatch(indvStudentDF, allStudentDF)
 
@@ -89,6 +88,8 @@ def studentToStudentsMatches(studentId, projectData, skillData):
 
 def studentToGroupsMatch(studentId, studentData, groupData):
     """ Show a specific student the list of groups that match their preferences"""
+    if len(groupData) == 0:
+        return []
     df = pd.DataFrame.from_dict(studentData)
     # pivot data frame to show rank values for each project columns
     studentDF = pd.pivot(df, index='studentId', columns='projectNum', values='projRank').fillna(0)
@@ -97,8 +98,7 @@ def studentToGroupsMatch(studentId, studentData, groupData):
     df = pd.DataFrame.from_dict(groupData)
     groupsDF = pd.pivot(df, index='groupId',columns='projectNum', values='projRank').fillna(0)
 
-    if groupsDF.shape[0] == 0:
-        return []
+
 
     possibleMatches = ProjMatch(studentDF, groupsDF)
 
@@ -108,6 +108,8 @@ def studentToGroupsMatch(studentId, studentData, groupData):
 
 def groupToStudentsMatch(groupId, groupData, studentData):
     """ Show specific group a list of possible students that match their preferences"""
+    if len(studentData) == 0:
+        return []
     df = pd.DataFrame.from_dict(groupData)
     # switch data frame to show rank values in each project columns
     groupDF = pd.pivot(df, index='groupId', columns='projectNum', values='projRank')
@@ -116,8 +118,7 @@ def groupToStudentsMatch(groupId, groupData, studentData):
     df = pd.DataFrame.from_dict(studentData)
     studentDF = pd.pivot(df, index='studentId',columns='projectNum', values='projRank').fillna(0)
 
-    if studentDF.shape[0] == 0:
-        return []
+
 
     possibleMatches = ProjMatch(groupDF, studentDF)
 

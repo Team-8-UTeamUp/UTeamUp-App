@@ -391,7 +391,9 @@ router.get('/student_info', (req, res) => {
                     let resultData = JSON.parse(message);
 
                     let match = resultData['matches'];
-
+                    if (match.length === 0) {
+                        return res.status(200).json([])
+                    }
                     const profileQuery = `select * from studentProfile where studentId in ?`
                     db.query(profileQuery, [[match]], (err, data) => {
                         if (err) return res.status(504).send(err);
@@ -614,13 +616,16 @@ router.get('/group_info', (req, res) => {
                 scriptPath: '../Database/',
             };
             ///*
-            const pyShell = new PythonShell('sortAlg.py', options);
+            const pyShell = new PythonShell('sortAlg.py', options)
+
             pyShell.send(stringifieidData);
             // Handle received data from the Python script
             pyShell.on('message', (message) => {
                 let resultData = JSON.parse(message);
 
                 let match = resultData['matches'];
+                if (match.length === 0)
+                    return res.status(200).json([])
                 //return res.status(200).json(match)
                 const groupProf = `select * from groupProfile where groupId in ?;`
                 db.query(groupProf, [[match]], (err, data) => {
