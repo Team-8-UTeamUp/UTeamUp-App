@@ -445,7 +445,7 @@ router.get('/student_info', (req, res) => {
 //login page
 //for admin
 router.post('/admin/login', (req, res) => {
-    console.log("Login StudentId:", req.query.studentId);
+    console.log("Login AdminId:", req.body.username);
     const q = "SELECT * FROM admin WHERE adminId = ?";
 
     db.query(q, [req.body.username], (err, data) => {
@@ -501,7 +501,7 @@ router.post('/register', (req, res) => {
         if (!userIdFormat.test(req.body.username)) {
             return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
         }
-        if (data.length > 0) return res.status(409).json("User already exists!");
+        if (data.length > 0) return res.status(409).json({msg: "User already exists!"});
 
         const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
         db.query(insertUserQuery, [req.body.username, req.body.firstName, req.body.lastName, req.body.password], (insertErr, insertData) => {
@@ -527,7 +527,7 @@ router.post('/register', (req, res) => {
                         }
                         return res.status(500).json(insertStudentErr);
                     }
-                return res.status(201).json("User registered successfully and added to students table!");
+                return res.status(201).json({msg: "User registered successfully and added to students table!"});
             });
         });
     });
@@ -535,7 +535,7 @@ router.post('/register', (req, res) => {
 
 
 
-//student login
+/*//student login
 router.post('/login', (req, res) => {
     //const { userId, password } = req.body;
     const q = "SELECT * FROM user WHERE userId = ?";
@@ -550,7 +550,44 @@ router.post('/login', (req, res) => {
 
         return res.status(200).json("Logged in!");
     });
+});*/
+
+// Combined login
+router.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Check if the username exists in the admin table
+    const adminQuery = "SELECT * FROM admin WHERE adminId = ?";
+    db.query(adminQuery, [username], (adminErr, adminData) => {
+        if (adminErr) return res.status(500).json(adminErr);
+
+        if (adminData.length > 0) {
+            // If the username exists in the admin table, return admin val
+            return res.status(200).json({ userType: 'admin' });
+        } else {
+            // If the username does not exist, check the user table
+            const userQuery = "SELECT * FROM user WHERE userId = ?";
+            db.query(userQuery, [username], (userErr, userData) => {
+                if (userErr) return res.status(500).json(userErr);
+                
+                if (userData.length === 0) {
+                    // If the username does not exist in the user table, return "User not found" error
+                    return res.status(404).json("User not found!");
+                } else {
+                    // If the username exists in the user table, check the password
+                    if (password !== userData[0].password) {
+                        // If the password does not match, return "Invalid credentials" error
+                        return res.status(400).json('Invalid credentials');
+                    } else {
+                        // If the password matches, return a distinct value to indicate regular user login
+                        return res.status(200).json({ userType: 'user' });
+                    }
+                }
+            });
+        }
+    });
 });
+
 
 
 router.get('/group_info', (req, res) => {
