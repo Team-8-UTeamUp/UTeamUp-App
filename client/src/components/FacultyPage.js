@@ -62,9 +62,19 @@ function Faculty_Page_Render({isLoading, madeGroups, students, projects}) {
         Title: "",
         ProjectType: ""
     });
+    const [editInputs, setEditInputs] = useState({
+        groupId: "",
+        groupSizePref: ""
+    });
 
     const onChange = (e) => {
         setInputs((previous) => ({ 
+            ...previous, 
+            [e.target.name]: e.target.value
+        }));
+    };
+    const onChange2 = (e) => {
+        setEditInputs((previous) => ({ 
             ...previous, 
             [e.target.name]: e.target.value
         }));
@@ -80,6 +90,20 @@ function Faculty_Page_Render({isLoading, madeGroups, students, projects}) {
                 ProjectType: ""
             })
             console.log(res)
+            window.location.reload()
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const handleEditSumbit = async (e) => {
+        e.preventDefault()
+        try {
+            const res = await axios.post("http://localhost:8800/api/admin/change_group_size", editInputs)
+            setEditInputs({
+                groupId: "",
+                groupSizePref: ""
+            })
             window.location.reload()
         } catch (err) {
             console.log(err)
@@ -144,6 +168,14 @@ function Faculty_Page_Render({isLoading, madeGroups, students, projects}) {
                             </tbody>
                         </table>
                     </div>
+                    <h2>Edit Group Size</h2>
+                    {/* <form nmae="addProject" style={{ display: "block", textAlign: "center" }} >
+                        <label for="groupId">Group ID</label><br></br>
+                        <input type="text" id="Title" name="groupId" onChange={onChange2}/><br></br>
+                        <label for="groupSizePref">Group Size Preference:</label><br></br>
+                        <input type="text" id="groupSizePref" name="groupSizePref" onChange={onChange2}/><br></br>
+                        <button class="button" onClick={handleEditSumbit}>Edit</button><br></br><br></br>
+                    </form> */}
                     <h2>Add a Project</h2>
                     <form nmae="addProject" style={{ display: "block", textAlign: "center" }} >
                         <label for="ProjectNum">Project Num:</label><br></br>

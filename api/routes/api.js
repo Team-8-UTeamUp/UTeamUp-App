@@ -172,9 +172,7 @@ router.get('/csprojects', (req, res) => {
 
 // Profile page
 router.get('/student_profile', (req, res) => {
-    console.log("StudentId:", req.query.studentId);
     const q = `select * from studentProfile where studentId =?;`
-    console.log("StudentId:", req.query.studentId);
     db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
         let temp = {
@@ -195,7 +193,7 @@ router.get('/student_profile', (req, res) => {
 
 // My Group profile
 router.get('/group_profile', (req, res) => {
-    console.log("StudentId:", req.query.studentId);
+    // console.log("StudentId:", req.query.studentId);
     const q =`select * from groupProfile where groupId in (select groupId from student where studentId= ?)`
     db.query(q, [req.query.studentId], (err, data) => {
         if (err) return res.status(500).send(err);
@@ -212,7 +210,7 @@ router.get('/group_profile', (req, res) => {
             emails:data[0]['emails'].replace(/"/g, '').split(','),
             skills: data[0]['skills'].replace(/"/g, '').split(','),
             codingLanguages: data[0]['languages'].replace(/"/g, '').split(','),
-            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)),
+            preferences: [data[0]['UTDNums'], data[0]['CSNums']].map(pref => pref.split(',').map(Number)), //[data[0]['UTDProjects'].replace(/"/g, '').split(','), data[0]['CSProjects'].replace(/"/g, '').split(',')]
             currentGroupSize: data[0]['totalMembers'],
             preferedGroupSize: data[0]['groupSizePref'],
             bio: data[0]['bios'].replace(/"/g, '').split(',')
@@ -224,7 +222,7 @@ router.get('/group_profile', (req, res) => {
 
 // wip changes name and size, needs proj ranks
 router.post('/edit_group', (req, res) => {
-    console.log("StudentId:", req.query.studentId);
+    // console.log("StudentId:", req.query.studentId);
     const{groupId, newName, newSize, newUTD, newCS, studentId } = req.body
 
     let q = `update formedGroups set groupName='${newName}' where groupId = ${groupId}`
@@ -310,7 +308,7 @@ router.post('/edit_group', (req, res) => {
 })
 
 router.post('/close_group', (req, res) => {
-    console.log("StudentId:", req.query.studentId);
+    // console.log("StudentId:", req.query.studentId);
     const {groupId} = req.body
     let q = `update formedGroups
              set groupCompleted=True
@@ -331,6 +329,153 @@ router.post('/close_group', (req, res) => {
     });
     return res.status(200).send(`Group ${groupId} closed`)
 })
+
+//login page
+//for admin
+router.post('/admin/login', (req, res) => {
+    // console.log("Login StudentId:", req.query.studentId);
+    const q = "SELECT * FROM admin WHERE adminId = ?";
+
+    db.query(q, [req.body.username], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data.length === 0) return res.status(404).json("User not found!");
+
+        return res.status(200).json("Logged in!");
+    });
+});
+/*
+//Student registration
+router.post('/register', async (req, res) => {
+    //const { firstName, lastName, userId, password } = req.body;
+    console.log("Request body:", req.body); // Log the request bod
+
+    try {
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        if (!userIdFormat.test(req.body.username)) {
+            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+        }
+
+        const existingUser = await db.query('SELECT * FROM user WHERE userId = ?', [req.body.username]);
+        console.log('SQL Query:', existingUser, ', Parameters:', [req.body.username]);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ msg: 'User already exists' });
+        }
+
+        await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?, ?, ?, ?)', [req.body.username, req.body.firstName, req.body.lastName, req.body.password]);
+        await db.query('INSERT INTO student(`studentId`, `email`, `groupId`, `prefGroupSize`, `bio`) VALUES (?, CONCAT(?, "@utdallas.edu"), ?, ?, ?)', [req.body.username, req.body.username, null, null, null]);
+        res.json({ msg: 'User registered successfully' });
+
+    } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ msg: 'Duplicate entry. User already exists' });
+        }
+        console.error(err);
+        res.status(500).json({ msg: 'Internal server error' });
+    }
+});*/
+/*{
+    "userId" : "ABC123456",
+    "firstName": "first",
+    "lastName": "last",
+    "password": "pass"
+}*/
+router.post('/register', (req, res) => {
+   // const { userId, firstName, lastName, password } = req.body;
+//    console.log("Register StudentId:", req.query.studentId);
+    const q = "SELECT * FROM user WHERE userId = ?";
+    db.query(q, [req.body.username], (err, data) => {
+        if (err) return res.status(500).json(err);
+        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
+        if (!userIdFormat.test(req.body.username)) {
+            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
+        }
+        if (data.length > 0) return res.status(409).json({msg: "User already exists!"});
+
+        const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
+        db.query(insertUserQuery, [req.body.username, req.body.firstName, req.body.lastName, req.body.password], (insertErr, insertData) => {
+            if (insertErr) {
+                if (insertErr.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ msg: 'Duplicate entry. This user ID is already registered.' });
+                }
+                if (insertErr.code === 'ER_BAD_NULL_ERROR') {
+                    return res.status(400).json({ msg: 'Invalid input. Please ensure all fields are filled out.' });
+                }
+                return res.status(500).json(insertErr);
+            }
+            const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
+                db.query(insertStudentQuery, [req.body.username, req.body.username], (insertStudentErr, insertStudentData) => {
+                    if (insertStudentErr) {
+                        // Check for duplicate entry error
+                        if (insertStudentErr.code === 'ER_DUP_ENTRY') {
+                            return res.status(409).json({ msg: 'Duplicate entry. This student ID is already registered.' });
+                        }
+                        // Check for inserting null into a non-nullable column error
+                        if (insertStudentErr.code === 'ER_BAD_NULL_ERROR') {
+                            return res.status(400).json({ msg: 'Invalid input. Please ensure all fields are filled out.' });
+                        }
+                        return res.status(500).json(insertStudentErr);
+                    }
+                return res.status(201).json({msg: "User registered successfully and added to students table!"});
+            });
+        });
+    });
+});
+
+
+
+/*//student login
+router.post('/login', (req, res) => {
+    //const { userId, password } = req.body;
+    const q = "SELECT * FROM user WHERE userId = ?";
+
+    db.query(q, [req.body.username], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data.length === 0) return res.status(404).json("User not found!");
+
+        if (req.body.password !== data[0].password) {
+            return res.status(400).json('Invalid credentials');
+        }
+
+        return res.status(200).json("Logged in!");
+    });
+});*/
+
+// Combined login
+router.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Check if the username exists in the admin table
+    const adminQuery = "SELECT * FROM admin WHERE adminId = ?";
+    db.query(adminQuery, [username], (adminErr, adminData) => {
+        if (adminErr) return res.status(500).json(adminErr);
+
+        if (adminData.length > 0) {
+            // If the username exists in the admin table, return admin val
+            return res.status(200).json({ userType: 'admin' });
+        } else {
+            // If the username does not exist, check the user table
+            const userQuery = "SELECT * FROM user WHERE userId = ?";
+            db.query(userQuery, [username], (userErr, userData) => {
+                if (userErr) return res.status(500).json(userErr);
+                
+                if (userData.length === 0) {
+                    // If the username does not exist in the user table, return "User not found" error
+                    return res.status(404).json("User not found!");
+                } else {
+                    // If the username exists in the user table, check the password
+                    if (password !== userData[0].password) {
+                        // If the password does not match, return "Invalid credentials" error
+                        return res.status(400).json('Invalid credentials');
+                    } else {
+                        // If the password matches, return a distinct value to indicate regular user login
+                        return res.status(200).json({ userType: 'user' });
+                    }
+                }
+            });
+        }
+    });
+});
+
 
 //STUDENTS PAGE
 //get student info
@@ -444,154 +589,6 @@ router.get('/student_info', (req, res) => {
     });
 })
 
-//login page
-//for admin
-router.post('/admin/login', (req, res) => {
-    console.log("Login AdminId:", req.body.username);
-    const q = "SELECT * FROM admin WHERE adminId = ?";
-
-    db.query(q, [req.body.username], (err, data) => {
-        if (err) return res.status(500).json(err);
-        if (data.length === 0) return res.status(404).json("User not found!");
-
-        return res.status(200).json("Logged in!");
-    });
-});
-/*
-//Student registration
-router.post('/register', async (req, res) => {
-    //const { firstName, lastName, userId, password } = req.body;
-    console.log("Request body:", req.body); // Log the request bod
-
-    try {
-        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
-        if (!userIdFormat.test(req.body.username)) {
-            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
-        }
-
-        const existingUser = await db.query('SELECT * FROM user WHERE userId = ?', [req.body.username]);
-        console.log('SQL Query:', existingUser, ', Parameters:', [req.body.username]);
-        if (existingUser.length > 0) {
-            return res.status(400).json({ msg: 'User already exists' });
-        }
-
-        await db.query('INSERT INTO user(`userId`, `firstName`, `lastName`, `password`) VALUES (?, ?, ?, ?)', [req.body.username, req.body.firstName, req.body.lastName, req.body.password]);
-        await db.query('INSERT INTO student(`studentId`, `email`, `groupId`, `prefGroupSize`, `bio`) VALUES (?, CONCAT(?, "@utdallas.edu"), ?, ?, ?)', [req.body.username, req.body.username, null, null, null]);
-        res.json({ msg: 'User registered successfully' });
-
-    } catch (err) {
-        if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(400).json({ msg: 'Duplicate entry. User already exists' });
-        }
-        console.error(err);
-        res.status(500).json({ msg: 'Internal server error' });
-    }
-});*/
-/*{
-    "userId" : "ABC123456",
-    "firstName": "first",
-    "lastName": "last",
-    "password": "pass"
-}*/
-router.post('/register', (req, res) => {
-   // const { userId, firstName, lastName, password } = req.body;
-   console.log("Register StudentId:", req.query.studentId);
-    const q = "SELECT * FROM user WHERE userId = ?";
-    db.query(q, [req.body.username], (err, data) => {
-        if (err) return res.status(500).json(err);
-        const userIdFormat = /^[A-Za-z]{3}\d{6}$/;
-        if (!userIdFormat.test(req.body.username)) {
-            return res.status(400).json({ msg: 'Invalid userId format. It should be 3 alphabetical letters followed by 6 integers.' });
-        }
-        if (data.length > 0) return res.status(409).json({msg: "User already exists!"});
-
-        const insertUserQuery = "INSERT INTO user (userId, firstName, lastName, password) VALUES (?, ?, ?, ?)";
-        db.query(insertUserQuery, [req.body.username, req.body.firstName, req.body.lastName, req.body.password], (insertErr, insertData) => {
-            if (insertErr) {
-                if (insertErr.code === 'ER_DUP_ENTRY') {
-                    return res.status(409).json({ msg: 'Duplicate entry. This user ID is already registered.' });
-                }
-                if (insertErr.code === 'ER_BAD_NULL_ERROR') {
-                    return res.status(400).json({ msg: 'Invalid input. Please ensure all fields are filled out.' });
-                }
-                return res.status(500).json(insertErr);
-            }
-            const insertStudentQuery = "INSERT INTO student (studentId, email) VALUES (?, CONCAT(?, '@utdallas.edu'))";  
-                db.query(insertStudentQuery, [req.body.username, req.body.username], (insertStudentErr, insertStudentData) => {
-                    if (insertStudentErr) {
-                        // Check for duplicate entry error
-                        if (insertStudentErr.code === 'ER_DUP_ENTRY') {
-                            return res.status(409).json({ msg: 'Duplicate entry. This student ID is already registered.' });
-                        }
-                        // Check for inserting null into a non-nullable column error
-                        if (insertStudentErr.code === 'ER_BAD_NULL_ERROR') {
-                            return res.status(400).json({ msg: 'Invalid input. Please ensure all fields are filled out.' });
-                        }
-                        return res.status(500).json(insertStudentErr);
-                    }
-                return res.status(201).json({msg: "User registered successfully and added to students table!"});
-            });
-        });
-    });
-});
-
-
-
-/*//student login
-router.post('/login', (req, res) => {
-    //const { userId, password } = req.body;
-    const q = "SELECT * FROM user WHERE userId = ?";
-
-    db.query(q, [req.body.username], (err, data) => {
-        if (err) return res.status(500).json(err);
-        if (data.length === 0) return res.status(404).json("User not found!");
-
-        if (req.body.password !== data[0].password) {
-            return res.status(400).json('Invalid credentials');
-        }
-
-        return res.status(200).json("Logged in!");
-    });
-});*/
-
-// Combined login
-router.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    // Check if the username exists in the admin table
-    const adminQuery = "SELECT * FROM admin WHERE adminId = ?";
-    db.query(adminQuery, [username], (adminErr, adminData) => {
-        if (adminErr) return res.status(500).json(adminErr);
-
-        if (adminData.length > 0) {
-            // If the username exists in the admin table, return admin val
-            return res.status(200).json({ userType: 'admin' });
-        } else {
-            // If the username does not exist, check the user table
-            const userQuery = "SELECT * FROM user WHERE userId = ?";
-            db.query(userQuery, [username], (userErr, userData) => {
-                if (userErr) return res.status(500).json(userErr);
-                
-                if (userData.length === 0) {
-                    // If the username does not exist in the user table, return "User not found" error
-                    return res.status(404).json("User not found!");
-                } else {
-                    // If the username exists in the user table, check the password
-                    if (password !== userData[0].password) {
-                        // If the password does not match, return "Invalid credentials" error
-                        return res.status(400).json('Invalid credentials');
-                    } else {
-                        // If the password matches, return a distinct value to indicate regular user login
-                        return res.status(200).json({ userType: 'user' });
-                    }
-                }
-            });
-        }
-    });
-});
-
-
-
 router.get('/group_info', (req, res) => {
     const p = "SELECT p.studentId, projectNum, projRank FROM projectpreference as p where  p.studentId=?;"
     db.query(p, [req.query.studentId], (err, data) => {
@@ -677,7 +674,7 @@ router.get('/group_info', (req, res) => {
 router.get('/requests/student_info', (req, res) => {
     const requests = `SELECT * FROM studentProfile WHERE studentId IN ((SELECT receiverId FROM studentrequeststudent WHERE senderId = ?) UNION(SELECT receiverId FROM grouprequeststudent WHERE senderId IN (SELECT groupId FROM student WHERE studentId = ?)))`
     db.query(requests, [req.query.studentId,req.query.studentId], (err, data) => {
-        console.log("StudentId:", req.query.studentId);
+        // console.log("StudentId:", req.query.studentId);
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -731,7 +728,7 @@ router.get('/requests/group_info', (req, res) => {
 router.get('/invites/student_info', (req, res) => {
     const invites = `select * from studentProfile where studentId in ((select senderId from studentrequeststudent where receiverId =?) UNION(SELECT senderId FROM studentrequestgroup WHERE receiverId IN (SELECT groupId FROM student WHERE studentId = ?)))`
     db.query(invites, [req.query.studentId, req.query.studentId], (err, data) => {
-        console.log("StudentId:", req.query.studentId);
+        // console.log("StudentId:", req.query.studentId);
         if (err) return res.status(500).send(err);
         let formattedData = [];
         let studentIndex = 0
@@ -855,7 +852,6 @@ router.post('/denyInvite', (req, res) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            console.log(data)
             return res.status(200).json("Invitation from " + senderId + " to " + receiverId + " has been rejected");
         });
     });
@@ -864,7 +860,7 @@ router.post('/denyInvite', (req, res) => {
 // Unsend an invitation
 router.post('/unsend', (req, res) => {
     var { senderId, receiverId, receiverType, debug } = req.body;
-    console.log("StudentId:", senderId);
+    // console.log("StudentId:", senderId);
     //senderId = debug ? studentId : senderId;
     const tableMap = {
         'ss': 'studentrequeststudent',
@@ -1016,7 +1012,7 @@ router.post('/remaining_students', (req, res) => {
         params["studentData"] = data;
         const b = `select varValue from globalVars where varName in ('minMembers','maxMembers') order by varValue asc`
         db.query(b, [], (err, data) => {
-            if (err) return res.status(500).send(err);
+            if (err) return res.status(501).send(err);
             // fix min max error
             params['min'] = data[0].varValue;
             params['max'] = data[1].varValue
@@ -1025,7 +1021,7 @@ router.post('/remaining_students', (req, res) => {
             const g = "select g.groupId, projectNum, projRank from grouppreference as p, formedGroups as g where p.groupId=g.groupId AND (select count(groupId) from groupInfo as i where i.groupId=g.groupId) < ?  and g.groupId in (select groupId from formedgroups where groupCompleted=False )order by g.groupId asc;\n"
 
             db.query(g, [params['min']], (err, data) => {
-                if (err) return res.status(500).send(err);
+                if (err) return res.status(502).send(err);
                 //const s =  "select k.studentId, k.skill from skills k, individualstudents s where s.studentId=k.studentId;"
                 params['groupData'] = data;
                 let uniqueId = [... new Set(params.groupData.map(item => item.groupId))];
@@ -1034,11 +1030,11 @@ router.post('/remaining_students', (req, res) => {
                 }
                 const m = "select groupId, count(*) as totalMembers from groupInfo where groupId in ? group by groupId"
                 db.query(m, [[uniqueId]], (err, data) => {
-                    if (err) return res.status(500).send(err);
+                    if (err) return res.status(503).send(err);
                     params['memberData'] = data;
                     const stringifieidData = JSON.stringify(params)
                     const options = {
-                        pythonPath: '../Database/.venv/Scripts/python.exe',
+                        pythonPath: pyPath,
                         pythonOptions: ['-u'],
                         scriptPath: '../Database/',
                     };
@@ -1058,13 +1054,13 @@ router.post('/remaining_students', (req, res) => {
                                        set groupId=${groupId}
                                        where studentId in (${membersList})`
                             db.query(q, [], (err, data) => {
-                                if (err) return res.status(500).send(err);
+                                if (err) return res.status(504).send(err);
                             });
                             const close = `update formedGroups
                                            set groupCompleted = True
                                            where groupId=${groupId}`
                             db.query(close, [], (err, data) => {
-                                if (err) return res.status(500).send(err);
+                                if (err) return res.status(505).send(err);
                             });
                         }
                         data = match['createGroups']
@@ -1077,19 +1073,19 @@ router.post('/remaining_students', (req, res) => {
                             const c = `insert into formedGroups(groupSizePref, groupLeader,groupCompleted) values ((select prefGroupSize from student where studentId = ${groupLeader}), ${groupLeader},True)`
 
                             db.query(c, [], (err, data) => {
-                                if (err) return res.status(500).send(err);
+                                if (err) return res.status(506).send(err);
                                 const m = `update student
                                            set groupId = (select groupId from formedGroups where groupLeader=${groupLeader})
                                            where studentId in (${membersList})`
                                 db.query(m, [], (err, data) => {
-                                    if (err) return res.status(500).send(err);
+                                    if (err) return res.status(507).send(err);
                                 });
                                 const p = `insert into grouppreference(groupId,projectNum,projRank)
                                             SELECT s.groupId, pp.projectNum, pp.projRank FROM projectpreference pp
                                                 JOIN (SELECT groupId FROM student WHERE studentId = ${groupLeader}) s
                                                 WHERE pp.studentId = ${groupLeader};`
                                 db.query(p, [], (err, data) => {
-                                    if (err) return res.status(500).send(err);
+                                    if (err) return res.status(508).send(err);
                                 });
 
 
@@ -1104,7 +1100,7 @@ router.post('/remaining_students', (req, res) => {
 
                     // Handle errors
                     pyShell.on('error', (error) => {
-                        return res.status(500).json(error);
+                        return res.status(509).json(error);
                     });
 
                 });
@@ -1177,6 +1173,15 @@ router.post('/admin/add_project', (req, res) => {
         return res.status(200).json("Added new project:" + req.body.Title)
     })
 
+})
+
+router.post('/admin/change_group_size', (req, res) => {
+    const {groupId, groupSizePref} = req.body
+    const d = `UPDATE formedGroups SET groupSizePref = '${groupSizePref}' WHERE groupId = '${groupId}';`
+    db.query(d,[], (err,data) => {
+        if (err) return res.json(err);
+        return res.status(200).json("updated group size" + groupId + groupSizePref)
+    })
 })
 
 export default router;
